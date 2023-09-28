@@ -8,6 +8,7 @@
     - corepack enable
 
 # Start Project
+``` yarn install ```
 ``` yarn expo start ```
 
 # Run from device
