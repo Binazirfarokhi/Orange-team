@@ -1,8 +1,8 @@
 import { Text, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import HomeScreen from './layouts/home-screen.layout';
 import MyTabs from './components/mytabs-component';
+import LoginScreen from './layouts/login.layout';
 
 
 const Stack = createNativeStackNavigator();
@@ -10,7 +10,10 @@ const Stack = createNativeStackNavigator();
 function App() {
   return (
     <NavigationContainer>
-      <MyTabs />
+      <Stack.Navigator screenOptions={{headerShown:false}}>
+        <Stack.Screen name="Login" component={LoginScreen} />
+        <Stack.Screen name="MyTabs" component={MyTabs} />
+      </Stack.Navigator>
     </NavigationContainer>
   );
 }

@@ -8,8 +8,7 @@
     - corepack enable
 
 # Start Project
-``` yarn install ```
-``` yarn expo start ```
+``` npx expo start ```
 
 # Run from device
 1. first install expo go from app store or play store
@@ -17,4 +16,4 @@
 3. open camera and scan QR Code from terminal after launch ```yarn expo start```
 
 # Run from browser
-```yarn expo start --web```
+```npx expo start --web```
