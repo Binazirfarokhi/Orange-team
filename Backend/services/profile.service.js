@@ -1,3 +1,5 @@
+const { getProfiles } = require("../repo/profile.repo")
+
 const createUser = async(req,res)=> {
     res.send('created')
 }
@@ -8,7 +10,8 @@ const deleteUser = async(req,res)=> {
     res.send(`deleted ${req.params.id}`)
 }
 const listUser = async(req,res)=> {
-    res.send('userList')
+    const doc = await getProfiles();
+    res.send(doc)
 }
 const user = async(req,res)=> {
     res.send('user')
