@@ -2,3 +2,4 @@ OrangeProject/.expo
 OrangeProject/node_modules
 OrangeProject/.DS_Store
 Backend/firebase-config.json
+Backend/firebase-service-config.json

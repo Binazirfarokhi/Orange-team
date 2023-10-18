@@ -1,12 +1,22 @@
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import { StyleSheet, Text, View } from "react-native";
+import { getPersistData } from "../contexts/store"
+import React, { useState } from 'react';
 
 function HomeScreen({navigation}) {
+    const [ name, setName ] = useState('');
+    React.useEffect(()=> {
+        getPersistData('userInfo').then(data=> {
+            const { displayName } = data[0].signup;
+            setName(displayName);
+            
+        });
+    },[]);
     return (
       <>
         <View style={{flex: 1}}>
           <Text style={styles.title}>Hi,</Text>
-          <Text style={styles.username}>HT</Text>
+          <Text style={styles.username}>{name}</Text>
         </View>
         <View style={{...styles.home, flex: 2}}>
           <View style={styles.list}>
@@ -21,17 +31,17 @@ function HomeScreen({navigation}) {
           </View>
           <View style={styles.list}>
             <FontAwesome name='group' size={20} style={styles.leftIcon} />
-            <Text style={styles.listText} onPress={()=> alert('hello')}>List of Children</Text>
+            <Text style={styles.listText} onPress={()=> navigation.navigate('ChildrenList')}>List of Children</Text>
             <FontAwesome name='chevron-right' size={20} style={styles.rightIcon} />
           </View>
           <View style={styles.list}>
             <FontAwesome name='table' size={20} style={styles.leftIcon} />
-            <Text style={styles.listText} onPress={()=> alert('hello')}>Event History</Text>
+            <Text style={styles.listText} onPress={()=> navigation.navigate('EventHistory')}>Event History</Text>
             <FontAwesome name='chevron-right' size={20} style={styles.rightIcon} />
           </View>
           <View style={styles.list}>
             <FontAwesome name='gear' size={20} style={styles.leftIcon} />
-            <Text style={styles.listText} onPress={()=> alert('hello')}>Setting</Text>
+            <Text style={styles.listText} onPress={()=> navigation.navigate('Settings')}>Setting</Text>
             <FontAwesome name='chevron-right' size={20} style={styles.rightIcon} />
           </View>
         </View>

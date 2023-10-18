@@ -1,23 +1,150 @@
-import { Text, View } from 'react-native';
+import * as React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import MyTabs from './components/mytabs-component';
+import { navigationRef } from './contexts/rootNavigation';
 import LoginScreen from './layouts/login.layout';
-import { NativeBaseProvider } from 'native-base';
+import SplashScreen from './layouts/splash.layout';
 
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import AuthContext from './contexts/auth';
+import AccountScreen from './layouts/account.layout';
+import AuthorizedTabs from './components/authorized-tabs.component';
+import EventHistoryScreen from './layouts/event-history.layout';
+import PersonalInformationScreen from './layouts/personal-information.layout';
+
+import { post } from './contexts/api';
+import { getPersistData, removePersistData, savePersistData } from './contexts/store';
 
 const Stack = createNativeStackNavigator();
+const Tab = createBottomTabNavigator();
 
-function App() {
-  return (
-    <NativeBaseProvider>
-      <NavigationContainer>
-        <Stack.Navigator screenOptions={{headerShown:false}}>
-            <Stack.Screen name="Login" component={LoginScreen} />
-            <Stack.Screen name="MyTabs" component={MyTabs} />
-        </Stack.Navigator>
-      </NavigationContainer>
-    </NativeBaseProvider>
+
+function App({navigation}) {
+  
+  const [state, dispatch] = React.useReducer(
+    (prevState, action) => {
+      switch (action.type) {
+        case 'RESTORE_TOKEN':
+          return {
+            ...prevState,
+            userToken: action.token,
+            isLoading: false,
+          };
+        case 'SIGN_IN':
+          return {
+            ...prevState,
+            isSignout: false,
+            userToken: action.token,
+          };
+        case 'SIGN_OUT':
+          return {
+            ...prevState,
+            isSignout: true,
+            userToken: null,
+          };
+      }
+    },
+    {
+      isLoading: true,
+      isSignout: false,
+      userToken: null,
+    }
+  );
+  React.useEffect(() => {
+    // Fetch the token from storage then navigate to our appropriate place
+    const bootstrapAsync = async () => {
+      let userToken;
+
+      try {
+        // alert(JSON.stringify(await getPersistData('token')))
+        const token = await getPersistData('token');
+        userToken = token.idToken;
+        // Restore token stored in `SecureStore` or any other encrypted storage
+        // userToken = await SecureStore.getItemAsync('userToken');
+      } catch (e) {
+        // Restoring token failed
+      }
+
+      // After restoring token, we may need to validate it in production apps
+
+      // This will switch to the App screen or Auth screen and this loading
+      // screen will be unmounted and thrown away.
+      dispatch({ type: 'RESTORE_TOKEN', token: userToken });
+    };
+
+    bootstrapAsync();
+  }, []);
+
+  const authContext = React.useMemo(
+    () => ({
+      signIn: async (data) => {
+        // In a production app, we need to send some data (usually username, password) to server and get a token
+        // We will also need to handle errors if sign in failed
+        // After getting token, we need to persist the token using `SecureStore` or any other encrypted storage
+        // In the example, we'll use a dummy token
+        const result = (await post('/auth', data)).data;
+        if(result.status ==='OK') {
+          alert(JSON.stringify(result.userData))
+          await savePersistData('userInfo', result.userData);
+          await savePersistData('token', result.token);
+          dispatch({ type: 'SIGN_IN', token: result.token.idToken});
+        } else if(result) {
+          alert(result.message)
+        } else alert('Unable to connect to server')
+      },
+      signOut: async() => {
+        await removePersistData('userInfo')
+        await removePersistData('token')
+        dispatch({ type: 'SIGN_OUT' });
+      },
+      signUp: async (data) => {
+        // In a production app, we need to send user data to server and get a token
+        // We will also need to handle errors if sign up failed
+        // After getting token, we need to persist the token using `SecureStore` or any other encrypted storage
+        // In the example, we'll use a dummy token
+        const result = (await post('/auth/signup', data)).data;
+        if(result) {
+            if(result.status === 'Failed')
+              alert(result.message)
+            else return 'OK'
+          } else alert('Unable to connect to server')
+          return 'Failed'
+          // dispatch({ type: 'SIGN_IN', token: 'dummy-auth-token' });
+      },
+    }),
+    []
+  );
+
+  return ( 
+  <AuthContext.Provider value={authContext}>
+    <NavigationContainer ref={navigationRef}>
+      <Stack.Navigator screenOptions={{headerShown:false}}>
+      {
+        state.isLoading ? (
+        <Stack.Screen name="SplashScreen" component={SplashScreen} />
+      ) : state.userToken == null ? (
+        <Stack.Screen name="Login" component={LoginScreen} />
+        ) : (
+        <Stack.Screen name="AuthorizedTabs" component={AuthorizedTabs}
+          options={{
+          title: 'Sign in',
+          animationTypeForReplace: state.isSignout ? 'pop' : 'push',
+        }} />
+        )
+      }
+      
+      <Stack.Group
+          screenOptions={{ headerStyle: { backgroundColor: 'papayawhip' } }}
+          >
+        <Stack.Screen name="Account" component={ AccountScreen } />  
+        <Stack.Screen name="PersonalInformation" component={ PersonalInformationScreen } />
+        
+        
+        <Stack.Screen name="EventHistory" component={ EventHistoryScreen } />
+      </Stack.Group>
+      </Stack.Navigator>
+    </NavigationContainer>
+  </AuthContext.Provider>
   );
 }
 
