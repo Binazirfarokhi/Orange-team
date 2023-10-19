@@ -7,8 +7,10 @@ function HomeScreen({navigation}) {
     const [ name, setName ] = useState('');
     React.useEffect(()=> {
         getPersistData('userInfo').then(data=> {
-            const { displayName } = data[0].signup;
-            setName(displayName);
+            if(data && data.length > 0) {
+              const { displayName } = data[0].signup;
+              setName(displayName);
+            }
             
         });
     },[]);

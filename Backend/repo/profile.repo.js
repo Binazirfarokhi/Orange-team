@@ -1,4 +1,4 @@
-const { getDocs, collection, query, where, setDoc, doc } = require("firebase/firestore");
+const { getDocs, collection, query, where, setDoc, doc, updateDoc } = require("firebase/firestore");
 const { firestoreDB } = require("./firebase");
 
 const userCollection = collection(firestoreDB, "users");
@@ -42,10 +42,30 @@ const saveProfile = async(username, displayName) => {
     try {
         let docRef = doc(signupCollection, username);
         await setDoc(docRef,{emailAddress: username, displayName, createdAt: new Date()})
-        await setDoc(doc(userCollection),{signup: `signup/${username}`, createdAt: new Date(), role: "parent"})
+        const q =  query(signupCollection, where("emailAddress","==", username));
+        const ref = (await getDocs(q)).docs[0];
+        await setDoc(doc(userCollection),{signup: ref.ref, createdAt: new Date(), role: "parent"})
     } catch (error) {
          console.error(error)
     }
 }
 
-module.exports = { getProfiles, getProfileByEmail, saveProfile }
+const updateUsername = async(displayName, emailAddress) => {
+    try {
+        let docRef = doc(signupCollection, emailAddress);
+        await updateDoc(docRef,{displayName})
+    } catch (error) {
+         console.error(error)
+    }
+}
+
+const updateUserData = async(emailAddress, data) => {
+    try {
+        let docRef = doc(signupCollection, emailAddress);
+        const userDoc = (await getDocs(query(userCollection, where("signup", "==", docRef))))
+        await updateDoc(userDoc.docs[0].ref,data)
+    } catch (error) {
+         console.error(error)
+    }
+}
+module.exports = { getProfiles, getProfileByEmail, saveProfile, updateUsername, updateUserData }

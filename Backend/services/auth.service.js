@@ -38,7 +38,7 @@ const passwordReset = async (req, res) => {
         res.send({status: "OK"})
     } catch (error) {
         res.send({
-            status: 'password reset error',
+            status: 'Failed',
             message: error.message
         })
     }
@@ -58,11 +58,11 @@ const signup = async (req, res) => {
             res.send({status: "Failed", message: `Email address's format is invalid.`})
         }
     } catch (error) {
-        console.error(error)
         // res.send({
         //     status: 'Failed',
         //     message: error.message
         // })
+        console.error(error)
         res.send({status: "Failed", message: `Account with ${username} is already exists.`})
 
     }

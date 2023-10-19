@@ -1,7 +1,7 @@
-const { initializeApp } = require("firebase/app");
+const { initializeApp } = require('firebase/app');
 const { getFirestore } = require("firebase/firestore");
 const { getAuth } = require("firebase/auth");
-const fbAdmin = require("firebase-admin");
+const fbAdmin = require('firebase-admin');
 
 var config = require("../firebase-config.json");
 var serviceAccountConfig = require("../firebase-service-config.json");
