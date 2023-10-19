@@ -5,7 +5,7 @@ const router = express.Router()
 // define the home page route
 router.post('/', login);
 router.post('/signup', signup);
-router.get('/reset', passwordReset);
+router.post('/reset', passwordReset);
 router.get('/refreshToken', refreshToken);
 
 

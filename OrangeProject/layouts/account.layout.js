@@ -2,22 +2,56 @@ import Feather from 'react-native-vector-icons/Feather';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import { Button, Input } from '@rneui/themed';
 import { StyleSheet, Text, View } from "react-native";
+import React, { useState } from 'react';
+import { getPersistData } from '../contexts/store';
+import { get, post, put } from '../contexts/api';
 
 function AccountScreen({navigation}) {
+  const [displayName, setDisplayname] = useState('');
+  const [emailAddress, setEmailAddress] = useState('');
+
+  const confirm = async() =>{   
+    const result = (await put(`/profile/${emailAddress}`, {displayName})).data;
+    if(result && result.status === 'OK') {
+          alert('Name has updated');
+    } else alert('Unable to connect to server') 
+  }
+
+  const changePassword = async() => {
+    const result = (await post('/auth/reset', {email: emailAddress})).data;
+    if(result) {
+      if(result.status === 'OK') {
+          alert('Password change request sent'); 
+      }
+    } else alert('Unable to connect to server') 
+    
+  }
+
+  React.useEffect(()=> {
+    getPersistData('userInfo').then(async data=> {
+        if(data && data.length > 0) {
+          const { emailAddress } = data[0].signup;
+          setEmailAddress(emailAddress);
+          const result = (await get(`/profile/${emailAddress}`)).data[0];
+          setDisplayname(result.signup.displayName);
+        }        
+      });
+    },[]);
     return (
       <View style={styles.main}>
-        <Feather name='arrow-left' size={30} style={styles.leftIcon} onPress={() => navigation.navigate('MyTabs')} />
+        <Feather name='arrow-left' size={30} style={styles.leftIcon} onPress={() => navigation.navigate('AuthorizedTabs')} />
         <Text style={styles.title}>Account</Text>
         <Input
         containerStyle={{}}
-        disabledInputStyle={{ background: "#ddd" }}
+        disabledInputStyle={{ backgroundColor: '#ddd' }}
         inputContainerStyle={{}}
-        errorMessage="Oops! that's not correct."
         errorStyle={{}}
         errorProps={{}}
         inputStyle={{}}
         labelStyle={{}}
         labelProps={{}}
+        value={displayName}
+        onChange={e=> setDisplayname(e.nativeEvent.text)}
         leftIcon={<FontAwesome name='user' size={20} color={'#666'} />}
         leftIconContainerStyle={{}}
         rightIconContainerStyle={{}}
@@ -25,49 +59,21 @@ function AccountScreen({navigation}) {
       /> 
       <Input
         containerStyle={{}}
-        disabledInputStyle={{ background: "#ddd" }}
+        disabledInputStyle={{ backgroundColor: '#ddd' }}
         inputContainerStyle={{}}
-        errorMessage="Oops! that's not correct."
+        disabled={true}
         errorStyle={{}}
         errorProps={{}}
         inputStyle={{}}
         labelStyle={{}}
         labelProps={{}}
+        value={emailAddress}
         leftIcon={<FontAwesome name='user' size={20} color={'#666'} />}
         leftIconContainerStyle={{}}
         rightIconContainerStyle={{}}
         placeholder="Email Address"
       />
-      <Input
-        containerStyle={{}}
-        disabledInputStyle={{ background: "#ddd" }}
-        inputContainerStyle={{}}
-        errorMessage="Oops! that's not correct."
-        errorStyle={{}}
-        errorProps={{}}
-        inputStyle={{}}
-        labelStyle={{}}
-        labelProps={{}}
-        leftIcon={<FontAwesome name='user' size={20} color={'#666'} />}
-        leftIconContainerStyle={{}}
-        rightIconContainerStyle={{}}
-        placeholder="Change Password"
-      /> 
-      <Input
-        containerStyle={{}}
-        disabledInputStyle={{ background: "#ddd" }}
-        inputContainerStyle={{}}
-        errorMessage="Oops! that's not correct."
-        errorStyle={{}}
-        errorProps={{}}
-        inputStyle={{}}
-        labelStyle={{}}
-        labelProps={{}}
-        leftIcon={<FontAwesome name='key' size={20} color={'#666'} />}
-        leftIconContainerStyle={{}}
-        rightIconContainerStyle={{}}
-        placeholder="Confirm Passwood"
-      />
+      
       <Button
         containerStyle={{ margin: 5 }}
         disabledStyle={{
@@ -80,10 +86,27 @@ function AccountScreen({navigation}) {
         iconContainerStyle={{ background: "#000" }}
         loadingProps={{ animating: true }}
         loadingStyle={{}}
-        // onPress={}
+        onPress={async()=> await confirm()}
         title="Save"
         titleProps={{}}
         titleStyle={{ marginHorizontal: 5 }}
+      />
+      <Button
+        containerStyle={{ margin: 5 }}
+        disabledStyle={{
+          borderWidth: 2,
+          borderColor: "#00F"
+        }}
+        disabledTitleStyle={{ color: "#00F" }}
+        linearGradientProps={null}
+        iconContainerStyle={{ background: "#000" }}
+        loadingProps={{ animating: true }}
+        loadingStyle={{}}
+        onPress={async()=> await changePassword()}
+        title="Change password"
+        titleProps={{}}
+        titleStyle={{ marginHorizontal: 5 }}
+        type='clear'
       />
       </View>
     );

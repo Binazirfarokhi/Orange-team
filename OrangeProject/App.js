@@ -9,10 +9,12 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import AuthContext from './contexts/auth';
 import AccountScreen from './layouts/account.layout';
 import AuthorizedTabs from './components/authorized-tabs.component';
+import ChildrenListScreen from './layouts/children-list.layout';
+import AddChildrenScreen from './layouts/add-child.layout';
 import EventHistoryScreen from './layouts/event-history.layout';
 import PersonalInformationScreen from './layouts/personal-information.layout';
 
-import { post } from './contexts/api';
+import { post, get } from './contexts/api';
 import { getPersistData, removePersistData, savePersistData } from './contexts/store';
 
 const Stack = createNativeStackNavigator();
@@ -84,7 +86,6 @@ function App({navigation}) {
         // In the example, we'll use a dummy token
         const result = (await post('/auth', data)).data;
         if(result.status ==='OK') {
-          alert(JSON.stringify(result.userData))
           await savePersistData('userInfo', result.userData);
           await savePersistData('token', result.token);
           dispatch({ type: 'SIGN_IN', token: result.token.idToken});
@@ -111,6 +112,16 @@ function App({navigation}) {
           return 'Failed'
           // dispatch({ type: 'SIGN_IN', token: 'dummy-auth-token' });
       },
+      forgotPassword: async (data) => {
+        try{
+          const result = (await post('/auth/reset', {email: data})).data;
+          if(result.status === 'OK') {
+            alert('Sent an email to password reset link.')
+          }
+        } catch(error) {
+          alert(error)
+        }
+      }
     }),
     []
   );
@@ -138,8 +149,8 @@ function App({navigation}) {
           >
         <Stack.Screen name="Account" component={ AccountScreen } />  
         <Stack.Screen name="PersonalInformation" component={ PersonalInformationScreen } />
-        
-        
+        <Stack.Screen name="ChildrenList" component={ ChildrenListScreen } />
+        <Stack.Screen name="AddChild" component={ AddChildrenScreen } />
         <Stack.Screen name="EventHistory" component={ EventHistoryScreen } />
       </Stack.Group>
       </Stack.Navigator>
