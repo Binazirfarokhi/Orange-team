@@ -9,7 +9,7 @@ import Feather from 'react-native-vector-icons/Feather';
 
 function LoginScreen() { 
   const [ formType, setFormType ] = useState('home')
-  const { signIn, signUp } = React.useContext(AuthContext);
+  const { signIn, signUp, forgotPassword } = React.useContext(AuthContext);
   
   const [username, setUsername] = React.useState('');
   const [password, setPassword] = React.useState('');
@@ -132,7 +132,7 @@ function LoginScreen() {
       iconContainerStyle={{ background: "#000" }}
       loadingProps={{ animating: true }}
       loadingStyle={{}}
-      onPress={() => setFormType('login')}
+      onPress={async() => await forgotPassword(username)}
       title="Request Password"
       titleProps={{}}
       titleStyle={{ marginHorizontal: 5 }}
