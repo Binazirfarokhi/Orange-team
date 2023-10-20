@@ -3,7 +3,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { navigationRef } from './contexts/rootNavigation';
 import LoginScreen from './layouts/login.layout';
 import SplashScreen from './layouts/splash.layout';
-
+import { NativeBaseProvider } from 'native-base';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import AuthContext from './contexts/auth';
@@ -127,6 +127,7 @@ function App({navigation}) {
   );
 
   return ( 
+    <NativeBaseProvider>
   <AuthContext.Provider value={authContext}>
     <NavigationContainer ref={navigationRef}>
       <Stack.Navigator screenOptions={{headerShown:false}}>
@@ -156,6 +157,7 @@ function App({navigation}) {
       </Stack.Navigator>
     </NavigationContainer>
   </AuthContext.Provider>
+  </NativeBaseProvider>
   );
 }
 

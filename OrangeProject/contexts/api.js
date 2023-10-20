@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const config = {
-    url: 'http://192.168.1.74:3000'
+    url: 'http://10.0.0.14:3000'
 }
 
 const api = ()=> {

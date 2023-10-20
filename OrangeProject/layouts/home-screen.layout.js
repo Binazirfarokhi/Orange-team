@@ -68,8 +68,8 @@ function HomeScreen({navigation}) {
     home: {
       border: '1px solid #DDD',
       backgroundColor: 'white',
-      borderTopLeftRadius: '50px',
-      borderTopRightRadius: '50px',
+      borderTopLeftRadius: 50,
+      borderTopRightRadius: 50,
       paddingTop: 16,
       alignItems: "center"
     }, list: {

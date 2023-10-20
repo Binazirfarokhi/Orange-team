@@ -19,7 +19,7 @@ const styles = StyleSheet.create({
       justifyContent: 'center',
       alignItems: 'center',
       border: '8px solid #CCC',
-      borderRadius: '50%',
+      borderRadius: 35,
       backgroundColor: '#666'
     },
   });
