@@ -59,13 +59,18 @@ const updateUsername = async(displayName, emailAddress) => {
     }
 }
 
+const getUserRefByEmail = async(emailAddress) => {
+    let docRef = doc(signupCollection, emailAddress);
+    const userDoc = (await getDocs(query(userCollection, where("signup", "==", docRef))))
+    return userDoc.docs[0].ref;
+}
+
 const updateUserData = async(emailAddress, data) => {
     try {
-        let docRef = doc(signupCollection, emailAddress);
-        const userDoc = (await getDocs(query(userCollection, where("signup", "==", docRef))))
-        await updateDoc(userDoc.docs[0].ref,data)
+        
+        await updateDoc(await getUserRefByEmail(emailAddress),data)
     } catch (error) {
          console.error(error)
     }
 }
-module.exports = { getProfiles, getProfileByEmail, saveProfile, updateUsername, updateUserData }
+module.exports = { getProfiles, getProfileByEmail, saveProfile, updateUsername, updateUserData, getUserRefByEmail }

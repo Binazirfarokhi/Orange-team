@@ -2,7 +2,7 @@ import { Button } from "@rneui/themed";
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import { StyleSheet, Text, View } from "react-native";
 
-export default function ChildItem ({ navigation, child}){
+export default function ChildItem ({ navigation, child, deleteChild}){
     return (
         <View style={styles.main}>
             <Text style={styles.name}>{child.name}</Text>
@@ -39,7 +39,7 @@ export default function ChildItem ({ navigation, child}){
                     loadingProps={{ animating: true }}
                     icon={<FontAwesome name='trash' size={20} color={'red'} />}
                     loadingStyle={{}}
-                    onPress={()=> navigation.navigate({name: 'AddChild', params: child})}
+                    onPress={()=> deleteChild(child.id)}
                     title=""
                     titleProps={{}}
                     titleStyle={{ marginHorizontal: 5 }}
