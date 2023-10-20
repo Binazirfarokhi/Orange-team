@@ -1,20 +1,78 @@
 import Feather from 'react-native-vector-icons/Feather';
 import { Button, Input, CheckBox } from '@rneui/themed';
 import { StyleSheet, Text, View } from "react-native";
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import { get, post, put } from '../contexts/api';
+import { getPersistData } from '../contexts/store';
 
 function AddChildrenScreen({navigation, route}) {
-  const [age, setAge] = useState(10)
-    return (
+  const [name, setName] = useState('')
+  const [age, setAge] = useState(0)
+  const [character, setCharacter] = useState('')
+  const [allergy, setAllergy] = useState('')
+  const [hasAllergy, setHasAllergy] = useState(false)
+  const [activities, setActivities] = useState('')
+  const [hasActivities, setHasActivities] = useState(false)
+  const [canView, setCanView] = useState(false)
+  const [email, setEmail] = useState('')
+  let childId;
+  if(route.params && route.params.child)
+    childId = route.params.child.id;
+
+  useEffect(() => {
+    getPersistData('userInfo').then(async data=> {
+      if(data && data.length > 0) {
+        const { emailAddress } = data[0].signup;
+        setEmail(emailAddress);
+        if(childId) {
+          const result = (await get(`/children/${emailAddress}`)).data.data.filter(child=> child.id === childId)[0];
+          setName(result.name);
+          setAge(result.age);
+          setCharacter(result.character);
+          setAllergy(result.allergy);
+          setHasAllergy(result.hasAllergy);
+          setActivities(result.activities);
+          setHasActivities(result.hasActivities);
+          setCanView(result.canView);
+        }
+      }        
+    });
+  }, []);
+  
+  const back = () => navigation.navigate('ChildrenList')
+
+  const save = async()=> {
+    if(childId) {
+      const result = (await put(`/children/${childId}`, {name, age, character, allergy, hasActivities, hasAllergy,activities, canView})).data;
+      if(result) {
+        if(result.status === 'OK') {
+            alert('Saved Child');
+            back();
+          }
+        } else alert('Unable to connect to server') 
+      } else {
+        const result = (await post(`/children/${email}`, {name, age, character, allergy, hasActivities, hasAllergy,activities, canView})).data;
+        if(result) {
+          if(result.status === 'OK') {
+            alert('Child Added'); 
+            back();
+          }
+        } else alert('Unable to connect to server') 
+      }
+    
+  }
+
+  return (
       <View style={styles.main}>
-        <Feather name='arrow-left' size={30} style={styles.leftIcon} onPress={() => navigation.navigate('ChildrenList')} />
-        <Text style={styles.title}>Add Child, {route.params.child.name}</Text>
+        <Feather name='arrow-left' size={30} style={styles.leftIcon} onPress={() => back()} />
+        <Text style={styles.title}>{childId? "Update": "Add"} Child, {name}</Text>
         <Input
           containerStyle={{}}
+          onChange={(e)=> setName(e.nativeEvent.text)}
           disabledInputStyle={{ background: "#ddd" }}
           inputContainerStyle={{}}
-          errorMessage="Oops! that's not correct."
+          value={name}
           errorStyle={{}}
           errorProps={{}}
           inputStyle={{}}
@@ -27,9 +85,11 @@ function AddChildrenScreen({navigation, route}) {
        
        <Input
           containerStyle={{}}
+          onChange={(e)=> setAge(e.nativeEvent.text)}
           disabledInputStyle={{ background: "#ddd" }}
           inputContainerStyle={{}}
-          errorMessage="Oops! that's not correct."
+          value={age+''}
+          keyboardType='numeric'
           errorStyle={{}}
           errorProps={{}}
           inputStyle={{}}
@@ -42,8 +102,9 @@ function AddChildrenScreen({navigation, route}) {
         <Input
           containerStyle={{}}
           disabledInputStyle={{ background: "#ddd" }}
+          onChange={(e)=> setCharacter(e.nativeEvent.text)}
           inputContainerStyle={{}}
-          errorMessage="Oops! that's not correct."
+          value={character}
           errorStyle={{}}
           errorProps={{}}
           inputStyle={{}}
@@ -51,19 +112,18 @@ function AddChildrenScreen({navigation, route}) {
           labelProps={{}}
           leftIconContainerStyle={{}}
           rightIconContainerStyle={{}}
-          placeholder="Addresss"
+          placeholder="Character"
         />
         <CheckBox
-          // checked={checked}
+          checked={hasAllergy}
           containerStyle ={{backgroundColor: 'transparent'}}
           checkedColor="#0F0"
-          checkedTitle="Great!"
-          onIconPress={() => setChecked(!checked)}
+          onIconPress={() => setHasAllergy(!hasAllergy)}
           onLongIconPress={() =>
             console.log("onLongIconPress()")
           }
           onLongPress={() => console.log("onLongPress()")}
-          onPress={() => console.log("onPress()")}
+          onPress={() => setHasAllergy(!hasAllergy)}
           size={30}
           textStyle={{}}
           title="Allergy"
@@ -72,9 +132,10 @@ function AddChildrenScreen({navigation, route}) {
         />
         <Input
           containerStyle={{}}
+          onChange={(e)=> setAllergy(e.nativeEvent.text)}
           disabledInputStyle={{ background: "#ddd" }}
           inputContainerStyle={{}}
-          errorMessage="Oops! that's not correct."
+          value={allergy}
           errorStyle={{}}
           errorProps={{}}
           inputStyle={{}}
@@ -85,16 +146,15 @@ function AddChildrenScreen({navigation, route}) {
           placeholder="Allergy"
         />
         <CheckBox
-          // checked={checked}
+          checked={hasActivities}
           containerStyle ={{backgroundColor: 'transparent'}}
           checkedColor="#0F0"
-          checkedTitle="Great!"
-          onIconPress={() => setChecked(!checked)}
+          onIconPress={() => setHasActivities(!hasActivities)}
           onLongIconPress={() =>
             console.log("onLongIconPress()")
           }
           onLongPress={() => console.log("onLongPress()")}
-          onPress={() => console.log("onPress()")}
+          onPress={() => setHasActivities(!hasActivities)}
           size={30}
           textStyle={{}}
           title="Activities Group"
@@ -103,9 +163,10 @@ function AddChildrenScreen({navigation, route}) {
         />
         <Input
           containerStyle={{}}
+          onChange={(e)=> setActivities(e.nativeEvent.text)}
           disabledInputStyle={{ background: "#ddd" }}
           inputContainerStyle={{}}
-          errorMessage="Oops! that's not correct."
+          value={activities}
           errorStyle={{}}
           errorProps={{}}
           inputStyle={{}}
@@ -116,16 +177,16 @@ function AddChildrenScreen({navigation, route}) {
           placeholder="Activities Group"
         />
         <CheckBox
-          // checked={checked}
+          checked={canView}
           containerStyle ={{backgroundColor: 'transparent'}}
           checkedColor="#0F0"
           checkedTitle="Great!"
-          onIconPress={() => setChecked(!checked)}
+          onIconPress={() => setCanView(!canView)}
           onLongIconPress={() =>
             console.log("onLongIconPress()")
           }
           onLongPress={() => console.log("onLongPress()")}
-          onPress={() => console.log("onPress()")}
+          onPress={() => setCanView(!canView)}
           size={30}
           textStyle={{}}
           title="Everyone can view"
@@ -143,7 +204,7 @@ function AddChildrenScreen({navigation, route}) {
             iconContainerStyle={{ background: "#000" }}
             loadingProps={{ animating: true }}
             loadingStyle={{}}
-            onPress={()=> navigation.navigate('ChildrenList')}
+            onPress={()=> save()}
             title="Save"
             titleProps={{}}
             titleStyle={{ marginHorizontal: 5 }}
