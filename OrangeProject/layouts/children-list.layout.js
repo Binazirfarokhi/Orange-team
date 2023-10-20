@@ -3,57 +3,44 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import { Button, CheckBox, Input } from '@rneui/themed';
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import ChildItem from '../components/child-item.component';
-
-const children = [{
-  name: 'John Doe',
-  age: 12,
-  id: 12321312,
-}, {
-  name: 'Johnson',
-  age: 8,
-  id: 2,
-},{
-  name: 'Joanna',
-  age: 6,
-  id: 3,
-},{
-  name: 'Jax',
-  age: 6,
-  id: 6,
-},{
-  name: 'Jeans',
-  age: 4,
-  id: 5,
-},{
-  name: 'John',
-  age: 4,
-  id: 4,
-}]
+import { useEffect, useState } from 'react';
+import { getPersistData } from '../contexts/store';
+import { deleteCall, get } from '../contexts/api';
 
 function ChildrenListScreen({navigation}) {
+  const [email, setEmail] = useState('')
+  const [children, setChildren] = useState([]);
+  const [lastReload, setLastReload] = useState('')
+    
+    useEffect(() => {
+      getPersistData('userInfo').then(async data=> {
+        if(data && data.length > 0) {
+          const { emailAddress } = data[0].signup;
+          setEmail(emailAddress);
+          const result = (await get(`/children/${emailAddress}`)).data.data;
+          setChildren(result);
+        }        
+      });
+    }, [lastReload])
+
+    async function deleteChild(id) {
+      const result = (await deleteCall(`/children/${id}`)).data;
+      if(result) {
+        if(result.status === 'OK') {
+          setLastReload(new Date())
+        } else {
+          alert(result.status)
+        }
+      } else alert('Unable to load children list');
+    }
+
     return (
       <>
         <View style={{flex: 0, ...styles.main}}>
           <Feather name='arrow-left' size={30} style={styles.leftIcon} onPress={() => navigation.navigate('AuthorizedTabs')} />
           <Text style={styles.title}>List of Children</Text>
           <View style={styles.options}>
-            <CheckBox
-            // checked={checked}
-            containerStyle ={{backgroundColor: 'transparent', flex: 2}}
-            checkedColor="#0F0"
-            checkedTitle="Great!"
-            onIconPress={() => setChecked(!checked)}
-            onLongIconPress={() =>
-              console.log("onLongIconPress()")
-            }
-            onLongPress={() => console.log("onLongPress()")}
-            onPress={() => console.log("onPress()")}
-            size={30}
-            textStyle={{}}
-            title="Allow everyone view?"
-            titleProps={{}}
-            uncheckedColor="#F00"
-          />
+           
           <Button
             containerStyle={{ margin: 5, flex: 1}}
             disabledStyle={{
@@ -75,7 +62,7 @@ function ChildrenListScreen({navigation}) {
         </View>
         <ScrollView style={styles.children}>
           {
-            children.map(child=> (<ChildItem child={child} key={child.id} navigation={navigation} />))
+            children.map(child=> (<ChildItem child={child} key={child.id} navigation={navigation} deleteChild={deleteChild} />))
           }        
         </ScrollView>
       </>
