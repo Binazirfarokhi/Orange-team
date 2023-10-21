@@ -1,7 +1,8 @@
 import axios from "axios";
 
+// Chage your local IP address (computer IP address)
 const config = {
-  url: "http://10.128.239.77:3000",
+  url: "http://192.168.1.74:3000",
 };
 
 const api = () => {};
