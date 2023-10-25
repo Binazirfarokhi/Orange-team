@@ -3,7 +3,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { navigationRef } from './contexts/rootNavigation';
 import LoginScreen from './layouts/login.layout';
 import SplashScreen from './layouts/splash.layout';
-import { NativeBaseProvider } from 'native-base';
+
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import AuthContext from './contexts/auth';
@@ -16,6 +16,10 @@ import PersonalInformationScreen from './layouts/personal-information.layout';
 
 import { post, get } from './contexts/api';
 import { getPersistData, removePersistData, savePersistData } from './contexts/store';
+import ReviewScreen from './layouts/review.layout';
+import TimeInVolunteerScreen from './layouts/time-in-volunteer.layout';
+import VolunteerDetailScreen from './layouts/volunteer-detail.layout';
+import SettingsScreen from './layouts/setting.layout';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -89,14 +93,17 @@ function App({navigation}) {
           await savePersistData('userInfo', result.userData);
           await savePersistData('token', result.token);
           dispatch({ type: 'SIGN_IN', token: result.token.idToken});
+          navigationRef.navigate('AuthorizedTabs')
+          
         } else if(result) {
           alert(result.message)
         } else alert('Unable to connect to server')
       },
       signOut: async() => {
         await removePersistData('userInfo')
-        await removePersistData('token')
         dispatch({ type: 'SIGN_OUT' });
+        await removePersistData('token')
+        navigationRef.navigate('Login')
       },
       signUp: async (data) => {
         // In a production app, we need to send user data to server and get a token
@@ -127,9 +134,8 @@ function App({navigation}) {
   );
 
   return ( 
-    <NativeBaseProvider>
   <AuthContext.Provider value={authContext}>
-    <NavigationContainer ref={navigationRef}>
+    <NavigationContainer ref={navigationRef} >
       <Stack.Navigator screenOptions={{headerShown:false}}>
       {
         state.isLoading ? (
@@ -152,12 +158,15 @@ function App({navigation}) {
         <Stack.Screen name="PersonalInformation" component={ PersonalInformationScreen } />
         <Stack.Screen name="ChildrenList" component={ ChildrenListScreen } />
         <Stack.Screen name="AddChild" component={ AddChildrenScreen } />
+        <Stack.Screen name="TimeInVolunteer" component={ TimeInVolunteerScreen } />
+        <Stack.Screen name="Review" component={ ReviewScreen } />
         <Stack.Screen name="EventHistory" component={ EventHistoryScreen } />
+        <Stack.Screen name="Settings" component={ SettingsScreen } />
+        <Stack.Screen name="VolunteerDetail" component={ VolunteerDetailScreen } />
       </Stack.Group>
       </Stack.Navigator>
     </NavigationContainer>
   </AuthContext.Provider>
-  </NativeBaseProvider>
   );
 }
 

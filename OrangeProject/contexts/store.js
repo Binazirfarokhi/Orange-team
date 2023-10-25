@@ -13,7 +13,7 @@ async function getPersistData(key) {
     if (result) {
         return JSON.parse(result);
     } else {
-        throw error('No values stored under that key.');
+        throw 'Unable to find user info';
     }
 }
 

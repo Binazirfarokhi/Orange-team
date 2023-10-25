@@ -5,28 +5,58 @@ import { StyleSheet, Text, View } from "react-native";
 import { get, put } from '../contexts/api';
 import React, { useState } from 'react';
 import { getPersistData } from '../contexts/store';
+import { TYPE_ORGANIZATION, TYPE_PARENT, TYPE_VOLUNTEER } from '../util/constants';
+import { MultiSelect } from 'react-native-element-dropdown';
 
 function PersonalInformationScreen({navigation}) {
-  const [contactNumber, setContactNumber] = useState('')
-  const [address, setAddress] = useState('')
-  const [allowAddress, setAllowAddress] = useState(false)
-  const [emailAddress, setEmailAddress] = useState('')
+  const [ contactNumber, setContactNumber ] = useState('')
+  const [ address, setAddress ] = useState('')
+  const [ organization, setOrganization ] = useState('')
+  const [ allowAddress, setAllowAddress ] = useState(false)
+  const [ emailAddress, setEmailAddress ] = useState('')
+  const [ role, setRole] = useState(0)
+  const [ isFocus, setIsFocus] = useState(false)
+  const [ org, setOrg ] = useState([])
+  const [ orgs, setOrgs ] = useState([])
   
   React.useEffect(()=> {
+    //get session data
     getPersistData('userInfo').then(async data=> {
-        if(data && data.length > 0) {
-          const { emailAddress } = data[0].signup;
+      if(data && data.length > 0) {
+        const { signup, role } = data[0];
+        setRole(role);
+          const { emailAddress } = signup;
           setEmailAddress(emailAddress)
           const result = (await get(`/profile/${emailAddress}`)).data[0];
           setContactNumber(result.contactNumber);
           setAddress(result.address);
           setAllowAddress(result.allowAddress);
+          setOrg(result.orgs)
         }        
+      }).catch(error=> console.error(error));
+    },[]);
+    
+    React.useEffect(()=> {
+      //fetch org
+      get(`/orgs`).then(data=> {
+        let index = 0;
+        setOrgs(data.data.map(or => ({
+          label: `${++index} . ${or.name}`,
+          value: or.id
+        })));
       });
     },[]);
 
-    const save = async() =>{   
-      const result = (await put(`/profile/personal/${emailAddress}`, {contactNumber, allowAddress, address})).data;
+    const save = async() =>{
+      if(role === TYPE_VOLUNTEER && ( !org || org.length === 0)) {
+        alert('Please select Organization');
+        return;
+      } else if(!contactNumber || contactNumber.trim() === '') {
+        alert('Please enter Phone Number');
+        return
+      }
+      const result = (await put(`/profile/personal/${emailAddress}`, {contactNumber, allowAddress, address, orgs: org, organization})).data;
+      
       if(result && result.status === 'OK') {
             alert('Personal Information has been updated');
       } else alert('Unable to connect to server') 
@@ -52,40 +82,89 @@ function PersonalInformationScreen({navigation}) {
         placeholder="Phone Number"
         value={contactNumber}
         /> 
-      <Input
-        containerStyle={{}}
-        onChange={(e)=> setAddress(e.nativeEvent.text)}
-        disabledInputStyle={{ background: "#ddd" }}
-        inputContainerStyle={{}}
-        errorStyle={{}}
-        errorProps={{}}
-        inputStyle={{}}
-        labelStyle={{}}
-        labelProps={{}}
-        leftIcon={<FontAwesome name='user' size={20} color={'#666'} />}
-        leftIconContainerStyle={{}}
-        rightIconContainerStyle={{}}
-        placeholder="Addresss"
-        value={address}
-      />
-      <CheckBox
-        checked={allowAddress}
-        containerStyle ={{backgroundColor: 'transparent'}}
-        checkedColor="#0F0"
-        onIconPress={() => setChecked(!checked)}
-        onLongIconPress={() =>
-          console.log("onLongIconPress()")
-        }
-        onLongPress={() => console.log("onLongPress()")}
-        onPress={(e) => setAllowAddress(!allowAddress)}
-        size={30}
-        textStyle={{}}
-        title="Allow everyone to check your address"
-        titleProps={{}}
-        uncheckedColor="#F00"
-      />
+      { role === TYPE_PARENT && 
+        <Input
+          containerStyle={{}}
+          onChange={(e)=> setAddress(e.nativeEvent.text)}
+          disabledInputStyle={{ background: "#ddd" }}
+          inputContainerStyle={{}}
+          errorStyle={{}}
+          errorProps={{}}
+          inputStyle={{}}
+          labelStyle={{}}
+          labelProps={{}}
+          leftIcon={<Feather name='map-pin' size={20} color={'#666'} />}
+          leftIconContainerStyle={{}}
+          rightIconContainerStyle={{}}
+          placeholder="Addresss"
+          value={address}
+        />
+      }
+      { role === TYPE_ORGANIZATION && 
+        <Input
+          containerStyle={{}}
+          onChange={(e)=> setOrganization(e.nativeEvent.text)}
+          disabledInputStyle={{ background: "#ddd" }}
+          inputContainerStyle={{}}
+          errorStyle={{}}
+          errorProps={{}}
+          inputStyle={{}}
+          labelStyle={{}}
+          labelProps={{}}
+          leftIcon={<FontAwesome name='building-o' size={20} color={'#666'} />}
+          leftIconContainerStyle={{}}
+          rightIconContainerStyle={{}}
+          placeholder="Organization"
+          value={organization}
+        />
+      }
+      { role === TYPE_PARENT && 
+        <CheckBox
+          checked={allowAddress}
+          containerStyle ={{backgroundColor: 'transparent', paddingLeft: 20}}
+          checkedColor="#0F0"
+          onIconPress={() => setChecked(!checked)}
+          onLongIconPress={() =>
+            console.log("onLongIconPress()")
+          }
+          onLongPress={() => console.log("onLongPress()")}
+          onPress={(e) => setAllowAddress(!allowAddress)}
+          size={30}
+          textStyle={{}}
+          title="Allow everyone to check your address"
+          titleProps={{}}
+          uncheckedColor="#F00"
+        />
+      }
+
+      { role === TYPE_VOLUNTEER && 
+        <MultiSelect
+          style={[styles.dropdown, isFocus && { borderColor: 'blue' }]}
+          // placeholderStyle={styles.placeholderStyle}
+          selectedTextStyle={{paddingLeft: 20}}
+          // inputSearchStyle={styles.inputSearchStyle}
+          iconStyle={{paddingLeft:10}}
+          data={orgs}
+          search
+          maxHeight={300}
+          labelField="label"
+          valueField="value"
+          placeholder={!isFocus ? 'Select item' : '...'}
+          searchPlaceholder="Search..."
+          value={org}
+          onFocus={() => setIsFocus(true)}
+          onBlur={() => setIsFocus(false)}
+          onChange={item => {
+            setOrg(item);
+            setIsFocus(false);
+          }}
+          renderLeftIcon={() => (
+            <FontAwesome name='map-pin' size={20} color={'#666'} />
+          )}
+        />
+      }
       <Button
-        containerStyle={{ margin: 5 }}
+        containerStyle={{ margin: 5, marginTop: 20 }}
         disabledStyle={{
           borderWidth: 2,
           borderColor: "#00F"
