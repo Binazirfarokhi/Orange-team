@@ -1,17 +1,30 @@
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+import Feather from 'react-native-vector-icons/Feather';
 import { StyleSheet, Text, View } from "react-native";
 import { getPersistData } from "../contexts/store"
 import React, { useState } from 'react';
+import { TYPE_ORGANIZATION, TYPE_PARENT, TYPE_VOLUNTEER } from '../util/constants';
 
 function HomeScreen({navigation}) {
     const [ name, setName ] = useState('');
+    const [ role, setRole ] = useState(0);
     React.useEffect(()=> {
         getPersistData('userInfo').then(data=> {
             if(data && data.length > 0) {
-              const { displayName } = data[0].signup;
-              setName(displayName);
-            }
-            
+              if(data[0].role === TYPE_ORGANIZATION) {
+                const { name } = data[0].orgDetail;
+                setName(name);
+              } else {
+                const { displayName } = data[0].signup;
+                setName(displayName);
+
+              }
+              setRole(data[0].role);
+            }            
+        }).catch(error=> {
+          console.error(error);
+          alert(error)
         });
     },[]);
     return (
@@ -20,27 +33,61 @@ function HomeScreen({navigation}) {
           <Text style={styles.title}>Hi,</Text>
           <Text style={styles.username}>{name}</Text>
         </View>
-        <View style={{...styles.home, flex: 2}}>
+        <View style={{...styles.home, flex: (role === TYPE_ORGANIZATION? 1 : 2)}}>
+        { role !== TYPE_ORGANIZATION &&
           <View style={styles.list}>
             <FontAwesome name='user' size={20} style={styles.leftIcon} />
             <Text style={styles.listText} onPress={()=> navigation.navigate('Account')}>Account</Text>
             <FontAwesome name='chevron-right' size={20} style={styles.rightIcon} />
           </View>
+        }
           <View style={styles.list}>
             <FontAwesome name='home' size={20} style={styles.leftIcon} />
-            <Text style={styles.listText} onPress={()=> navigation.navigate('PersonalInformation')}>Personal Infomation</Text>
+            <Text style={styles.listText} onPress={()=> navigation.navigate('PersonalInformation')}>{role === TYPE_ORGANIZATION? 'Contact': 'Personal'} Infomation</Text>
             <FontAwesome name='chevron-right' size={20} style={styles.rightIcon} />
           </View>
+          { role === TYPE_PARENT &&
           <View style={styles.list}>
             <FontAwesome name='group' size={20} style={styles.leftIcon} />
             <Text style={styles.listText} onPress={()=> navigation.navigate('ChildrenList')}>List of Children</Text>
             <FontAwesome name='chevron-right' size={20} style={styles.rightIcon} />
           </View>
+          }
+          { role !== TYPE_ORGANIZATION &&
           <View style={styles.list}>
             <FontAwesome name='table' size={20} style={styles.leftIcon} />
             <Text style={styles.listText} onPress={()=> navigation.navigate('EventHistory')}>Event History</Text>
             <FontAwesome name='chevron-right' size={20} style={styles.rightIcon} />
           </View>
+          }
+          { role === TYPE_ORGANIZATION &&
+            <View style={styles.list}>
+              <Feather name='file-plus' size={20} style={styles.leftIcon} />
+              <Text style={styles.listText} onPress={()=> navigation.navigate('Event')}>Event</Text>
+              <FontAwesome name='chevron-right' size={20} style={styles.rightIcon} />
+            </View>
+          }
+          { role === TYPE_ORGANIZATION &&
+            <View style={styles.list}>
+              <FontAwesome name='building-o' size={20} style={styles.leftIcon} />
+              <Text style={styles.listText} onPress={()=> navigation.navigate('OrganizationInfo')}>Organization Information</Text>
+              <FontAwesome name='chevron-right' size={20} style={styles.rightIcon} />
+            </View>
+          }
+          { role === TYPE_VOLUNTEER &&
+            <View style={styles.list}>
+              <FontAwesome5 name='user-tag' size={20} style={styles.leftIcon} />
+              <Text style={styles.listText} onPress={()=> navigation.navigate('TimeInVolunteer')}>Time In Volunteer</Text>
+              <FontAwesome name='chevron-right' size={20} style={styles.rightIcon} />
+            </View>
+          }
+          { role === TYPE_VOLUNTEER || role === TYPE_ORGANIZATION &&
+          <View style={styles.list}>
+            <FontAwesome name='star' size={20} style={styles.leftIcon} />
+            <Text style={styles.listText} onPress={()=> navigation.navigate('Review')}>Review</Text>
+            <FontAwesome name='chevron-right' size={20} style={styles.rightIcon} />
+          </View>
+          }
           <View style={styles.list}>
             <FontAwesome name='gear' size={20} style={styles.leftIcon} />
             <Text style={styles.listText} onPress={()=> navigation.navigate('Settings')}>Setting</Text>
@@ -68,14 +115,15 @@ function HomeScreen({navigation}) {
     home: {
       border: '1px solid #DDD',
       backgroundColor: 'white',
-      borderTopLeftRadius: 50,
-      borderTopRightRadius: 50,
+      borderTopLeftRadius: '50px',
+      borderTopRightRadius: '50px',
       paddingTop: 16,
       alignItems: "center"
     }, list: {
       flexDirection: 'row',
       paddingLeft: 30,
-      paddingTop: 60
+      paddingTop: 30,
+      flex: 1
     }, listText: {
       fontSize: 20,
       flex: 5

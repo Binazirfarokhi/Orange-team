@@ -19,6 +19,7 @@ function ChildrenListScreen({navigation}) {
           setEmail(emailAddress);
           const result = (await get(`/children/${emailAddress}`)).data.data;
           setChildren(result);
+          console.log(result)
         }        
       });
     }, [lastReload])

@@ -115,7 +115,8 @@ function AccountScreen({navigation}) {
   const styles = StyleSheet.create({
     main: {
       paddingLeft: 20,
-      paddingTop: 60
+      paddingTop: 60,
+      backgroundColor: 'white'
     },
     title: {
       paddingTop: 30,

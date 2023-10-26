@@ -11,6 +11,7 @@ app.use(CORS());
 app.use('/profile', require('./controllers/profile.controller'))
 app.use('/auth', require('./controllers/auth.controller'))
 app.use('/children', require('./controllers/children.controller'))
+app.use('/orgs', require('./controllers/orgs.controller'))
 
 
 app.listen(port, () => {
