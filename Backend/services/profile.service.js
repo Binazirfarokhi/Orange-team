@@ -1,10 +1,12 @@
-const {
-  getProfiles,
-  getProfileByEmail,
-  updateUsername,
-  updateUserData,
-  updateUserDataById,
-} = require("../repo/profile.repo");
+const { 
+    getProfiles, 
+    getProfileByEmail, 
+    getProfileByID,
+    updateUsername, 
+    updateUserData, 
+    updateUserDataById, 
+    getProfileImageURL
+} = require("../repo/profile.repo")
 
 const updateUser = async (req, res) => {
   const emailAddress = req.params.email;
@@ -38,26 +40,49 @@ const updatePersonalInfo = async (req, res) => {
   }
 };
 
-const deleteUser = async (req, res) => {
-  res.send(`deleted ${req.params.id}`);
+const deleteUser = async(req,res)=> {
+    res.send(`deleted ${req.params.id}`)
+}
+
+const listUser = async(req, res) => {
+    try {
+        const docs = await getProfiles();
+        const promises = docs.map(async doc => {
+            if (doc.id) {
+                doc.profileImageURL = await getProfileImageURL(doc.id);
+            }
+            return doc;
+        });
+
+        const updatedDocs = await Promise.all(promises);
+        res.send(updatedDocs);
+    } catch (error) {
+        console.error(error);
+        res.send({
+            status: 'Failed',
+            message: error.message
+        });
+    }
+}
+
+
+const user = async(req,res)=> {
+    try { 
+        const { email } = req.params;
+        const doc = await getProfileByEmail(email);
+        if (doc && doc[0] && doc[0].id) {
+            doc[0].profileImageURL = await getProfileImageURL(doc[0].id);
+        }
+        res.send(doc);
+    } catch (error) {
+        console.error(error);
+        res.send({
+            status: 'Failed',
+            message: error.message
+        });
+    }
 };
-const listUser = async (req, res) => {
-  const doc = await getProfiles();
-  res.send(doc);
-};
-const user = async (req, res) => {
-  try {
-    const { email } = req.params;
-    const doc = await getProfileByEmail(email);
-    res.send(doc);
-  } catch (error) {
-    console.error(error);
-    res.send({
-      status: "Failed",
-      message: error.message,
-    });
-  }
-};
+
 
 const setVolunteerPosition = async (req, res) => {
   try {
@@ -75,11 +100,15 @@ const setVolunteerPosition = async (req, res) => {
   }
 };
 
+
+
+
+
 module.exports = {
-  updateUser,
-  deleteUser,
-  listUser,
-  setVolunteerPosition,
-  updatePersonalInfo,
-  user,
-};
+    updateUser,
+    deleteUser,
+    listUser,
+    setVolunteerPosition,
+    updatePersonalInfo,
+    user
+}
