@@ -9,20 +9,22 @@ import {
   TYPE_PARENT,
   TYPE_VOLUNTEER,
 } from "../util/constants";
+import { useContext } from "react";
+import AuthContext from "../contexts/auth";
+import { Button } from "@rneui/themed";
 
 function HomeScreen({ navigation }) {
   const [name, setName] = useState("");
   const [role, setRole] = useState(0);
+  const { reloadUserData, signOut } = useContext(AuthContext);
   React.useEffect(() => {
     getPersistData("userInfo")
       .then((data) => {
         if (data && data.length > 0) {
           if (data[0].role === TYPE_ORGANIZATION) {
-            console.log(data[0].orgDetail);
             const { name } = data[0].orgDetail;
             setName(name);
           } else {
-            console.log(data[0]);
             const { displayName } = data[0].signup;
             setName(displayName);
           }
@@ -34,6 +36,9 @@ function HomeScreen({ navigation }) {
         alert(error);
       });
   }, []);
+  reloadUserData()
+    .then((data) => {})
+    .catch(console.log);
   return (
     <>
       <View style={{ flex: 1 }}>
@@ -120,7 +125,7 @@ function HomeScreen({ navigation }) {
             <FontAwesome name="building-o" size={20} style={styles.leftIcon} />
             <Text
               style={styles.listText}
-              onPress={() => navigation.navigate("OrganizationInfo")}>
+              onPress={() => navigation.navigate("OrganizationDetails")}>
               Organization Information
             </Text>
             <FontAwesome
@@ -137,6 +142,25 @@ function HomeScreen({ navigation }) {
               style={styles.listText}
               onPress={() => navigation.navigate("TimeInVolunteer")}>
               Time In Volunteer
+            </Text>
+            <FontAwesome
+              name="chevron-right"
+              size={20}
+              style={styles.rightIcon}
+            />
+          </View>
+        )}
+        {role === TYPE_VOLUNTEER && (
+          <View style={styles.list}>
+            <FontAwesome5
+              name="align-justify"
+              size={20}
+              style={styles.leftIcon}
+            />
+            <Text
+              style={styles.listText}
+              onPress={() => navigation.navigate("VolunteerDetail")}>
+              Volunteer Detail
             </Text>
             <FontAwesome
               name="chevron-right"
@@ -174,6 +198,16 @@ function HomeScreen({ navigation }) {
             style={styles.rightIcon}
           />
         </View>
+        {role === TYPE_ORGANIZATION && (
+          <View style={{ ...styles.list, display: "flex" }}>
+            <Button
+              onPress={signOut}
+              title="Login"
+              containerStyle={{ flex: 1, marginRight: 20 }}>
+              Logout
+            </Button>
+          </View>
+        )}
       </View>
     </>
   );

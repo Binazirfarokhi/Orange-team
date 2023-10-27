@@ -9,7 +9,7 @@ import { TYPE_ORGANIZATION, TYPE_PARENT, TYPE_VOLUNTEER } from '../util/constant
 import { ButtonGroup } from '@rneui/base';
 import VolunteerItem from '../components/volunteer-item.component';
 
-function OrganizationInformationScreen({navigation}) {
+function OrganizationInformationScreen({navigation, route}) {
   const [ orgDetail, setOrgDetail ] = useState({})
   const [ currentOrgId, setCurrentOrgId ] = useState(0)
   const [ volunteers, setVolunteers ] = useState([])
@@ -20,8 +20,13 @@ function OrganizationInformationScreen({navigation}) {
       // get session data
       getPersistData('userInfo').then(data=> {
         if(data && data.length > 0) {
+          let org;
+          if (route && route.params) {
+            org = route.params.id;
+          } else 
+            org = data[0].organization
           setOrgDetail(data[0].orgDetail);
-          setCurrentOrgId(data[0].organization)
+          setCurrentOrgId(org)
           setRole(data[0].role);
           // get volunteers
           get(`/orgs/volunteer/${data[0].organization}`).then(volunteers=> {
@@ -40,6 +45,9 @@ function OrganizationInformationScreen({navigation}) {
 
     return (
       <View style={styles.main}>
+        <View style={{paddingLeft: 20, height: 30}}>
+              <Feather name='arrow-left' size={30} style={styles.leftIcon} onPress={() => navigation.goBack()} />
+          </View>
         <Text style={styles.title}>{orgDetail.name}</Text>
         <ButtonGroup
           buttonContainerStyle={{}}

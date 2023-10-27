@@ -44,12 +44,15 @@ const CreateEventScreen = ({ navigation, route }) => {
   const [showVolunteer, setShowVolunteer] = useState(false);
   const height = useHeaderHeight();
 
-  const id = route.params;
+  let id;
+  if (route && route.params) {
+    id = route.params.id;
+  }
 
   useEffect(() => {
     getPersistData("userInfo")
       .then((data) => {
-        const orgranization = data[0].orgDetail;
+        const organization = data[0].organization;
         setOrganizationId(organization);
         get(`/orgs/${organization}`)
           .then((orgData) => {
@@ -64,7 +67,6 @@ const CreateEventScreen = ({ navigation, route }) => {
       })
       .catch((error) => alert("Unable to load user data"));
   }, []);
-  // console.log(availableVolunteers)
   // load event for edit
   useEffect(() => {
     if (id) {
@@ -163,6 +165,7 @@ const CreateEventScreen = ({ navigation, route }) => {
               alert("Event has been saved.");
               navigation.goBack();
             } else {
+              
               alert("Unable to save event. Please try again later.");
             }
           })
@@ -415,19 +418,20 @@ const CreateEventScreen = ({ navigation, route }) => {
             />
             <View style={{ flex: 7, padding: 20 }}>
               <ScrollView>
-                {availableVolunteers
-                  .filter(
-                    (vol) =>
-                      searchText === "" ||
-                      vol.signup.displayName.indexOf(searchText) >= 0
-                  )
-                  .map((vol) => (
-                    <View style={styles.volunteer} key={vol.id}>
-                      <Text onPress={() => addVolunteer(vol.id)}>
-                        {vol.signup.displayName}
-                      </Text>
-                    </View>
-                  ))}
+                {availableVolunteers &&
+                  availableVolunteers
+                    .filter(
+                      (vol) =>
+                        searchText === "" ||
+                        vol.signup.displayName.indexOf(searchText) >= 0
+                    )
+                    .map((vol) => (
+                      <View style={styles.volunteer} key={vol.id}>
+                        <Text onPress={() => addVolunteer(vol.id)}>
+                          {vol.signup.displayName}
+                        </Text>
+                      </View>
+                    ))}
               </ScrollView>
             </View>
             <Button onPress={() => setShowVolunteer(false)}>OK</Button>

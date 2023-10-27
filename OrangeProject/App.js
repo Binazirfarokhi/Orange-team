@@ -27,6 +27,7 @@ import SettingsScreen from "./layouts/setting.layout";
 import MyTheme from "./contexts/theme";
 import CreateEventScreen from "./layouts/create-event.layout";
 import EventDetailScreen from "./layouts/event-detail.layout";
+import OrganizationInformationScreen from "./layouts/organization-information.layout";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -187,6 +188,10 @@ function App({ navigation }) {
             />
             <Stack.Screen name="CreateEvent" component={CreateEventScreen} />
             <Stack.Screen name="EventDetail" component={EventDetailScreen} />
+            <Stack.Screen
+              name="OrganizationDetails"
+              component={OrganizationInformationScreen}
+            />
           </Stack.Group>
         </Stack.Navigator>
       </NavigationContainer>

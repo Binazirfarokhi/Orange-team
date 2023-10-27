@@ -6,9 +6,6 @@ import VolunteerDetailScreen from "../layouts/volunteer-detail.layout";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import * as React from "react";
-import StartChatScreen from "../layouts/start-chat.layout";
-import ChatActiveIcon from "../assets/chat-active-icon.svg";
-import ChatInactiveIcon from "../assets/chat-inactive-icon.svg";
 import { useState } from "react";
 import { getPersistData } from "../contexts/store";
 import {
@@ -17,6 +14,9 @@ import {
   TYPE_VOLUNTEER,
 } from "../util/constants";
 import ParentDetailScreen from "../layouts/personal-detail.layout";
+import StartChatScreen from "../layouts/start-chat.layout";
+import ChatActiveIcon from "../assets/chat-active-icon.svg";
+import ChatInactiveIcon from "../assets/chat-inactive-icon.svg";
 
 const Tab = createBottomTabNavigator();
 
@@ -44,16 +44,12 @@ function AuthorizedTabs() {
   return (
     <>
       <Tab.Navigator screenOptions={{ headerShown: false }}>
-        <Tab.Screen
-          name="Home"
-          component={HomeScreen}
-          options={{
-            tabBarLabel: "Home",
-            tabBarIcon: ({ color, size }) => (
-              <FontAwesome name="home" size={size} color={color} />
-            ),
-          }}
-        />
+        {/* <Tab.Screen name="Home" component={HomeScreen} options={{
+        tabBarLabel: 'Home',
+        tabBarIcon: ({ color, size })=> (
+          <FontAwesome name='home' size={size} color={color} />
+        )
+      }} /> */}
         <Tab.Screen
           name="Event"
           component={EventListScreen}
@@ -64,23 +60,21 @@ function AuthorizedTabs() {
             ),
           }}
         />
-        {role === TYPE_ORGANIZATION ||
-          (role === TYPE_VOLUNTEER && (
-            <Tab.Screen
-              name="Chat"
-              component={StartChatScreen}
-              options={{
-                tabBarLabel: "Chat",
-                tabBarIcon: ({ color, size }) => (
-                  <FontAwesome name="comments" size={size} color={color} />
-                ),
-              }}
-            />
-          ))}
+        <Tab.Screen
+          name="Chat"
+          component={StartChatScreen}
+          options={{
+            tabBarLabel: "Chat",
+            tabBarIcon: ({ color, size }) => (
+              <FontAwesome name="comments" size={size} color={color} />
+            ),
+          }}
+        />
         {role === TYPE_VOLUNTEER && (
+          // <Tab.Screen name="User" component={VolunteerDetailScreen} options={{
           <Tab.Screen
             name="User"
-            component={VolunteerDetailScreen}
+            component={HomeScreen}
             options={{
               tabBarLabel: "user",
               tabBarIcon: ({ color, size }) => (
@@ -90,22 +84,28 @@ function AuthorizedTabs() {
             initialParams={formParam}
           />
         )}
-        {/* { role === TYPE_PARENT &&
-          <Tab.Screen name="User" component={ParentDetailScreen} options={{
-            tabBarLabel: 'user',
-            tabBarIcon: ({ color, size })=> (
-              <FontAwesome name='user' size={size} color={color} />
-            )
-          }} initialParams={formParam}/>
-        } */}
+        {role === TYPE_PARENT && (
+          <Tab.Screen
+            name="User"
+            component={HomeScreen}
+            options={{
+              tabBarLabel: "user",
+              tabBarIcon: ({ color, size }) => (
+                <FontAwesome name="user" size={size} color={color} />
+              ),
+            }}
+            initialParams={formParam}
+          />
+        )}
         {role === TYPE_ORGANIZATION && (
+          // <Tab.Screen name="OrganizationInfo" component={OrganizationInformationScreen} options={{
           <Tab.Screen
             name="OrganizationInfo"
-            component={OrganizationInformationScreen}
+            component={HomeScreen}
             options={{
               tabBarLabel: "Info",
               tabBarIcon: ({ color, size }) => (
-                <FontAwesome name="building-o" size={size} color={color} />
+                <FontAwesome name="user" size={size} color={color} />
               ),
             }}
           />
