@@ -29,4 +29,4 @@ function SettingsScreen({navigation}) {
   })
 
 
-  export default SettingsScreen;
+export default SettingsScreen;

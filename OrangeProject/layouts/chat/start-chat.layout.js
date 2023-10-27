@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
-import { Box, Image, Text } from "native-base"
-import Subtitle from '../components/text/subtitle';
+import { Box, Image, Text } from "@gluestack-ui/themed"
+import Subtitle from '../../components/text/subtitle';
+import Feather from 'react-native-vector-icons/Feather';
 
 
-export default function StartChatScreen({ }) {
-
+export default function StartChatScreen({navigation}) {
     return (
             <Box flex="1" alignItems="center" padding="10" justifyContent="center">
+                <Feather name='arrow-left' size={30} onPress={() => navigation.navigate('AuthorizedTabs', {screen: 'Home'})} />
                 <Subtitle>Start a new chat</Subtitle>
                 <Text textAlign="center">Tap the icon on the top right corner to start a new chat. </Text>
                 <Box
@@ -20,7 +21,7 @@ export default function StartChatScreen({ }) {
                     marginTop="5"
                 >
                     <Image 
-                        source={require('../assets/Intersect.png')} 
+                        source={require('../../assets/Intersect.png')} 
                         alt="Illustration for starting new chat" 
                         size="xl" 
                     />
