@@ -19,10 +19,11 @@ function HomeScreen({ navigation }) {
         if (data && data.length > 0) {
           if (data[0].role === TYPE_ORGANIZATION) {
             console.log(data[0].orgDetail);
-            const name = data[0].orgDetail;
+            const { name } = data[0].orgDetail;
             setName(name);
           } else {
-            const displayName = data[0].signup;
+            console.log(data[0]);
+            const { displayName } = data[0].signup;
             setName(displayName);
           }
           setRole(data[0].role);
