@@ -1,25 +1,29 @@
-import { StyleSheet, View } from "react-native";
+import React from 'react';
+import { Image, StyleSheet, View } from "react-native";
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
-export const ProfileImage = ({size, children}) => (
-    <View style={{...styles.thumbnail, height: (size|| 80) +16, width: (size || 80)+16}}>
-          {
-            children || <FontAwesome name='user' size={size || 80} color={'white'} />
-                
-          }
-    </View>
-)
+export const ProfileImage = ({size, source}) => {
+    const containerSize = (size || 80) + 16;
+
+    return (
+        <View style={{...styles.thumbnail, height: containerSize, width: containerSize}}>
+            {
+                source 
+                ? <Image source={source} style={{height: size || 80, width: size || 80}} />
+                : <FontAwesome name='user' size={size || 80} color={'white'} />
+            }
+        </View>
+    );
+};
 
 const styles = StyleSheet.create({
     thumbnail: {
-      height: 68,
-      width: 68,
       position: 'relative',
-      display: 'flex',
       justifyContent: 'center',
       alignItems: 'center',
-      border: '8px solid #CCC',
-      borderRadius: '50%',
+    //   borderWidth: 8,
+    //   borderColor: '#CCC',
+      borderRadius: 50,
       backgroundColor: '#666'
     },
-  });
+});

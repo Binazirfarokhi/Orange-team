@@ -1,34 +1,26 @@
-const {
-  getDocs,
-  collection,
-  query,
-  where,
-  setDoc,
-  doc,
-  updateDoc,
-  getDoc,
-} = require("firebase/firestore");
+const { getDoc, getDocs, collection, query, where, setDoc, doc, updateDoc } = require("firebase/firestore");
+const { getStorage, ref, getDownloadURL } = require("firebase/storage");
 const { firestoreDB } = require("./firebase");
 const { saveOrg, updateOrg, getOrg } = require("./org.repo");
 
 const userCollection = collection(firestoreDB, "users");
 const signupCollection = collection(firestoreDB, "signup");
+const storage = getStorage(); 
 
-const getProfiles = async () => {
-  try {
-    const docRef = await getDocs(userCollection);
-    docRef.forEach((doc) => {
-      // console.log(`${doc.id} => ${doc.data()}`);
-    });
-    return docRef.docs.map((doc) => ({
-      ...doc.data(),
-      signup: "",
-    }));
-  } catch (e) {
-    console.error("Error adding document: ", e);
-    return [];
-  }
-};
+const getProfiles = async ()=> {
+    try {
+        const docRef = await getDocs(userCollection);
+        docRef.forEach((doc) => {
+          });
+          return docRef.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data()
+        }));
+      } catch (e) {
+        console.error("Error adding document: ", e);
+        return [];
+      }
+}
 
 const getProfileByEmail = async (email) => {
   try {
@@ -110,29 +102,31 @@ const updateUserData = async (emailAddress, data) => {
         data.organization = newOrgId;
       }
     }
-    await updateDoc(await getUserRefByEmail(emailAddress), data);
-  } catch (error) {
-    console.error(error);
-  }
+}}
+
+const getProfileImageURL = async (docId) => {
+    try {
+        const imagePath = `portrait/${docId}.png`; 
+        const imageRef = ref(storage, imagePath);
+        
+        return await getDownloadURL(imageRef);
+    } catch (error) {
+        console.error("Error fetching profile image:", error);
+
+        const defaultImagePath = 'portrait/default.png';
+        const defaultImageRef = ref(storage, defaultImagePath);
+        return await getDownloadURL(defaultImageRef);
+    }
 };
 
-const getProfileById = async (id) => {
-  let data = await getDoc(doc(userCollection, id));
-  data = {
-    ...data.data(),
-    id: data.id,
-    signup: (await getDoc(data.data().signup)).data(),
-  };
-  return data;
-};
 
-module.exports = {
-  getProfiles,
-  getProfileByEmail,
-  saveProfile,
-  updateUsername,
-  updateUserDataById,
-  updateUserData,
-  getUserRefByEmail,
-  getProfileById,
-};
+module.exports = { 
+    getProfiles, 
+    getProfileByEmail, 
+    saveProfile, 
+    updateUsername, 
+    updateUserDataById, 
+    updateUserData, 
+    getUserRefByEmail, 
+    getProfileImageURL
+}
