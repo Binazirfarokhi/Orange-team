@@ -5,8 +5,9 @@ import { StyleSheet, Text, View } from "react-native";
 import { get, put } from '../contexts/api';
 import React, { useState } from 'react';
 import { getPersistData } from '../contexts/store';
-import { TYPE_ORGANIZATION, TYPE_PARENT, TYPE_VOLUNTEER } from '../util/constants';
+import { POSITION_L1, TYPE_ORGANIZATION, TYPE_PARENT, TYPE_VOLUNTEER } from '../util/constants';
 import { MultiSelect } from 'react-native-element-dropdown';
+import { bindOrgAndPosition } from '../util/general-functions';
 
 function PersonalInformationScreen({navigation}) {
   const [ contactNumber, setContactNumber ] = useState('')
@@ -18,13 +19,15 @@ function PersonalInformationScreen({navigation}) {
   const [ isFocus, setIsFocus] = useState(false)
   const [ org, setOrg ] = useState([])
   const [ orgs, setOrgs ] = useState([])
+  const [ orgPos, setOrgPos ] = useState([])
   
   React.useEffect(()=> {
     //get session data
     getPersistData('userInfo').then(async data=> {
       if(data && data.length > 0) {
-        const { signup, role } = data[0];
-        setRole(role);
+        const { signup, organization, role } = data[0];
+          setRole(role);
+          setOrganization(organization)
           const { emailAddress } = signup;
           setEmailAddress(emailAddress)
           const result = (await get(`/profile/${emailAddress}`)).data[0];
@@ -32,6 +35,8 @@ function PersonalInformationScreen({navigation}) {
           setAddress(result.address);
           setAllowAddress(result.allowAddress);
           setOrg(result.orgs)
+          // setOrgPos()
+          setOrgPos(bindOrgAndPosition(data[0].orgs, data[0].positionOfOrganization))
         }        
       }).catch(error=> console.error(error));
     },[]);
@@ -55,8 +60,8 @@ function PersonalInformationScreen({navigation}) {
         alert('Please enter Phone Number');
         return
       }
-      const result = (await put(`/profile/personal/${emailAddress}`, {contactNumber, allowAddress, address, orgs: org, organization})).data;
-      
+      const positionOfOrganization = org.map(o=> orgPos[o] || POSITION_L1)
+      const result = (await put(`/profile/personal/${emailAddress}`, {contactNumber, allowAddress, address, orgs: org, organization, positionOfOrganization})).data;
       if(result && result.status === 'OK') {
             alert('Personal Information has been updated');
       } else alert('Unable to connect to server') 
@@ -64,7 +69,7 @@ function PersonalInformationScreen({navigation}) {
 
     return (
       <View style={styles.main}>
-        <Feather name='arrow-left' size={30} style={styles.leftIcon} onPress={() => navigation.navigate('AuthorizedTabs')} />
+        <Feather name='arrow-left' size={30} style={styles.leftIcon} onPress={() => navigation.goBack()} />
         <Text style={styles.title}>Personal Infomation</Text>
         <Input
         onChange={(e)=> setContactNumber(e.nativeEvent.text)}
@@ -80,6 +85,7 @@ function PersonalInformationScreen({navigation}) {
         leftIconContainerStyle={{}}
         rightIconContainerStyle={{}}
         placeholder="Phone Number"
+        label="Phone Number"
         value={contactNumber}
         /> 
       { role === TYPE_PARENT && 
@@ -97,6 +103,7 @@ function PersonalInformationScreen({navigation}) {
           leftIconContainerStyle={{}}
           rightIconContainerStyle={{}}
           placeholder="Addresss"
+          label="Addresss"
           value={address}
         />
       }
@@ -115,6 +122,7 @@ function PersonalInformationScreen({navigation}) {
           leftIconContainerStyle={{}}
           rightIconContainerStyle={{}}
           placeholder="Organization"
+          label="Organization"
           value={organization}
         />
       }
