@@ -89,20 +89,24 @@ const updateUserDataById = async (id, data) => {
 };
 
 const updateUserData = async (emailAddress, data) => {
-  try {
-    if (data.organization) {
-      const orgName = data.organization;
-      delete data.organization;
-      const user = (await getProfileByEmail(emailAddress))[0];
-      const orgId = user.organization;
-      if (orgId) {
-        await updateOrg(orgId, { name: orgName });
-      } else {
-        const newOrgId = await saveOrg({ name: orgName });
-        data.organization = newOrgId;
+    try {
+      if (data.organization) {
+        const orgName = data.organization;
+        delete data.organization;
+        const user = (await getProfileByEmail(emailAddress))[0];
+        const orgId = user.organization;
+        if (orgId) {
+          await updateOrg(orgId, { name: orgName });
+        } else {
+          const newOrgId = await saveOrg({ name: orgName });
+          data.organization = newOrgId;
+        }
       }
+      await updateDoc(await getUserRefByEmail(emailAddress), data);
+    } catch (error) {
+      console.error(error);
     }
-}}
+  };
 
 const getProfileImageURL = async (docId) => {
     try {
@@ -119,7 +123,16 @@ const getProfileImageURL = async (docId) => {
     }
 };
 
-
+const getProfileById = async (id) => {
+    let data = await getDoc(doc(userCollection, id));
+    data = {
+      ...data.data(),
+      id: data.id,
+      signup: (await getDoc(data.data().signup)).data(),
+    };
+    return data;
+};
+  
 module.exports = { 
     getProfiles, 
     getProfileByEmail, 
@@ -128,5 +141,6 @@ module.exports = {
     updateUserDataById, 
     updateUserData, 
     getUserRefByEmail, 
-    getProfileImageURL
+    getProfileImageURL,
+    getProfileById,
 }
