@@ -1,9 +1,7 @@
 import axios from "axios";
 import { config } from "../config";
 
-const config = {
-    url: 'http://10.0.0.14:3000'
-}
+const api = () => {};
 
 const get = async (url) => {
   return await axios.get(`${config.url}${url}`);

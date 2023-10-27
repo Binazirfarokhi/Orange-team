@@ -214,48 +214,6 @@ function HomeScreen({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-  title: {
-    paddingTop: 40,
-    fontSize: 40,
-    fontWeight: "bold",
-    marginTop: 48,
-    paddingLeft: 24,
-  },
-  username: {
-    paddingTop: 40,
-    fontSize: 30,
-    fontWeight: "bold",
-    paddingLeft: 40,
-  },
-  home: {
-    border: "1px solid #DDD",
-    backgroundColor: "white",
-    borderTopLeftRadius: "50px",
-    borderTopRightRadius: "50px",
-    paddingTop: 16,
-    alignItems: "center",
-  },
-  list: {
-    flexDirection: "row",
-    paddingLeft: 30,
-    paddingTop: 30,
-    flex: 1,
-  },
-  listText: {
-    fontSize: 20,
-    flex: 5,
-  },
-  leftIcon: {
-    flex: 1,
-  },
-  rightIcon: {
-    flex: 1,
-  },
-});
-
-export default HomeScreen;
-
-  const styles = StyleSheet.create({
     title: {
       paddingTop: 40,
       fontSize: 40,

@@ -13,6 +13,9 @@ import ChildrenListScreen from "./layouts/children-list.layout";
 import AddChildrenScreen from "./layouts/add-child.layout";
 import EventHistoryScreen from "./layouts/event-history.layout";
 import PersonalInformationScreen from "./layouts/personal-information.layout";
+import StartChatScreen from './layouts/chat/start-chat.layout';
+import ChatListScreen from './layouts/chat/chat-list.layout';
+import ChatScreen from './layouts/chat/chat.layout';
 
 import { post, get } from "./contexts/api";
 import {
@@ -192,6 +195,9 @@ function App({ navigation }) {
               name="OrganizationDetails"
               component={OrganizationInformationScreen}
             />
+            <Stack.Screen name="ChatList" component={ ChatListScreen } />
+            <Stack.Screen name="StartChat" component={ StartChatScreen } />
+            <Stack.Screen name="ChatDetail" component={ ChatScreen } />
           </Stack.Group>
         </Stack.Navigator>
       </NavigationContainer>
