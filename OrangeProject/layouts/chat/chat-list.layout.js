@@ -6,11 +6,13 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import { ProfileImage } from '../../components/profile-image.component';
 import { get } from '../../contexts/api';
 import { getPersistData } from '../../contexts/store';
+import { Ionicons } from '@expo/vector-icons';
 
 export default function ChatListScreen({navigation}) {
     const [focusedButton, setFocusedButton] = useState('parents');
     const [users, setUsers] = useState([]);
     const [myUserId, setMyUserId] = useState(null);
+    const [myRoleType, setMyRoleType] = useState(null);
 
 
     useEffect(() => {
@@ -34,9 +36,12 @@ export default function ChatListScreen({navigation}) {
         const fetchMyUserId = async () => {
             try {
                 const data = await getPersistData('userInfo');
+                // console.log('userInfo', data);
                 if (data && data.length > 0) {
                     const myId = data[0].id; 
+                    const myRole = data[0].role;
                     setMyUserId(myId);
+                    setMyRoleType(myRole);
                 }
             } catch (error) {
                 console.error('Error fetching my user ID', error);
@@ -44,6 +49,37 @@ export default function ChatListScreen({navigation}) {
         };
         fetchMyUserId();
     }, []);  
+
+    const fetchMessages = async (userId) => {
+        try {
+            const response = await get(`/chat/${myUserId}/${userId}`); 
+            if (response && response.data) {
+                return response.data;
+            }
+        } catch (error) {
+            console.error('Error fetching the messages', error);
+        }
+        return [];
+    };
+    
+    useEffect(() => {
+        const fetchLatestMessages = async () => {
+            for (const user of users) {
+                if (user.id !== myUserId) {
+                    const userMessages = await fetchMessages(user.id);
+                    userMessages.sort((a, b) => 
+                        new Date(b.createdAt) - new Date(a.createdAt)
+                    );
+                    const latestMessage = userMessages[0];
+                    user.latestMessageText = latestMessage ? latestMessage.text : "No messages yet";
+                    user.latestMessageDate = latestMessage ? latestMessage.createdAt : null;
+                    // console.log(user.latestMessageDate, "latestMessageDate");
+                }
+            }
+        };
+        
+        fetchLatestMessages();
+    }, [users]);
 
     const filteredUsers = users.filter(user => {
         if (focusedButton === 'parents') {
@@ -53,6 +89,7 @@ export default function ChatListScreen({navigation}) {
         }
         return true;
     });
+    
 
 
     return (
@@ -64,15 +101,18 @@ export default function ChatListScreen({navigation}) {
                 leftComponent={<Feather name='arrow-left' size={30} onPress={() => navigation.navigate('AuthorizedTabs', {screen: 'Home'})} />}
                 rightComponent={<FontAwesome name='plus' size={30}/>}
             />
-            <View>
+            <View style={{flexDirection:'row', justifyContent:'space-between', alignItems: 'center', paddingHorizontal: 10}}>
                 <SearchBar 
-                    lightTheme='true'
+                    lightTheme
                     placeholder="Search"
-                    containerStyle={{backgroundColor:'transparent', borderBottomColor: 'transparent', borderTopColor: 'transparent'}}
-                    inputContainerStyle={{backgroundColor:'#D8D4DE', borderRadius:'50'}}
+                    containerStyle={{flex: 1, backgroundColor:'transparent', borderBottomColor: 'transparent', borderTopColor: 'transparent', paddingHorizontal: 0}}
+                    inputContainerStyle={{backgroundColor:'#D8D4DE', borderRadius: 25}}
                 />
-                {/* <Icon name='filter' type='octicons' onPress={() => console.log('hello')} /> */}
+                <View style={{marginLeft: 10}}>
+                    <Ionicons name="filter-outline" size={24} color="black" />
+                </View>
             </View>
+
             <View style={{flexDirection:'row', justifyContent:'space-evenly', marginBottom:'2%'}}>
                 <Button
                 title="Parents"
@@ -86,18 +126,20 @@ export default function ChatListScreen({navigation}) {
                     marginVertical: 5,
                 }}
                 />
-                <Button
-                    title="Organization"
-                    onPress={() => setFocusedButton('organization')}
-                    buttonStyle={{
-                        backgroundColor: focusedButton === 'organization' ? '#613194' : '#9B77C2',
-                        borderRadius: 50,
-                    }}
-                    containerStyle={{
-                        width: '45%',
-                        marginVertical: 5,
-                    }}
-                />
+                {myRoleType !== 2 && (
+                    <Button
+                        title="Organization"
+                        onPress={() => setFocusedButton('organization')}
+                        buttonStyle={{
+                            backgroundColor: focusedButton === 'organization' ? '#613194' : '#9B77C2',
+                            borderRadius: 50,
+                        }}
+                        containerStyle={{
+                            width: '45%',
+                            marginVertical: 5,
+                        }}
+                    />
+                )}
             </View>
             <Divider />
 
@@ -106,17 +148,18 @@ export default function ChatListScreen({navigation}) {
                     return (
                         <TouchableOpacity 
                             key={i} 
-                            style={{flexDirection:'row', marginVertical: '5%', alignItems: 'center', gap:'20'}} 
+                            style={{flexDirection:'row', marginVertical: '1.5%', alignItems: 'center', gap:'20'}} 
                             onPress={() => {navigation.navigate('ChatDetail',{userId: user.id, myUserId: myUserId});}}
                         >
-                            <ProfileImage source={{uri: user.profileImageURL}} style={{borderRadius: 50, width: 60, height: 60, marginRight: 10}} />
+                            <ProfileImage source={{uri: user.profileImageURL}} size={65} />
                             <View style={{flexGrow:1}}>
                                 <View style={{flexDirection:'row', justifyContent:'space-between'}}>
                                     <Text style={{fontSize:18, fontWeight:'600'}}>{user.firstName} {user.lastName}</Text>
-                                    <Text>Date</Text>
+                                    {user.latestMessageDate && user.latestMessageDate.seconds && 
+                                    <Text>{new Date(user.latestMessageDate.seconds * 1000).toLocaleDateString()}</Text>
+                                    }
                                 </View>
-                                {/* <Text>{user.role}</Text> */}
-                                <Text style={{marginBottom:'20%'}}>message preview</Text>
+                                <Text style={{marginBottom:'20%'}}>{user.latestMessageText}</Text>
                                 
                                 <Divider />
                             </View>
@@ -125,7 +168,6 @@ export default function ChatListScreen({navigation}) {
                 }
                 return null; 
             })}
-
 
         </View>
         </>
