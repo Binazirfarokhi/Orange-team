@@ -2332,6 +2332,22 @@
     "@react-types/shared" "^3.21.0"
     "@swc/helpers" "^0.5.0"
 
+"@react-aria/listbox@^3.2.4":
+  version "3.11.1"
+  resolved "https://registry.yarnpkg.com/@react-aria/listbox/-/listbox-3.11.1.tgz#2a2c88daf6a67e07ab17440f72a859913161e6e8"
+  integrity sha512-AkguQaIkqpP5oe++EZqYHowD7FfeQs+yY0QZVSsVPpNExcBug8/GcXvhSclcOxdh6ekZg4Wwcq7K0zhuTSOPzg==
+  dependencies:
+    "@react-aria/focus" "^3.14.3"
+    "@react-aria/interactions" "^3.19.1"
+    "@react-aria/label" "^3.7.2"
+    "@react-aria/selection" "^3.17.1"
+    "@react-aria/utils" "^3.21.1"
+    "@react-stately/collections" "^3.10.2"
+    "@react-stately/list" "^3.10.0"
+    "@react-types/listbox" "^3.4.5"
+    "@react-types/shared" "^3.21.0"
+    "@swc/helpers" "^0.5.0"
+
 "@react-aria/live-announcer@^3.0.0-alpha.0", "@react-aria/live-announcer@^3.3.1":
   version "3.3.1"
   resolved "https://registry.yarnpkg.com/@react-aria/live-announcer/-/live-announcer-3.3.1.tgz#bf864b8820fb02daaeefc1c972782a0174fd60b9"
@@ -2423,7 +2439,7 @@
     "@react-types/shared" "^3.21.0"
     "@swc/helpers" "^0.5.0"
 
-"@react-aria/selection@^3.17.1":
+"@react-aria/selection@^3.17.1", "@react-aria/selection@^3.3.2":
   version "3.17.1"
   resolved "https://registry.yarnpkg.com/@react-aria/selection/-/selection-3.17.1.tgz#12df277b8806fd26093e16f6a2734bd1e6fbb3e2"
   integrity sha512-g5gkSc/M+zJiVgWbUpKN095ea0D4fxdluH9ZcXxN4AAvcrVfEJyAnMmWOIKRebN8xR0KPfNRnKB7E6jld2tbuQ==
@@ -2750,7 +2766,7 @@
     "@react-stately/tabs" "3.0.0-alpha.1"
     "@react-types/tabs" "3.0.0-alpha.2"
 
-"@react-native-aria/toggle@^0.2.6":
+"@react-native-aria/toggle@^0.2.3", "@react-native-aria/toggle@^0.2.6":
   version "0.2.6"
   resolved "https://registry.yarnpkg.com/@react-native-aria/toggle/-/toggle-0.2.6.tgz#916832079a551d57bbc5842a09884700a2925579"
   integrity sha512-uqsoh3ISY3yVh6HBH6jklrZ9eZgLqZ2A8s3XhxLGZIZV3SbhSP0LwwjTOqRIMXK12lvHixWneObD0GpR4i7v+g==
@@ -3544,6 +3560,14 @@
   resolved "https://registry.yarnpkg.com/@react-types/slider/-/slider-3.6.2.tgz#b401bbbd473b62edc394ac3c41ed6df329d111d4"
   integrity sha512-LSvna1gpOvBxOBI5I/CYEtkAshWYwPlxE9F/jCaxCa9Q7E9xZp1hFFGY87iQ1A3vQM5SCa5PFStwOvXO7rA55w==
   dependencies:
+    "@react-types/shared" "^3.21.0"
+
+"@react-types/switch@^3.4.2":
+  version "3.4.2"
+  resolved "https://registry.yarnpkg.com/@react-types/switch/-/switch-3.4.2.tgz#8c0a8f8dfcaae29ccd9409a2beaac0d31a131027"
+  integrity sha512-OQWpawikWhF+ET1/kE0/JeJVr6gHjkR72p/idTsT7RUJySBcehhAscbIA8iWzVWJvdFCVF2hG7uzBAJTeDMr9A==
+  dependencies:
+    "@react-types/checkbox" "^3.5.2"
     "@react-types/shared" "^3.21.0"
 
 "@react-types/table@^3.9.0":
@@ -9135,7 +9159,7 @@ react-native-typing-animation@0.1.7:
   resolved "https://registry.yarnpkg.com/react-native-typing-animation/-/react-native-typing-animation-0.1.7.tgz#8f2cf08d9400ae543a110292eb7d71523dda5528"
   integrity sha512-4H3rF9M+I2yAZpYJcY0Mb29TXkn98QK12rrKSY6LZj1BQD9NNmRZuNXzwX4XHapsIz+N/J8M3p27FOQPbfzqeg==
 
-react-native-ui-datepicker@^1.0.3:
+react-native-ui-datepicker@1.0.3:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/react-native-ui-datepicker/-/react-native-ui-datepicker-1.0.3.tgz#5267bc524d429e5e5f886933b4775084444675cb"
   integrity sha512-zsaLdwcm1X8BvbUeK3iX3cPQVlfjHLy/b8XWQBNvahxieUakz9vtZOigeUM2JbF8lTYsi3W+yyEzZSeFZPWO1Q==
