@@ -13,9 +13,9 @@ import ChildrenListScreen from "./layouts/children-list.layout";
 import AddChildrenScreen from "./layouts/add-child.layout";
 import EventHistoryScreen from "./layouts/event-history.layout";
 import PersonalInformationScreen from "./layouts/personal-information.layout";
-import StartChatScreen from './layouts/chat/start-chat.layout';
-import ChatListScreen from './layouts/chat/chat-list.layout';
-import ChatScreen from './layouts/chat/chat.layout';
+import StartChatScreen from "./layouts/chat/start-chat.layout";
+import ChatListScreen from "./layouts/chat/chat-list.layout";
+import ChatScreen from "./layouts/chat/chat.layout";
 
 import { post, get } from "./contexts/api";
 import {
@@ -31,6 +31,25 @@ import MyTheme from "./contexts/theme";
 import CreateEventScreen from "./layouts/create-event.layout";
 import EventDetailScreen from "./layouts/event-detail.layout";
 import OrganizationInformationScreen from "./layouts/organization-information.layout";
+import ChildDetailScreen from "./layouts/child-detail.layout";
+
+import { ThemeProvider, createTheme } from "@rneui/themed";
+import ChildAchivementScreen from "./layouts/child-achivement.layout";
+
+const theme = createTheme({
+  lightColors: {
+    primary: "#613194",
+  },
+  darkColors: {
+    primary: "blue",
+  },
+  components: {
+    Button: {
+      // raised: true,
+      radius: 10,
+    },
+  },
+});
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -152,55 +171,70 @@ function App({ navigation }) {
 
   return (
     <AuthContext.Provider value={authContext}>
-      <NavigationContainer ref={navigationRef} theme={MyTheme}>
-        <Stack.Navigator screenOptions={{ headerShown: false }}>
-          {state.isLoading ? (
-            <Stack.Screen name="SplashScreen" component={SplashScreen} />
-          ) : state.userToken == null ? (
-            <Stack.Screen name="Login" component={LoginScreen} />
-          ) : (
-            <Stack.Screen
-              name="AuthorizedTabs"
-              component={AuthorizedTabs}
-              options={{
-                title: "Sign in",
-                animationTypeForReplace: state.isSignout ? "pop" : "push",
-              }}
-            />
-          )}
+      <ThemeProvider theme={theme}>
+        <NavigationContainer ref={navigationRef} theme={MyTheme}>
+          <Stack.Navigator screenOptions={{ headerShown: false }}>
+            {state.isLoading ? (
+              <Stack.Screen name="SplashScreen" component={SplashScreen} />
+            ) : state.userToken == null ? (
+              <Stack.Screen name="Login" component={LoginScreen} />
+            ) : (
+              <Stack.Screen
+                name="AuthorizedTabs"
+                component={AuthorizedTabs}
+                options={{
+                  title: "Sign in",
+                  animationTypeForReplace: state.isSignout ? "pop" : "push",
+                }}
+              />
+            )}
 
-          <Stack.Group
-            screenOptions={{ headerStyle: { backgroundColor: "papayawhip" } }}>
-            <Stack.Screen name="Account" component={AccountScreen} />
-            <Stack.Screen
-              name="PersonalInformation"
-              component={PersonalInformationScreen}
-            />
-            <Stack.Screen name="ChildrenList" component={ChildrenListScreen} />
-            <Stack.Screen name="AddChild" component={AddChildrenScreen} />
-            <Stack.Screen
-              name="TimeInVolunteer"
-              component={TimeInVolunteerScreen}
-            />
-            <Stack.Screen name="Review" component={ReviewScreen} />
-            <Stack.Screen name="EventHistory" component={EventHistoryScreen} />
-            <Stack.Screen name="Settings" component={SettingsScreen} />
-            <Stack.Screen
-              name="VolunteerDetail"
-              component={VolunteerDetailScreen}
-            />
-            <Stack.Screen name="CreateEvent" component={CreateEventScreen} />
-            <Stack.Screen name="EventDetail" component={EventDetailScreen} />
-            <Stack.Screen
-              name="OrganizationDetails"
-              component={OrganizationInformationScreen}
-            />
-            <Stack.Screen name="ChatList" component={ ChatListScreen } />
-            <Stack.Screen name="StartChat" component={ StartChatScreen } />
-            <Stack.Screen name="ChatDetail" component={ ChatScreen } />
-          </Stack.Group>
-        </Stack.Navigator>
-      </NavigationContainer>
+            <Stack.Group
+              screenOptions={{
+                headerStyle: { backgroundColor: "papayawhip" },
+              }}>
+              <Stack.Screen name="Account" component={AccountScreen} />
+              <Stack.Screen
+                name="PersonalInformation"
+                component={PersonalInformationScreen}
+              />
+              <Stack.Screen
+                name="ChildrenList"
+                component={ChildrenListScreen}
+              />
+              <Stack.Screen name="AddChild" component={AddChildrenScreen} />
+              <Stack.Screen name="ChildDetail" component={ChildDetailScreen} />
+              <Stack.Screen
+                name="AchivementDetail"
+                component={ChildAchivementScreen}
+              />
+              <Stack.Screen
+                name="TimeInVolunteer"
+                component={TimeInVolunteerScreen}
+              />
+              <Stack.Screen name="Review" component={ReviewScreen} />
+              <Stack.Screen
+                name="EventHistory"
+                component={EventHistoryScreen}
+              />
+              <Stack.Screen name="Settings" component={SettingsScreen} />
+              <Stack.Screen
+                name="VolunteerDetail"
+                component={VolunteerDetailScreen}
+              />
+              <Stack.Screen name="CreateEvent" component={CreateEventScreen} />
+              <Stack.Screen name="EventDetail" component={EventDetailScreen} />
+              <Stack.Screen
+                name="OrganizationDetails"
+                component={OrganizationInformationScreen}
+              />
+              <Stack.Screen name="ChatList" component={ChatListScreen} />
+              <Stack.Screen name="StartChat" component={StartChatScreen} />
+              <Stack.Screen name="ChatDetail" component={ChatScreen} />
+            </Stack.Group>
+          </Stack.Navigator>
+        </NavigationContainer>
+      </ThemeProvider>
     </AuthContext.Provider>
   );
 }

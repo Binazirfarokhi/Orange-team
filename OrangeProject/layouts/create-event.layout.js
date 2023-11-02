@@ -165,7 +165,6 @@ const CreateEventScreen = ({ navigation, route }) => {
               alert("Event has been saved.");
               navigation.goBack();
             } else {
-              
               alert("Unable to save event. Please try again later.");
             }
           })
@@ -187,7 +186,7 @@ const CreateEventScreen = ({ navigation, route }) => {
   return (
     <KeyboardAvoidingView
       behavior={"padding"}
-      keyboardVerticalOffset={150}
+      keyboardVerticalOffset={50}
       style={styles.container}>
       <View style={styles.main}>
         <Feather
@@ -198,7 +197,7 @@ const CreateEventScreen = ({ navigation, route }) => {
         />
         <Text style={styles.title}>Create Event</Text>
         <View>
-          <ScrollView style={{ marginBottom: 180, paddingRight: 20 }}>
+          <ScrollView style={{ marginBottom: 100, paddingRight: 20 }}>
             <Input
               onChange={(e) => setEventName(e.nativeEvent.text)}
               containerStyle={{}}
@@ -241,20 +240,13 @@ const CreateEventScreen = ({ navigation, route }) => {
               label="Date"
               value={date}
             />
-            {pickerOpen && (
-              <DateTimePicker
-                value={moment(date, DATE_FORMAT_DISPLAY).format(
-                  DATE_FORMAT_PICKER
-                )}
-                mode="date"
-                minimumDate={moment().format(DATE_FORMAT_PICKER)}
-                onValueChange={(date) =>
-                  setDate(
-                    moment(date, DATE_FORMAT_PICKER).format(DATE_FORMAT_DISPLAY)
-                  )
-                }
-              />
-            )}
+            {/* {pickerOpen && 
+                        <DateTimePicker
+                            value={new Date()}
+                            mode='date'
+                            onValueChange={(date) => setDate(moment(date, DATE_FORMAT_PICKER).format(DATE_FORMAT_DISPLAY))}
+                    />
+                        } */}
             <Input
               onChange={(e) => setTime(e.nativeEvent.text)}
               containerStyle={{}}

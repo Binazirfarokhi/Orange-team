@@ -1,9 +1,13 @@
-const { initializeApp } = require('firebase/app');
+const { initializeApp } = require("firebase/app");
 const { getFirestore } = require("firebase/firestore");
 const { getAuth } = require("firebase/auth");
-const fbAdmin = require('firebase-admin');
+const { getStorage } = require("firebase/storage");
 
-var config = require("../firebase-config.json");
+const fbAdmin = require("firebase-admin");
+var config = {
+  ...require("../firebase-config.json"),
+  storageBucket: "uniteer-wmdd-sept22.appspot.com",
+};
 var serviceAccountConfig = require("../firebase-service-config.json");
 
 const firebase = initializeApp(config);
@@ -12,4 +16,9 @@ const firebaseAdmin = fbAdmin.initializeApp(serviceAccountConfig);
 const firestoreDB = getFirestore(firebase);
 const auth = getAuth(firebase);
 
-module.exports = { firestoreDB, auth, firebaseAdmin };
+// Initialize Cloud Storage and get a reference to the service
+const storage = getStorage(firebase);
+
+// Create a storage reference from our storage service
+
+module.exports = { firestoreDB, auth, firebaseAdmin, storage };

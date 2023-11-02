@@ -14,7 +14,7 @@ import {
   TYPE_VOLUNTEER,
 } from "../util/constants";
 import ParentDetailScreen from "../layouts/personal-detail.layout";
-import ChatListScreen from '../layouts/chat/chat-list.layout';
+import ChatListScreen from "../layouts/chat/chat-list.layout";
 import ChatActiveIcon from "../assets/chat-active-icon.svg";
 import ChatInactiveIcon from "../assets/chat-inactive-icon.svg";
 

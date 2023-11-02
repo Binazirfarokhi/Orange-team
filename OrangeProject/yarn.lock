@@ -9159,10 +9159,10 @@ react-native-typing-animation@0.1.7:
   resolved "https://registry.yarnpkg.com/react-native-typing-animation/-/react-native-typing-animation-0.1.7.tgz#8f2cf08d9400ae543a110292eb7d71523dda5528"
   integrity sha512-4H3rF9M+I2yAZpYJcY0Mb29TXkn98QK12rrKSY6LZj1BQD9NNmRZuNXzwX4XHapsIz+N/J8M3p27FOQPbfzqeg==
 
-react-native-ui-datepicker@1.0.3:
-  version "1.0.3"
-  resolved "https://registry.yarnpkg.com/react-native-ui-datepicker/-/react-native-ui-datepicker-1.0.3.tgz#5267bc524d429e5e5f886933b4775084444675cb"
-  integrity sha512-zsaLdwcm1X8BvbUeK3iX3cPQVlfjHLy/b8XWQBNvahxieUakz9vtZOigeUM2JbF8lTYsi3W+yyEzZSeFZPWO1Q==
+react-native-ui-datepicker@^1.0.3:
+  version "1.0.8"
+  resolved "https://registry.yarnpkg.com/react-native-ui-datepicker/-/react-native-ui-datepicker-1.0.8.tgz#5de863977d2bc6de56369d04dc3442ce46546eea"
+  integrity sha512-CPFulv7iW0qq8zvLgeS8z5hsXBVHPgJpAjeqkD88w+hDhkrLg0/Pp3Jr/X2afxrPj9+eUTII6B5I0qKaEFqrbg==
 
 react-native-vector-icons@^10.0.0:
   version "10.0.0"

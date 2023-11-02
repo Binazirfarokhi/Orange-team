@@ -1,12 +1,13 @@
 import * as React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { ProfileImage } from "../components/profile-image.component";
-import { Button, Input } from "@rneui/themed";
+import { Avatar, Button, Input } from "@rneui/themed";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import { useState } from "react";
 import AuthContext from "../contexts/auth";
 import Feather from "react-native-vector-icons/Feather";
 import { ButtonGroup } from "@rneui/base";
+import { logo } from "../util/constants";
 
 function LoginScreen() {
   const [formType, setFormType] = useState("home");
@@ -60,7 +61,12 @@ function LoginScreen() {
         />
       )}
       <View style={{ alignItems: "center" }}>
-        <ProfileImage />
+        <Avatar
+          size={120}
+          avatarStyle={{ marginTop: 5, marginTop: 20, marginLeft: 20 }}
+          rounded
+          source={logo}
+          containerStyle={{ backgroundColor: "#DDD" }}></Avatar>
         {formType === "forgot" && (
           <Text style={styles.title}>Forgot Password ?</Text>
         )}
@@ -81,7 +87,7 @@ function LoginScreen() {
             containerStyle={{}}
             disabledInputStyle={{ background: "#ddd" }}
             inputContainerStyle={{}}
-            onChange={(e) => setUsername(e.nativeEvent.text.toLowerCase())}
+            onChange={(e) => setUsername(e.nativeEvent.text)}
             errorStyle={{}}
             errorProps={{}}
             inputStyle={{}}
