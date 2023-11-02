@@ -151,7 +151,7 @@ export default function ChatListScreen({navigation}) {
                             style={{flexDirection:'row', marginVertical: '1.5%', alignItems: 'center', gap:'20'}} 
                             onPress={() => {navigation.navigate('ChatDetail',{userId: user.id, myUserId: myUserId});}}
                         >
-                            <ProfileImage source={{uri: user.profileImageURL}} size={65} />
+                            <ProfileImage uri={user.profileImageURL} size={65} />
                             <View style={{flexGrow:1}}>
                                 <View style={{flexDirection:'row', justifyContent:'space-between'}}>
                                     <Text style={{fontSize:18, fontWeight:'600'}}>{user.firstName} {user.lastName}</Text>
