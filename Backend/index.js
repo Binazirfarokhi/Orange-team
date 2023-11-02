@@ -8,6 +8,7 @@ var jsonParser = bodyParser.json();
 // var urlencodedParser = bodyParser.urlencoded({ extended: false })
 app.use(jsonParser);
 app.use(CORS());
+app.get('/', (req, res) => {res.send('abcdfa')})
 app.use('/profile', require('./controllers/profile.controller'))
 app.use('/auth', require('./controllers/auth.controller'))
 app.use('/children', require('./controllers/children.controller'))
