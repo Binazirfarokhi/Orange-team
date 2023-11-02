@@ -77,13 +77,9 @@ const joinEventRepo = async (userId, id) => {
 
 const saveEventRepo = async (id, data) => {
   let docRef;
-  console.log(data);
   if (!id || id === null) docRef = doc(eventCollection);
   else docRef = doc(eventCollection, id);
-  console.log(docRef);
   await setDoc(docRef, { ...data, createdAt: new Date() });
-  console.log(docRef.id);
-
   return docRef.id;
 };
 

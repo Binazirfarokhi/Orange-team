@@ -1,7 +1,7 @@
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
 import Feather from "react-native-vector-icons/Feather";
-import { StyleSheet, Text, View } from "react-native";
+import { ImageBackground, StyleSheet, Text, View } from "react-native";
 import { getPersistData } from "../contexts/store";
 import React, { useState } from "react";
 import {
@@ -11,7 +11,7 @@ import {
 } from "../util/constants";
 import { useContext } from "react";
 import AuthContext from "../contexts/auth";
-import { Button } from "@rneui/themed";
+import { Avatar, Button } from "@rneui/themed";
 
 function HomeScreen({ navigation }) {
   const [name, setName] = useState("");
@@ -42,8 +42,37 @@ function HomeScreen({ navigation }) {
   return (
     <>
       <View style={{ flex: 1 }}>
-        <Text style={styles.title}>Hi,</Text>
-        <Text style={styles.username}>{name}</Text>
+        {role === TYPE_PARENT ? (
+          <>
+            <ImageBackground
+              source={require("../assets/parent.png")}
+              imageStyle={{ opacity: 1, marginBottom: -100 }}
+              resizeMode="cover">
+              <Text style={styles.title}>Hi,</Text>
+              <Text style={styles.username}>{name}</Text>
+            </ImageBackground>
+            <Text style={styles.title}></Text>
+          </>
+        ) : (
+          <>
+            <ImageBackground
+              source={require("../assets/parent-background.png")}
+              imageStyle={{ opacity: 0.1, marginBottom: -200 }}
+              resizeMode="cover">
+              <View style={{ alignItems: "center", paddingTop: 50 }}>
+                <Avatar
+                  size={120}
+                  avatarStyle={{ marginLeft: 10 }}
+                  rounded
+                  source={require("../assets/boy.png")}
+                  containerStyle={{ backgroundColor: "#eb1561" }}>
+                  <Avatar.Accessory size={34} />
+                </Avatar>
+              </View>
+              <Text style={styles.username}>{name}</Text>
+            </ImageBackground>
+          </>
+        )}
       </View>
       <View
         style={{ ...styles.home, flex: role === TYPE_ORGANIZATION ? 1 : 2 }}>
@@ -214,40 +243,43 @@ function HomeScreen({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-    title: {
-      paddingTop: 40,
-      fontSize: 40,
-      fontWeight: 'bold',
-      marginTop: 48,
-      paddingLeft: 24
-    },
-    username: {
-      paddingTop: 40,
-      fontSize: 30,
-      fontWeight: 'bold',
-      paddingLeft: 40
-    },
-    home: {
-      border: '1px solid #DDD',
-      backgroundColor: 'white',
-      borderTopLeftRadius: 50,
-      borderTopRightRadius: 50,
-      paddingTop: 16,
-      alignItems: "center"
-    }, list: {
-      flexDirection: 'row',
-      paddingLeft: 30,
-      paddingTop: 30,
-      flex: 1
-    }, listText: {
-      fontSize: 20,
-      flex: 5
-    },
-    leftIcon: {
-      flex: 1
-    }, rightIcon: {
-      flex: 1
-    }
-  })
+  title: {
+    paddingTop: 40,
+    fontSize: 40,
+    fontWeight: "bold",
+    marginTop: 48,
+    paddingLeft: 24,
+  },
+  username: {
+    paddingTop: 40,
+    fontSize: 30,
+    fontWeight: "bold",
+    paddingLeft: 40,
+  },
+  home: {
+    border: "1px solid #DDD",
+    backgroundColor: "white",
+    borderTopLeftRadius: "50px",
+    borderTopRightRadius: "50px",
+    paddingTop: 16,
+    alignItems: "center",
+  },
+  list: {
+    flexDirection: "row",
+    paddingLeft: 30,
+    paddingTop: 30,
+    flex: 1,
+  },
+  listText: {
+    fontSize: 20,
+    flex: 5,
+  },
+  leftIcon: {
+    flex: 1,
+  },
+  rightIcon: {
+    flex: 1,
+  },
+});
 
-  export default HomeScreen;
+export default HomeScreen;

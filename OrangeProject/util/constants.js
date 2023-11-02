@@ -20,3 +20,5 @@ export const TIME_FORMAT_DISPLAY = "hh:mm a";
 export const TIME_FORMAT_PICKER = "HH:mm";
 
 export const POSITION_L1 = "scout";
+
+export const logo = require("../assets/unilogo.png");
