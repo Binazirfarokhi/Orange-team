@@ -22,10 +22,27 @@ export default function ChildItem ({ navigation, child, deleteChild}){
                     iconContainerStyle={{ background: "#000" }}
                     loadingProps={{ animating: true }}
                     loadingStyle={{}}
-                    onPress={()=> navigation.navigate('AddChild', {child})}
-                    title="Edit"
+                    onPress={()=> navigation.navigate('ChildDetail', {child})}
+                    title="Check"
                     titleProps={{}}
                     titleStyle={{ marginHorizontal: 5 }}
+                    />
+                <Button
+                    containerStyle={{ margin: 5, flex: 1}}
+                    disabledStyle={{
+                        borderWidth: 2,
+                        borderColor: "#00F"
+                    }}
+                    disabledTitleStyle={{ color: "#00F" }}
+                    linearGradientProps={null}
+                    iconContainerStyle={{ background: "#000" }}
+                    loadingProps={{ animating: true }}
+                    loadingStyle={{}}
+                    onPress={()=> navigation.navigate('AddChild', {child})}
+                    icon={<FontAwesome name='pencil' size={20} />}
+                    titleProps={{}}
+                    titleStyle={{ marginHorizontal: 5 }}
+                    type="clear"
                     />
                 <Button
                     containerStyle={{ margin: 5, flex: 1}}
