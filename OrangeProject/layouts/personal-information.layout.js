@@ -60,7 +60,8 @@ function PersonalInformationScreen({navigation}) {
         alert('Please enter Phone Number');
         return
       }
-      const positionOfOrganization = org.map(o=> orgPos[o] || POSITION_L1)
+      const positionOfOrganization = [];
+      if(org && org != null) positionOfOrganization = org.map(o=> orgPos[o] || POSITION_L1)
       const result = (await put(`/profile/personal/${emailAddress}`, {contactNumber, allowAddress, address, orgs: org, organization, positionOfOrganization})).data;
       if(result && result.status === 'OK') {
             alert('Personal Information has been updated');
@@ -135,7 +136,7 @@ function PersonalInformationScreen({navigation}) {
           onLongIconPress={() =>
             console.log("onLongIconPress()")
           }
-          onLongPress={() => console.log("onLongPress()")}
+          
           onPress={(e) => setAllowAddress(!allowAddress)}
           size={30}
           textStyle={{}}

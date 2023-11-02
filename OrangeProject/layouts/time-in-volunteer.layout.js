@@ -17,7 +17,7 @@ function TimeInVolunteerScreen({navigation}) {
     },[]);
     return (
       <View style={styles.main}>
-        <Feather name='arrow-left' size={30} style={styles.leftIcon} onPress={() => navigation.navigate('AuthorizedTabs')} />
+        <Feather name='arrow-left' size={30} style={styles.leftIcon} onPress={() => navigation.goBack()} />
         <Text style={styles.title}>Time In Volunteer</Text>
         <Text style={styles.dayCount}>{timeIn}</Text>
         
