@@ -24,4 +24,8 @@ const getChildList = async(parentRef) => {
     return getDocs(q)
 }
 
-module.exports = { getChildList, saveChild, updateChild, deleteChild }
+const getChild = async(id) => {
+    return getDoc(doc(childrenCollection, id))
+}
+
+module.exports = { getChildList, saveChild, updateChild, deleteChild, getChild }
