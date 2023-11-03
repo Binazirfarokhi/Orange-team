@@ -1,8 +1,10 @@
 const { getDocs, getDoc, query, where, doc, setDoc, collection } = require("@firebase/firestore");
-const { getProfileImageURL} = require("../repo/profile.repo");
+const { getStorage, ref, getDownloadURL } = require("firebase/storage");
 const { firestoreDB } = require("../repo/firebase");
+const { getProfiles } = require("../repo/profile.repo")
 const messagesCollection = collection(firestoreDB, "messages");
 const usersCollection = collection(firestoreDB, "users");
+const storage = getStorage(); 
 
 const singleUserProfile = async (req, res) => {
     try {
@@ -91,10 +93,53 @@ const sendMessages = async (req, res) => {
     }
 };
 
+const getProfileImageURL = async (docId) => {
+    try {
+        const imagePath = `portrait/${docId}.png`; 
+        const imageRef = ref(storage, imagePath);
+
+        return await getDownloadURL(imageRef);
+    } catch (error) {
+        console.error("Error fetching profile image:", error);
+        const defaultImagePath = 'portrait/default.png';
+        const defaultImageRef = ref(storage, defaultImagePath);
+        return await getDownloadURL(defaultImageRef);
+    }
+};
+
+const listUsers = async(req, res) => {
+    try {
+        const docs = await getProfiles();
+        console.log(docs, "docs data")
+        const promises = docs.map(async doc => {
+            try {
+              if (doc.id) {
+                doc.profileImageURL = await getProfileImageURL(doc.id);
+              }
+              return doc;
+            } catch (error) {
+              console.error('Error in getProfileImageURL for doc.id:', doc.id, error);
+              doc.profileImageError = true;
+              return doc;
+            }
+          });
+
+        const updatedDocs = await Promise.all(promises);
+        res.send(updatedDocs);
+    } catch (error) {
+        console.error(error);
+        res.send({
+            status: 'Failed',
+            message: error.message
+        });
+    }
+}
+
 
 
 module.exports = {
     sendMessages,
     getMessages,
-    singleUserProfile
+    singleUserProfile,
+    listUsers
 }

@@ -1,4 +1,4 @@
-import { Button, Input, Overlay, Text } from "@rneui/themed";
+import { Button, Input, Overlay, Text, ListItem } from "@rneui/themed";
 import {
   Platform,
   ScrollView,
@@ -23,7 +23,7 @@ import {
 import { useHeaderHeight } from "@react-navigation/elements";
 import { useEffect } from "react";
 import { getPersistData } from "../contexts/store";
-import { get, patch, post } from "../contexts/api";
+import { get, patch, post, getLocation } from "../contexts/api";
 
 const CreateEventScreen = ({ navigation, route }) => {
   const [eventName, setEventName] = useState("");
@@ -31,6 +31,8 @@ const CreateEventScreen = ({ navigation, route }) => {
   const [time, setTime] = useState(moment().format(TIME_FORMAT_DISPLAY));
   const [pickerOpen, setPickerOpen] = useState(false);
   const [location, setLocation] = useState("");
+  const [suggestions, setSuggestions] = useState([]);
+  const [isInputFocused, setInputFocused] = useState(false);
   const [organization, setOrganization] = useState("");
   const [organizationId, setOrganizationId] = useState("");
   const [eventType, setEventType] = useState("");
@@ -130,6 +132,41 @@ const CreateEventScreen = ({ navigation, route }) => {
     }
   };
 
+// fetching location suggestions 
+  const fetchLocations = async (searchText) => {
+    try {
+      const response = await getLocation('/location', { text: searchText });
+      const suggestions = response.data.features.map(feature => {
+        return {
+          label: feature.properties.formatted,
+          coordinates: feature.geometry.coordinates
+        };
+      });
+      setSuggestions(suggestions); 
+      // console.log(suggestions);
+    } catch (error) {
+      console.error('Error fetching location suggestions:', error);
+    }
+  };
+
+  useEffect(() => {
+    if (location.length > 5) { 
+      fetchLocations(location);
+    } else {
+      setSuggestions([]); 
+    }
+  }, [location]); 
+
+  const handleLocationInput = (e) => {
+    setLocation(e.nativeEvent.text);
+  };
+
+  const onSuggestionPress = (suggestion) => {
+    setLocation(suggestion.label);
+    setSuggestions([]);
+    setInputFocused(false);
+  };
+
   const save = () => {
     let message = "";
     if (eventName === "") message = "Event Name should not be blank.\n";
@@ -197,7 +234,7 @@ const CreateEventScreen = ({ navigation, route }) => {
         />
         <Text style={styles.title}>Create Event</Text>
         <View>
-          <ScrollView style={{ marginBottom: 100, paddingRight: 20 }}>
+          <ScrollView style={{ marginBottom: 200, paddingRight: 20 }}>
             <Input
               onChange={(e) => setEventName(e.nativeEvent.text)}
               containerStyle={{}}
@@ -265,9 +302,11 @@ const CreateEventScreen = ({ navigation, route }) => {
               value={time}
             />
             <Input
-              onChange={(e) => setLocation(e.nativeEvent.text)}
+              onChange={handleLocationInput}
               containerStyle={{}}
               disabledInputStyle={{ background: "#ddd" }}
+              onFocus={() => setInputFocused(true)}
+              onBlur={() => setInputFocused(false)}
               inputContainerStyle={{}}
               errorStyle={{}}
               errorProps={{}}
@@ -281,6 +320,17 @@ const CreateEventScreen = ({ navigation, route }) => {
               label="Location"
               value={location}
             />
+            {isInputFocused && suggestions.length > 0 && (
+              <ScrollView style={{ maxHeight: 200 }}>
+                {suggestions.map((suggestion, index) => (
+                  <ListItem key={index} onPress={() => onSuggestionPress(suggestion)}>
+                    <ListItem.Content>
+                      <ListItem.Title>{suggestion.label}</ListItem.Title>
+                    </ListItem.Content>
+                  </ListItem>
+                ))}
+              </ScrollView>
+            )}
             <Input
               onChange={(e) => setEventType(e.nativeEvent.text)}
               containerStyle={{}}

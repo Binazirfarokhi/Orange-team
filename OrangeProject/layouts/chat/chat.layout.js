@@ -84,7 +84,6 @@ export default function ChatScreen({ navigation, route }) {
                 console.error('Error fetching the messages', error);
             }
         };
-    
         if (myUserId && userId) fetchMessages();
         const intervalId = setInterval(fetchMessages, 2000);
         return () => clearInterval(intervalId);
