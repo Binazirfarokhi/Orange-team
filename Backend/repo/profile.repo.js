@@ -12,6 +12,7 @@ const getProfiles = async ()=> {
             // console.log(`${doc.id} => ${doc.data()}`);
           });
           return  docRef.docs.map(doc=> ({
+            id: doc.id,
             ...doc.data(),
             signup: ''
         }));

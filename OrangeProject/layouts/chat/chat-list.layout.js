@@ -18,7 +18,7 @@ export default function ChatListScreen({navigation}) {
     useEffect(() => {
         const fetchUsers = async () => {
             try {
-                const response = await get('/profile');  
+                const response = await get('/chat/userlist');  
                 if (response && response.data) {
                     setUsers(response.data);
                 }
