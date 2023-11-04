@@ -1,4 +1,3 @@
 export const config = {
-  //url: "https://www.uniteer.net/api",
-  url: "https://10.128.220.248:3000",
+  url: "http://10.0.0.14:3000", //"https://www.uniteer.net/api",
 };

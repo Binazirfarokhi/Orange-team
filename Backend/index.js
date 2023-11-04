@@ -16,6 +16,7 @@ app.use('/children', require('./controllers/children.controller'))
 app.use('/orgs', require('./controllers/orgs.controller'))
 app.use('/chat', require('./controllers/chat.controller'))
 app.use('/photos', require('./controllers/photos.controller'))
+app.use('/location', require('./controllers/location.controller'))
 
 
 app.listen(port, () => {
