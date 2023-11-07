@@ -1,4 +1,4 @@
-import { Button, Input, Overlay, Text } from "@rneui/themed";
+import { Button, Image, Input, Overlay, Text } from "@rneui/themed";
 import {
   ScrollView,
   View,
@@ -21,7 +21,7 @@ import {
 
 import { useEffect } from "react";
 import { getPersistData } from "../contexts/store";
-import { get, post } from "../contexts/api";
+import { get, post, getLocation } from "../contexts/api";
 import { useId } from "react";
 
 const EventDetailScreen = ({ navigation, route }) => {
@@ -31,6 +31,7 @@ const EventDetailScreen = ({ navigation, route }) => {
   const [time, setTime] = useState(moment().format(TIME_FORMAT_DISPLAY));
   const [pickerOpen, setPickerOpen] = useState(false);
   const [location, setLocation] = useState("");
+  const [coordinates, setCoordinates] = useState({ lat: null, lon: null });
   const [organization, setOrganization] = useState("");
   const [organizationId, setOrganizationId] = useState("");
   const [eventType, setEventType] = useState("");
@@ -48,6 +49,8 @@ const EventDetailScreen = ({ navigation, route }) => {
   const [joinedUser, setJoinedUser] = useState([]);
   const [role, setRole] = useState();
   const [currentUser, setCurrentUser] = useState();
+  const [mapUrl, setMapUrl] = useState(null);
+
 
   useEffect(() => {
     getPersistData("userInfo")
@@ -57,6 +60,8 @@ const EventDetailScreen = ({ navigation, route }) => {
         setRole(role);
         setCurrentUser(data[0]);
 
+        const myRole = data[0].role;
+        setMyRoleType(myRole);
         get(`/orgs/volunteer/${organization}`)
           .then((volData) => {
             setAvailableVolunteers(volData.data.data);
@@ -97,6 +102,7 @@ const EventDetailScreen = ({ navigation, route }) => {
           organization,
           participantsList,
           location,
+          coordinates,
           eventType,
           ageGroup,
           participants,
@@ -110,6 +116,7 @@ const EventDetailScreen = ({ navigation, route }) => {
         setTime(time);
         // setOrganization(organization)
         setLocation(location);
+        setCoordinates(coordinates);
         setEventType(eventType);
         setAgeGroup(ageGroup);
         setParticipants(participants);
@@ -141,6 +148,34 @@ const EventDetailScreen = ({ navigation, route }) => {
       })
       .catch((error) => alert("Unable to load organization data"));
   }, []);
+
+  // Adding action of chat screen navigation and map display 
+  const navigateChat = (focusedTab) => {
+    navigation.navigate('ChatList', { focusedTab: focusedTab });
+  };
+
+  // fetching coordinates data 
+  const fetchMap = async () => {
+    try {
+      const { lat, lon } = coordinates;
+      if (!lat || !lon) {
+        console.error('Latitude and longitude are missing');
+        return;
+      }
+      const response = await getLocation('/location/displaymap', { lat, lon });
+      setMapUrl(response.data.imageUrl);
+  
+    } catch (error) {
+      console.error('Error fetching map', error);
+    }
+  };
+  
+  useEffect(() => {
+    if (coordinates.lat && coordinates.lon) {
+      fetchMap();
+    }
+  }, [coordinates]);
+  
 
   return (
     <KeyboardAvoidingView
@@ -223,6 +258,25 @@ const EventDetailScreen = ({ navigation, route }) => {
                 {description}
               </Text>
             </View>
+            {/* Adding two chat buttons and map */}
+            { role !== 2 && (
+              <Button style={{marginVertical: 10}} onPress={() => navigateChat('organization')}>
+                Chat with Organization
+              </Button>
+            )}
+              <Button style={{marginTop: 10, marginBottom: 30}} onPress={() => navigateChat('parents')}>
+                Chat with Parents
+              </Button>
+            
+            <Text style={styles.text1}>Direction</Text>
+            {mapUrl && (
+              <View style={{ alignItems: 'center', justifyContent: 'center', marginTop: 20, marginBottom: 40}}>
+                <Image
+                  source={{ uri: mapUrl }}
+                  style={{ width: 350, height: 240 }} 
+                />
+              </View>
+            )}
 
             <Text style={styles.text1}>Volunteer List </Text>
             <View style={styles.volunteers}>
