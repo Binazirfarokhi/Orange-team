@@ -126,6 +126,24 @@ const getProfileById = async (id) => {
   return data;
 };
 
+// DO NOT CHANGE THIS ONE, THIS IS FOR CHAT FEATURE
+const getProfilewithID = async ()=> {
+  try {
+      const docRef = await getDocs(userCollection);
+      docRef.forEach((doc) => {
+        });
+        return  docRef.docs.map(doc=> ({
+          id: doc.id,
+          ...doc.data(),
+          signup: ''
+      }));
+    } catch (e) {
+      console.error("Error adding document: ", e);
+      return [];
+    }
+    
+}
+
 module.exports = {
   getProfiles,
   getProfileByEmail,
@@ -135,4 +153,5 @@ module.exports = {
   updateUserData,
   getUserRefByEmail,
   getProfileById,
+  getProfilewithID
 };

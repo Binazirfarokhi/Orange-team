@@ -1,7 +1,7 @@
 const { getDocs, getDoc, query, where, doc, setDoc, collection } = require("@firebase/firestore");
 const { getStorage, ref, getDownloadURL } = require("firebase/storage");
 const { firestoreDB } = require("../repo/firebase");
-const { getProfiles } = require("../repo/profile.repo")
+const { getProfilewithID } = require("../repo/profile.repo")
 const messagesCollection = collection(firestoreDB, "messages");
 const usersCollection = collection(firestoreDB, "users");
 const storage = getStorage(); 
@@ -109,7 +109,7 @@ const getProfileImageURL = async (docId) => {
 
 const listUsers = async(req, res) => {
     try {
-        const docs = await getProfiles();
+        const docs = await getProfilewithID();
         console.log(docs, "docs data")
         const promises = docs.map(async doc => {
             try {
