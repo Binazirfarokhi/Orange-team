@@ -71,25 +71,23 @@ export default function EventItem({ navigation, event, orgPos, reload }) {
             <Text>{ageGroup} Years</Text>
             <Text>{participants} Participants</Text>
           </View>
-          {postion === "admin" && (
-            <View
-              style={{
-                flex: 1,
-                flexDirection: "row",
-                justifyContent: "space-around",
-              }}>
-              <Button
-                icon={<FontAwesome name="edit" size={20} color="green" />}
-                onPress={editEvent}
-                type="clear"
-              />
-              <Button
-                icon={<FontAwesome name="trash" size={20} />}
-                onPress={deleteEvent}
-                type="clear"
-              />
-            </View>
-          )}
+          <View
+            style={{
+              flex: 1,
+              flexDirection: "row",
+              justifyContent: "space-around",
+            }}>
+            <Button
+              icon={<FontAwesome name="edit" size={20} color="green" />}
+              onPress={editEvent}
+              type="clear"
+            />
+            <Button
+              icon={<FontAwesome name="trash" size={20} />}
+              onPress={deleteEvent}
+              type="clear"
+            />
+          </View>
         </View>
       </View>
     </View>

@@ -1,29 +1,28 @@
 import { Button, Input, Overlay, Text } from "@rneui/themed";
 import {
-  Platform,
   ScrollView,
   View,
   KeyboardAvoidingView,
-  TextInput,
+  TouchableOpacity,
 } from "react-native";
 
 import FontAwesome from "react-native-vector-icons/FontAwesome";
-import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import Feather from "react-native-vector-icons/Feather";
 import { useState } from "react";
-import DateTimePicker from "react-native-ui-datepicker";
 import moment from "moment";
 import {
   DATE_FORMAT_DISPLAY,
   DATE_FORMAT_PICKER,
   TIME_FORMAT_DISPLAY,
   TIME_FORMAT_PICKER,
+  TYPE_PARENT,
+  TYPE_VOLUNTEER,
 } from "../util/constants";
 
-import { useHeaderHeight } from "@react-navigation/elements";
 import { useEffect } from "react";
 import { getPersistData } from "../contexts/store";
 import { get, post } from "../contexts/api";
+import { useId } from "react";
 
 const EventDetailScreen = ({ navigation, route }) => {
   const { id } = route.params;
@@ -47,13 +46,16 @@ const EventDetailScreen = ({ navigation, route }) => {
   const [joined, setJoined] = useState(false);
   const [userId, setUserId] = useState("");
   const [joinedUser, setJoinedUser] = useState([]);
+  const [role, setRole] = useState();
+  const [currentUser, setCurrentUser] = useState();
 
   useEffect(() => {
     getPersistData("userInfo")
       .then((data) => {
-        const organization = data[0].organization;
-        setUserId(data[0].id);
-        setOrganizationId(organization);
+        const { role, id, signup } = data[0];
+        setUserId(id);
+        setRole(role);
+        setCurrentUser(data[0]);
 
         get(`/orgs/volunteer/${organization}`)
           .then((volData) => {
@@ -65,10 +67,24 @@ const EventDetailScreen = ({ navigation, route }) => {
   }, []);
 
   const joinEvent = async () => {
-    const result = await post(`/orgs/event/${userId}/${id}`);
+    const result = await post(`/orgs/event/${userId}/${id}/${role}`);
     if (result.data.status === "OK") {
-      joined = true;
+      if (role === TYPE_PARENT) {
+        setJoinedUser([...joinedUser, currentUser]);
+      } else {
+        setVolunteers([...volunteers, currentUser]);
+      }
+      setJoined(true);
     } else alert("Unable to join to the group");
+  };
+
+  const checkVolunteer = (id, email) => {
+    navigation.navigate("VolunteerDetail", {
+      email,
+      fromOrg: true,
+      orgId: organizationId,
+      id: id,
+    });
   };
 
   useEffect(() => {
@@ -98,14 +114,23 @@ const EventDetailScreen = ({ navigation, route }) => {
         setAgeGroup(ageGroup);
         setParticipants(participants);
         setDescription(description);
+        setOrganizationId(organization);
         setNote(note);
         setVolunteers(volunteers);
         setJoinedUser(participantsUserList);
-        setJoined(
-          participantsList &&
-            participantsList !== null &&
-            participantsList.indexOf(userId) >= 0
-        );
+        if (role === TYPE_PARENT)
+          setJoined(
+            participantsList &&
+              participantsList !== null &&
+              participantsList.indexOf(userId) >= 0
+          );
+        if (role === TYPE_VOLUNTEER && !joined) {
+          setJoined(
+            volunteers &&
+              volunteers !== null &&
+              volunteers.filter((vol) => vol.id === currentUser.id).length > 0
+          );
+        }
 
         get(`/orgs/${organization}`)
           .then((orgData) => {
@@ -202,10 +227,16 @@ const EventDetailScreen = ({ navigation, route }) => {
             <Text style={styles.text1}>Volunteer List </Text>
             <View style={styles.volunteers}>
               {volunteers.map((volunteer) => (
-                <View style={styles.volunteer} key={volunteer.id}>
-                  <Text>{volunteer.signup.displayName}</Text>
-                  {/* <Text style={styles.remove} onPress={()=> removeVolunteer(volunteer.id)}>Remove</Text> */}
-                </View>
+                <TouchableOpacity
+                  onPress={() =>
+                    checkVolunteer(volunteer.id, volunteer.signup.emailAddress)
+                  }
+                  key={volunteer.id}>
+                  <View style={styles.volunteer}>
+                    <Text>{volunteer.signup.displayName}</Text>
+                    {/* <Text style={styles.remove} onPress={()=> removeVolunteer(volunteer.id)}>Remove</Text> */}
+                  </View>
+                </TouchableOpacity>
               ))}
             </View>
             <Text style={styles.text1}>ParticipantsList List </Text>
@@ -234,7 +265,7 @@ const EventDetailScreen = ({ navigation, route }) => {
             </View>
             {moment(date, DATE_FORMAT_DISPLAY).diff(new Date(), "day") >= 0 && (
               <Button onPress={joinEvent} disabled={joined}>
-                {joined ? "Joined" : "Join To The Event"}
+                {joined ? "Joined" : "Register"}
               </Button>
             )}
           </ScrollView>
@@ -270,9 +301,7 @@ const EventDetailScreen = ({ navigation, route }) => {
                   )
                   .map((vol) => (
                     <View style={styles.volunteer} key={vol.id}>
-                      <Text onPress={() => addVolunteer(vol.id)}>
-                        {vol.signup.displayName}
-                      </Text>
+                      <Text>{vol.signup.displayName}</Text>
                     </View>
                   ))}
               </ScrollView>

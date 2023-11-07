@@ -9,8 +9,9 @@ const {
   getEventDetail,
   deleteEventData,
   joinEventRepo,
+  getOrgsByIds,
 } = require("../repo/org.repo");
-const { getProfileById } = require("../repo/profile.repo");
+const { getProfileById, getUserRefByEmail } = require("../repo/profile.repo");
 
 const orgs = async (req, res) => {
   try {
@@ -171,9 +172,27 @@ const deleteEvent = async (req, res) => {
 };
 const joinEvent = async (req, res) => {
   try {
-    await joinEventRepo(req.params.userId, req.params.id);
+    await joinEventRepo(req.params.userId, req.params.id, req.params.role);
     res.send({
       status: "OK",
+    });
+  } catch (error) {
+    console.log(error);
+    res.send({
+      status: "Failed",
+      message: error,
+      data: [],
+    });
+  }
+};
+
+const getOrgsByVolunteerId = async (req, res) => {
+  try {
+    const data = await getProfileById(req.params.volunteerId);
+    const orgs = await getOrgsByIds(data.orgs);
+    res.send({
+      status: "OK",
+      data: orgs,
     });
   } catch (error) {
     console.log(error);
@@ -196,4 +215,5 @@ module.exports = {
   deleteEvent,
   joinEvent,
   getJoinedEvents,
+  getOrgsByVolunteerId,
 };

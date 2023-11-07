@@ -38,6 +38,18 @@ const getOrg = async (id) => {
   return data;
 };
 
+const getOrgsByIds = async (ids) => {
+  let docsRef = await Promise.all(
+    ids.map(async (id) => getDoc(doc(orgsCollection, id)))
+  );
+  return docsRef.map((doc) => {
+    return {
+      id: doc.id,
+      name: doc.data().name,
+    };
+  });
+};
+
 const saveOrg = async (organization) => {
   let docRef = doc(orgsCollection);
   await setDoc(docRef, organization);
@@ -62,17 +74,29 @@ const getVolunteerByOrgIdRepo = async (id) => {
   return data;
 };
 
-const joinEventRepo = async (userId, id) => {
+const joinEventRepo = async (userId, id, role) => {
   const docRef = await getDoc(doc(eventCollection, id));
-  let { participantsList } = docRef.data();
-  if (participantsList) {
-    if (participantsList.indexOf(userId) < 0) {
-      participantsList = [...participantsList, userId];
+  if (role === 0) {
+    let { participantsList } = docRef.data();
+    if (participantsList) {
+      if (participantsList.indexOf(userId) < 0) {
+        participantsList = [...participantsList, userId];
+      }
+    } else {
+      participantsList = [userId];
     }
+    await updateDoc(docRef.ref, { participantsList });
   } else {
-    participantsList = [userId];
+    let { volunteers } = docRef.data();
+    if (volunteers) {
+      if (volunteers.indexOf(userId) < 0) {
+        volunteers = [...volunteers, userId];
+      }
+    } else {
+      volunteers = [userId];
+    }
+    await updateDoc(docRef.ref, { volunteers });
   }
-  await updateDoc(docRef.ref, { participantsList });
 };
 
 const saveEventRepo = async (id, data) => {
@@ -124,6 +148,7 @@ const deleteEventData = async (id) => {
 module.exports = {
   getOrg,
   getOrgs,
+  getOrgsByIds,
   getVolunteerByOrgIdRepo,
   saveOrg,
   updateOrg,
