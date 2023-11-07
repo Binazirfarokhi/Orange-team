@@ -34,6 +34,7 @@ const CreateEventScreen = ({ navigation, route }) => {
   const [time, setTime] = useState(moment().format(TIME_FORMAT_DISPLAY));
   const [pickerOpen, setPickerOpen] = useState(false);
   const [location, setLocation] = useState("");
+  const [coordinates, setCoordinates] = useState({ lat: null, lon: null });
   const [suggestions, setSuggestions] = useState([]);
   const [isInputFocused, setInputFocused] = useState(false);
   const [organization, setOrganization] = useState("");
@@ -223,6 +224,10 @@ const CreateEventScreen = ({ navigation, route }) => {
 
   const onSuggestionPress = (suggestion) => {
     setLocation(suggestion.label);
+    setCoordinates({
+      lat: suggestion.coordinates[1], 
+      lon: suggestion.coordinates[0],
+    });
     setSuggestions([]);
     setInputFocused(false);
   };
@@ -260,6 +265,7 @@ const CreateEventScreen = ({ navigation, route }) => {
         time,
         organization,
         location,
+        coordinates,
         organization: organizationId,
         eventType,
         ageGroup,
