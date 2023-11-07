@@ -13,9 +13,9 @@ import ChildrenListScreen from "./layouts/children-list.layout";
 import AddChildrenScreen from "./layouts/add-child.layout";
 import EventHistoryScreen from "./layouts/event-history.layout";
 import PersonalInformationScreen from "./layouts/personal-information.layout";
-import StartChatScreen from './layouts/chat/start-chat.layout';
-import ChatListScreen from './layouts/chat/chat-list.layout';
-import ChatScreen from './layouts/chat/chat.layout';
+import StartChatScreen from "./layouts/chat/start-chat.layout";
+import ChatListScreen from "./layouts/chat/chat-list.layout";
+import ChatScreen from "./layouts/chat/chat.layout";
 
 import { post, get } from "./contexts/api";
 import {
@@ -33,20 +33,20 @@ import EventDetailScreen from "./layouts/event-detail.layout";
 import OrganizationInformationScreen from "./layouts/organization-information.layout";
 import ChildDetailScreen from "./layouts/child-detail.layout";
 
-import { ThemeProvider, createTheme } from '@rneui/themed';
+import { ThemeProvider, createTheme } from "@rneui/themed";
 import ChildAchivementScreen from "./layouts/child-achivement.layout";
 
 const theme = createTheme({
   lightColors: {
-    primary: '#613194',
+    primary: "#613194",
   },
   darkColors: {
-    primary: 'blue',
+    primary: "blue",
   },
   components: {
     Button: {
       // raised: true,
-      radius: 10
+      radius: 10,
     },
   },
 });
@@ -190,22 +190,33 @@ function App({ navigation }) {
             )}
 
             <Stack.Group
-              screenOptions={{ headerStyle: { backgroundColor: "papayawhip" } }}>
+              screenOptions={{
+                headerStyle: { backgroundColor: "papayawhip" },
+              }}>
               <Stack.Screen name="Account" component={AccountScreen} />
               <Stack.Screen
                 name="PersonalInformation"
                 component={PersonalInformationScreen}
               />
-              <Stack.Screen name="ChildrenList" component={ChildrenListScreen} />
+              <Stack.Screen
+                name="ChildrenList"
+                component={ChildrenListScreen}
+              />
               <Stack.Screen name="AddChild" component={AddChildrenScreen} />
               <Stack.Screen name="ChildDetail" component={ChildDetailScreen} />
-              <Stack.Screen name="AchivementDetail" component={ChildAchivementScreen} />
+              <Stack.Screen
+                name="AchivementDetail"
+                component={ChildAchivementScreen}
+              />
               <Stack.Screen
                 name="TimeInVolunteer"
                 component={TimeInVolunteerScreen}
               />
               <Stack.Screen name="Review" component={ReviewScreen} />
-              <Stack.Screen name="EventHistory" component={EventHistoryScreen} />
+              <Stack.Screen
+                name="EventHistory"
+                component={EventHistoryScreen}
+              />
               <Stack.Screen name="Settings" component={SettingsScreen} />
               <Stack.Screen
                 name="VolunteerDetail"
