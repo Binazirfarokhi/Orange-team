@@ -18,12 +18,15 @@ import {
   DATE_FORMAT_PICKER,
   TIME_FORMAT_DISPLAY,
   TIME_FORMAT_PICKER,
+  TYPE_ORGANIZATION,
+  TYPE_VOLUNTEER,
 } from "../util/constants";
 
 import { useHeaderHeight } from "@react-navigation/elements";
 import { useEffect } from "react";
 import { getPersistData } from "../contexts/store";
 import { get, patch, post, getLocation } from "../contexts/api";
+import { Dropdown } from "react-native-element-dropdown";
 
 const CreateEventScreen = ({ navigation, route }) => {
   const [eventName, setEventName] = useState("");
@@ -44,6 +47,11 @@ const CreateEventScreen = ({ navigation, route }) => {
   const [volunteers, setVolunteers] = useState([]);
   const [searchText, setSearchText] = useState("");
   const [showVolunteer, setShowVolunteer] = useState(false);
+  const [orgs, setOrgs] = useState([]);
+  const [isFocus, setIsFocus] = useState(false);
+  const [selectedDropdown, setSelectedDropdown] = useState([]);
+  const [selectedIndex, setSelectedIndex] = useState(0);
+  const [role, setRole] = useState();
   const height = useHeaderHeight();
 
   let id;
@@ -54,21 +62,34 @@ const CreateEventScreen = ({ navigation, route }) => {
   useEffect(() => {
     getPersistData("userInfo")
       .then((data) => {
-        const organization = data[0].organization;
-        setOrganizationId(organization);
-        get(`/orgs/${organization}`)
-          .then((orgData) => {
-            setOrganization(orgData.data.name);
-          })
-          .catch((error) => alert("Unable to load organization data"));
-        get(`/orgs/volunteer/${organization}`)
-          .then((volData) => {
-            setAvailableVolunteers(volData.data.data);
-          })
-          .catch((error) => alert("Unable to load organization data"));
+        const { organization, id, role } = data[0];
+        setUserId(id);
+        setRole(role);
+        if (role === TYPE_ORGANIZATION) {
+          setOrganizationId(organization);
+          get(`/orgs/${organization}`)
+            .then((orgData) => {
+              setOrganization(orgData.data.name);
+            })
+            .catch((error) => alert("Unable to load organization data"));
+
+          retrieveVolunteer(organization).then().catch();
+        }
       })
-      .catch((error) => alert("Unable to load user data"));
+      .catch((error) => {
+        console.error(error);
+        alert("Unable to load user data");
+      });
   }, []);
+
+  const retrieveVolunteer = (org) => {
+    // alert(org)
+    get(`/orgs/volunteer/${org}`)
+      .then((volData) => {
+        setAvailableVolunteers(volData.data.data);
+      })
+      .catch((error) => alert("Unable to load organization data"));
+  };
   // load event for edit
   useEffect(() => {
     if (id) {
@@ -83,6 +104,7 @@ const CreateEventScreen = ({ navigation, route }) => {
             location,
             note,
             organization,
+            organizationId,
             participants,
             time,
             volunteers,
@@ -94,11 +116,23 @@ const CreateEventScreen = ({ navigation, route }) => {
           setEventType(eventType);
           setLocation(location);
           setNote(note);
-          setOrganization(organization);
+          setOrganizationId(organization);
+          get(`/orgs/${organization}`)
+            .then((orgData) => {
+              setOrganization(orgData.data.name);
+              setSelectedDropdown([
+                { label: orgData.data.name, value: organization },
+              ]);
+              setSelectedIndex(0);
+            })
+            .catch((error) => alert("Unable to load organization data"));
           setParticipants(participants);
           setTime(time);
           setVolunteers(volunteers);
           const tempVolunteer = volunteers.map((v) => v.id);
+          if (role === TYPE_VOLUNTEER) {
+            console.log(organizationId);
+          }
           setAvailableVolunteers(
             availableVolunteers.filter(
               (vol) => tempVolunteer.indexOf(vol.id) < 0
@@ -111,6 +145,32 @@ const CreateEventScreen = ({ navigation, route }) => {
         });
     }
   }, []);
+
+  // load organization list if it is volunteer is creating
+  useEffect(() => {
+    if (role === TYPE_VOLUNTEER && userId && userId !== null) {
+      get(`/orgs/orgs/${userId}`)
+        .then((data) => {
+          setOrgs(
+            data.data.data.map((org) => ({ label: org.name, value: org.id }))
+          );
+        })
+        .catch((error) => {
+          console.error(error);
+          alert("Unable to load Organization List.");
+        });
+    }
+  }, [role, userId]);
+
+  useEffect(() => {
+    if (role === TYPE_VOLUNTEER && selectedDropdown.length > 0) {
+      const { label, value } = selectedDropdown[0];
+      // console.log(label, value)
+      retrieveVolunteer(value);
+      setOrganization(label);
+      setOrganizationId(value);
+    }
+  }, [selectedDropdown]);
 
   const removeVolunteer = (id) => {
     setAvailableVolunteers([
@@ -132,30 +192,30 @@ const CreateEventScreen = ({ navigation, route }) => {
     }
   };
 
-// fetching location suggestions 
+  // fetching location suggestions
   const fetchLocations = async (searchText) => {
     try {
-      const response = await getLocation('/location', { text: searchText });
-      const suggestions = response.data.features.map(feature => {
+      const response = await getLocation("/location", { text: searchText });
+      const suggestions = response.data.features.map((feature) => {
         return {
           label: feature.properties.formatted,
-          coordinates: feature.geometry.coordinates
+          coordinates: feature.geometry.coordinates,
         };
       });
-      setSuggestions(suggestions); 
+      setSuggestions(suggestions);
       // console.log(suggestions);
     } catch (error) {
-      console.error('Error fetching location suggestions:', error);
+      console.error("Error fetching location suggestions:", error);
     }
   };
 
   useEffect(() => {
-    if (location.length > 5) { 
+    if (location.length > 5) {
       fetchLocations(location);
     } else {
-      setSuggestions([]); 
+      setSuggestions([]);
     }
-  }, [location]); 
+  }, [location]);
 
   const handleLocationInput = (e) => {
     setLocation(e.nativeEvent.text);
@@ -177,6 +237,19 @@ const CreateEventScreen = ({ navigation, route }) => {
     if (ageGroup === "") message += "Age Group should not be blank.\n";
     if (participants === "") message += "Participants should not be blank.\n";
     if (volunteers.length === 0) message += "Volunteers should not be blank.\n";
+    // if (selectedIndex.length === 0)
+    //     message += 'Volunteers should not be blank.\n'
+    if (role === TYPE_VOLUNTEER) {
+      if (
+        selectedDropdown === null ||
+        selectedDropdown === undefined ||
+        selectedDropdown.length <= 0
+      ) {
+        message += "Organization should not be blank.\n";
+      }
+      setOrganization(selectedDropdown.label);
+      setOrganizationId(selectedDropdown.value);
+    }
 
     if (message !== "") {
       alert(message);
@@ -187,7 +260,7 @@ const CreateEventScreen = ({ navigation, route }) => {
         time,
         organization,
         location,
-        organizationId,
+        organization: organizationId,
         eventType,
         ageGroup,
         participants,
@@ -234,7 +307,38 @@ const CreateEventScreen = ({ navigation, route }) => {
         />
         <Text style={styles.title}>Create Event</Text>
         <View>
-          <ScrollView style={{ marginBottom: 200, paddingRight: 20 }}>
+          <ScrollView style={{ marginBottom: 150, paddingRight: 20 }}>
+            {role === TYPE_VOLUNTEER && (
+              <View style={{ padding: 10, height: 80, marginBottom: 20 }}>
+                <Text style={styles.label}>Organization </Text>
+                <Dropdown
+                  style={{
+                    ...styles.dropdown,
+                    height: 30,
+                  }}
+                  placeholderStyle={styles.placeholderStyle}
+                  selectedTextStyle={styles.selectedTextStyle}
+                  inputSearchStyle={styles.inputSearchStyle}
+                  iconStyle={styles.iconStyle}
+                  data={orgs}
+                  search
+                  maxHeight={300}
+                  labelField="label"
+                  valueField="value"
+                  placeholder={!isFocus ? "Select item" : "..."}
+                  searchPlaceholder="Search..."
+                  value={selectedDropdown[selectedIndex]}
+                  onFocus={() => setIsFocus(true)}
+                  onBlur={() => setIsFocus(false)}
+                  onChange={(item) => {
+                    let data = [...selectedDropdown];
+                    data[selectedIndex] = item;
+                    setSelectedDropdown(data);
+                    setIsFocus(false);
+                  }}
+                />
+              </View>
+            )}
             <Input
               onChange={(e) => setEventName(e.nativeEvent.text)}
               containerStyle={{}}
@@ -302,11 +406,9 @@ const CreateEventScreen = ({ navigation, route }) => {
               value={time}
             />
             <Input
-              onChange={handleLocationInput}
+              onChange={(e) => setLocation(e.nativeEvent.text)}
               containerStyle={{}}
               disabledInputStyle={{ background: "#ddd" }}
-              onFocus={() => setInputFocused(true)}
-              onBlur={() => setInputFocused(false)}
               inputContainerStyle={{}}
               errorStyle={{}}
               errorProps={{}}
@@ -320,17 +422,6 @@ const CreateEventScreen = ({ navigation, route }) => {
               label="Location"
               value={location}
             />
-            {isInputFocused && suggestions.length > 0 && (
-              <ScrollView style={{ maxHeight: 200 }}>
-                {suggestions.map((suggestion, index) => (
-                  <ListItem key={index} onPress={() => onSuggestionPress(suggestion)}>
-                    <ListItem.Content>
-                      <ListItem.Title>{suggestion.label}</ListItem.Title>
-                    </ListItem.Content>
-                  </ListItem>
-                ))}
-              </ScrollView>
-            )}
             <Input
               onChange={(e) => setEventType(e.nativeEvent.text)}
               containerStyle={{}}
@@ -525,6 +616,16 @@ const styles = {
     width: 300,
     height: 400,
     display: "flex",
+  },
+  label: {
+    fontWeight: "bold",
+    color: "#86939e",
+    fontSize: 16,
+    paddingBottom: 20,
+  },
+  dropdown: {
+    paddingLeft: 20,
+    backgroundColor: "white",
   },
 };
 

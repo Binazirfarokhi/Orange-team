@@ -4,10 +4,10 @@ import { View } from "react-native";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import Feather from "react-native-vector-icons/Feather";
-import { useEffect } from "react";
+import React, { useEffect } from "react";
 import { useState } from "react";
 import MyTheme from "../contexts/theme";
-import { ButtonGroup } from "@rneui/base";
+import { ButtonGroup } from "@rneui/themed";
 import { ScrollView } from "react-native";
 import EventItem from "../components/event-item.component";
 import { getPersistData } from "../contexts/store";
@@ -20,10 +20,12 @@ import {
 } from "../util/constants";
 import moment from "moment";
 import { bindOrgAndPosition } from "../util/general-functions";
+import AuthContext from "../contexts/auth";
 
 let index = 0;
 
 const EventListScreen = ({ navigation }) => {
+  const { signOut } = React.useContext(AuthContext);
   const [eventName, setEventName] = useState("");
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [events, setEvents] = useState([]);
@@ -68,7 +70,7 @@ const EventListScreen = ({ navigation }) => {
     setReloadOnce(!reloadData);
     const timer = setTimeout(() => {
       setReloadOnce(!reloadData);
-    }, 1000 * 60);
+    }, 1000 * 5);
     return () => clearTimeout(timer);
   }, []);
 
@@ -101,7 +103,18 @@ const EventListScreen = ({ navigation }) => {
             value={eventName}
           />
         </View>
+        {!role && (
+          <View>
+            <Button
+              onPress={signOut}
+              title="Login"
+              containerStyle={{ flex: 1, marginRight: 20 }}>
+              Logout
+            </Button>
+          </View>
+        )}
       </View>
+
       <View>
         <ButtonGroup
           buttonStyle={{}}
@@ -150,7 +163,7 @@ const EventListScreen = ({ navigation }) => {
         </ScrollView>
       </View>
       {/* <View style={styles.backdrop}></View> */}
-      {role === TYPE_ORGANIZATION && (
+      {role !== TYPE_PARENT && (
         <View style={styles.container}>
           <Button
             titleStyle={styles.button}
