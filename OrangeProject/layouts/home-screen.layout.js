@@ -11,11 +11,13 @@ import {
 } from "../util/constants";
 import { useContext } from "react";
 import AuthContext from "../contexts/auth";
-import { Avatar, Button } from "@rneui/themed";
+import { Avatar, Button, Image } from "@rneui/themed";
+import { getImageUrl, uploadImage } from "../util/general-functions";
 
 function HomeScreen({ navigation }) {
   const [name, setName] = useState("");
   const [role, setRole] = useState(0);
+  const [id, setId] = useState();
   const { reloadUserData, signOut } = useContext(AuthContext);
   React.useEffect(() => {
     getPersistData("userInfo")
@@ -28,7 +30,13 @@ function HomeScreen({ navigation }) {
             const { displayName } = data[0].signup;
             setName(displayName);
           }
+          setId(data[0].id);
           setRole(data[0].role);
+          getImageUrl(data[0].id)
+            .then((data) => {
+              if (data !== "FAILED") setImage(data);
+            })
+            .catch((error) => console.error(error));
         }
       })
       .catch((error) => {
@@ -36,6 +44,15 @@ function HomeScreen({ navigation }) {
         alert(error);
       });
   }, []);
+
+  const [image, setImage] = useState(null);
+
+  const pickImage = async () => {
+    // No permissions request is necessary for launching the image library
+    const img = await uploadImage("user", id);
+    if (img !== "FAILED") setImage(img);
+  };
+
   reloadUserData()
     .then((data) => {})
     .catch(console.log);
@@ -64,9 +81,10 @@ function HomeScreen({ navigation }) {
                   size={120}
                   avatarStyle={{ marginLeft: 10 }}
                   rounded
-                  source={require("../assets/boy.png")}
-                  containerStyle={{ backgroundColor: "#eb1561" }}>
-                  <Avatar.Accessory size={34} />
+                  source={
+                    image ? { uri: image } : require("../assets/boy.png")
+                  }>
+                  <Avatar.Accessory size={34} onPress={pickImage} />
                 </Avatar>
               </View>
               <Text style={styles.username}>{name}</Text>
@@ -243,6 +261,12 @@ function HomeScreen({ navigation }) {
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#fff",
+    alignItems: "center",
+    justifyContent: "center",
+  },
   title: {
     paddingTop: 40,
     fontSize: 40,

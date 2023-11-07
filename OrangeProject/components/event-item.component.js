@@ -1,11 +1,11 @@
-import { Button, ButtonGroup } from "@rneui/themed";
+import { Button, ButtonGroup, Image } from "@rneui/themed";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { ProfileImage } from "./profile-image.component";
-import moment from "moment";
 import { POSITION_L1 } from "../util/constants";
 import { Alert } from "react-native";
 import { deleteCall } from "../contexts/api";
+import { Avatar } from "react-native-gifted-chat";
+import { ProfileImage } from "./profile-image.component";
 
 export default function EventItem({ navigation, event, orgPos, reload }) {
   const {
@@ -13,6 +13,7 @@ export default function EventItem({ navigation, event, orgPos, reload }) {
     date,
     time,
     organization,
+    images,
     location,
     id,
     ageGroup,
@@ -37,7 +38,6 @@ export default function EventItem({ navigation, event, orgPos, reload }) {
   const confirmDelete = async () => {
     try {
       const result = await deleteCall(`/orgs/event/${id}`).data;
-      console.log(result);
       if (result.status === "OK") reload();
     } catch (error) {
       console.error(error);
@@ -51,8 +51,24 @@ export default function EventItem({ navigation, event, orgPos, reload }) {
 
   return (
     <View style={styles.main}>
-      <View style={{ flex: 1, paddingRight: 40 }}>
-        <ProfileImage size={60} />
+      <View
+        style={{
+          flex: 1,
+          paddingRight: 40,
+          alignItems: "center",
+          justifyContent: "center",
+        }}>
+        {images && images !== null && images.length > 0 ? (
+          <Image
+            style={{
+              width: 60,
+              height: 60,
+            }}
+            source={{ uri: images[0] }}
+          />
+        ) : (
+          <ProfileImage size={60} />
+        )}
       </View>
       <View style={{ flex: 4, display: "flex", flexDirection: "column" }}>
         <TouchableOpacity style={styles.button} onPress={goto}>
@@ -104,7 +120,7 @@ const styles = StyleSheet.create({
     paddingLeft: 20,
     paddingRight: 20,
     display: "flex",
-    height: 150,
+    minHeight: 150,
     flexDirection: "row",
   },
   name: {
