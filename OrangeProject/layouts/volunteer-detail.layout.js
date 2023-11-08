@@ -3,7 +3,6 @@ import Feather from "react-native-vector-icons/Feather";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
-import { ProfileImage } from "../components/profile-image.component";
 import { useEffect, useState } from "react";
 import { get, patch } from "../contexts/api";
 import moment from "moment/moment";
@@ -11,7 +10,8 @@ import { POSITIONS, getPositionByIndex } from "../util/constants";
 import { Dropdown } from "react-native-element-dropdown";
 import { getPersistData } from "../contexts/store";
 import { Avatar, Button, Overlay } from "@rneui/themed";
-import PhotoUpload from "../components/photo-upload.component";
+import { getImageUrl } from "../util/general-functions";
+import EventItem from "../components/event-item.component";
 
 const VolunteerDetailScreen = ({ navigation, route }) => {
   const [id, setid] = useState();
@@ -20,7 +20,6 @@ const VolunteerDetailScreen = ({ navigation, route }) => {
   const [orgId, setOrgId] = useState();
   useEffect(() => {
     if (route && route.params) {
-      console.log(route.params);
       setEmail(route.params.email);
       setFromOrg(route.params.fromOrg);
       setOrgId(route.params.orgId);
@@ -28,15 +27,14 @@ const VolunteerDetailScreen = ({ navigation, route }) => {
     }
   }, []);
 
+  const [image, setImage] = useState();
+
   const [volunteerInfo, setVolunteerInfo] = useState({});
   const [collapse, setCollapse] = useState(0);
-  const [events, setEvents] = useState([]);
   const [selectedDropdown, setSelectedDropdown] = useState([]);
   const [isFocus, setIsFocus] = useState(false);
   const [updatedOrgPosition, setUpdatedOrgPosition] = useState(false);
   const [orgList, setOrgList] = useState([]);
-
-  const [visible, setVisible] = useState(false);
 
   useEffect(() => {
     get(`/orgs`)
@@ -55,6 +53,11 @@ const VolunteerDetailScreen = ({ navigation, route }) => {
         const { emailAddress } = data[0].signup;
         setEmail(emailAddress);
         const result = (await get(`/profile/${emailAddress}`)).data[0];
+        getImageUrl(data[0].id)
+          .then((data) => {
+            if (data !== "FAILED") setImage(data);
+          })
+          .catch((error) => {});
 
         get(`/profile/${email && email !== null ? email : emailAddress}`)
           .then((data) => {
@@ -169,16 +172,15 @@ const VolunteerDetailScreen = ({ navigation, route }) => {
               onPress={() => navigation.goBack()}
             />
           </View>
-          <ScrollView>
+          <ScrollView style={{ marginBottom: 30 }}>
             <View style={{ alignItems: "center" }}>
               <Avatar
                 size={120}
                 avatarStyle={{ marginLeft: 10 }}
                 rounded
-                source={require("../assets/boy.png")}
-                containerStyle={{ backgroundColor: "#eb1561" }}>
-                <Avatar.Accessory size={34} />
-              </Avatar>
+                source={
+                  image ? { uri: image } : require("../assets/boy.png")
+                }></Avatar>
               <Text style={styles.name}>
                 {volunteerInfo.signup.displayName}
               </Text>
@@ -244,24 +246,17 @@ const VolunteerDetailScreen = ({ navigation, route }) => {
                   size={20}
                   style={styles.leftIcon}
                 />
-                <Text style={styles.itemText} onPress={() => setCollapse(1)}>
+                <Text
+                  style={styles.itemText}
+                  onPress={() => navigation.navigate("EventHistory")}>
                   Event History
                 </Text>
                 <FontAwesome
-                  name={collapse === 1 ? "chevron-up" : "chevron-down"}
+                  name={"chevron-right"}
                   size={20}
                   style={styles.rightIcon}
                 />
               </View>
-              {collapse === 1 && (
-                <View style={styles.card}>
-                  {events.length > 0 ? (
-                    <Text>Events</Text>
-                  ) : (
-                    <Text>No events found.</Text>
-                  )}
-                </View>
-              )}
               <View style={styles.item}>
                 <FontAwesome name="clock-o" size={20} style={styles.leftIcon} />
                 <Text style={styles.itemText} onPress={() => setCollapse(2)}>
@@ -318,9 +313,6 @@ const VolunteerDetailScreen = ({ navigation, route }) => {
           </ScrollView>
         </ImageBackground>
       </View>
-      <Overlay isVisible={visible} onBackdropPress={() => {}}>
-        <PhotoUpload title="Profile Photo Upload" id={id} />
-      </Overlay>
     </>
   );
 };

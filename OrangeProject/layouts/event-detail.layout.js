@@ -50,7 +50,7 @@ const EventDetailScreen = ({ navigation, route }) => {
   const [role, setRole] = useState();
   const [currentUser, setCurrentUser] = useState();
   const [mapUrl, setMapUrl] = useState(null);
-
+  const [images, setImages] = useState([]);
 
   useEffect(() => {
     getPersistData("userInfo")
@@ -101,6 +101,7 @@ const EventDetailScreen = ({ navigation, route }) => {
           time,
           organization,
           participantsList,
+          images,
           location,
           coordinates,
           eventType,
@@ -125,6 +126,9 @@ const EventDetailScreen = ({ navigation, route }) => {
         setNote(note);
         setVolunteers(volunteers);
         setJoinedUser(participantsUserList);
+        if (images && images !== null) {
+          setImages(images);
+        }
         if (role === TYPE_PARENT)
           setJoined(
             participantsList &&
@@ -175,7 +179,7 @@ const EventDetailScreen = ({ navigation, route }) => {
       fetchMap();
     }
   }, [coordinates]);
-  
+
 
   return (
     <KeyboardAvoidingView
@@ -192,6 +196,20 @@ const EventDetailScreen = ({ navigation, route }) => {
         {/* <Text style={styles.title}>Event Page</Text> */}
         <View>
           <ScrollView style={{ paddingRight: 20 }}>
+            {images && images.length > 0 && (
+              <View style={{ alignItems: "center", height: 200 }}>
+                <ScrollView horizontal={true}>
+                  {images.map((uri) => (
+                    <Image
+                      key={uri}
+                      // containerStyle={{width: 36, height: 36}}
+                      source={{ uri }}
+                      style={styles.image}
+                    />
+                  ))}
+                </ScrollView>
+              </View>
+            )}
             <Text style={styles.title}>{eventName}</Text>
             <View
               style={{ ...styles.item, display: "flex", flexDirection: "row" }}>
@@ -382,6 +400,7 @@ const styles = {
     paddingTop: 30,
     paddingBottom: 30,
     fontSize: 30,
+    fontWeight: "bold",
   },
   logo: {
     /* Vector */
@@ -413,6 +432,10 @@ const styles = {
   item: {
     paddingTop: 10,
     paddingBottom: 10,
+  },
+  image: {
+    width: 300,
+    height: 200,
   },
 };
 

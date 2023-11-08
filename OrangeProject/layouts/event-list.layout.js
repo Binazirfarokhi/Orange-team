@@ -48,20 +48,22 @@ const EventListScreen = ({ navigation }) => {
           result = (await get(`/orgs/events/${data[0].organization}`)).data
             .data;
           setEvents(result);
-        } else if (role === TYPE_PARENT) {
+        } else {
           result = (await get(`/orgs/events`)).data.data;
           setEvents(result);
-        } else {
-          if (data[0].orgs) {
-            await Promise.all(
-              data[0].orgs.map(async (org) => {
-                const record = (await get(`/orgs/events/${org}`)).data.data;
-                result = [...result, ...record];
-              })
-            );
-            setEvents(result);
-          }
-        }
+        } /*else {
+                    if (data[0].orgs) {
+                        await Promise.all(data[0].orgs.map(async org => {
+                            const record = (await get(`/orgs/events/${org}`)).data.data;
+                            result = [
+                                ...result,
+                                ...record
+                            ]
+                        }));
+                        setEvents(result)
+                    }
+
+                }*/
       }
     });
   }, [reloadOnce]);
@@ -103,16 +105,12 @@ const EventListScreen = ({ navigation }) => {
             value={eventName}
           />
         </View>
-        {!role && (
-          <View>
-            <Button
-              onPress={signOut}
-              title="Login"
-              containerStyle={{ flex: 1, marginRight: 20 }}>
-              Logout
-            </Button>
-          </View>
-        )}
+        {/* {
+                    !role &&
+                    <View>
+                        <Button onPress={signOut} title="Login" containerStyle={{ flex: 1, marginRight: 20 }}>Logout</Button>
+                    </View>
+                } */}
       </View>
 
       <View>

@@ -1,4 +1,4 @@
-import { Button, Input, Overlay, Text, ListItem } from "@rneui/themed";
+import { Button, Divider, Image, Input, Overlay, Text } from "@rneui/themed";
 import {
   Platform,
   ScrollView,
@@ -27,8 +27,10 @@ import { useEffect } from "react";
 import { getPersistData } from "../contexts/store";
 import { get, patch, post, getLocation } from "../contexts/api";
 import { Dropdown } from "react-native-element-dropdown";
+import { uploadImage } from "../util/general-functions";
 
 const CreateEventScreen = ({ navigation, route }) => {
+  const [userId, setUserId] = useState();
   const [eventName, setEventName] = useState("");
   const [date, setDate] = useState(moment().format(DATE_FORMAT_DISPLAY));
   const [time, setTime] = useState(moment().format(TIME_FORMAT_DISPLAY));
@@ -53,6 +55,9 @@ const CreateEventScreen = ({ navigation, route }) => {
   const [selectedDropdown, setSelectedDropdown] = useState([]);
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [role, setRole] = useState();
+
+  const [images, setImages] = useState([]);
+
   const height = useHeaderHeight();
 
   let id;
@@ -83,6 +88,11 @@ const CreateEventScreen = ({ navigation, route }) => {
       });
   }, []);
 
+  const upload = async () => {
+    const imgs = await uploadImage("event", null, true);
+    setImages([...images, ...imgs]);
+  };
+
   const retrieveVolunteer = (org) => {
     // alert(org)
     get(`/orgs/volunteer/${org}`)
@@ -103,6 +113,7 @@ const CreateEventScreen = ({ navigation, route }) => {
             eventName,
             eventType,
             location,
+            coordinates,
             note,
             organization,
             organizationId,
@@ -118,6 +129,7 @@ const CreateEventScreen = ({ navigation, route }) => {
           setLocation(location);
           setNote(note);
           setOrganizationId(organization);
+          if (images && images !== null) setImages(images);
           get(`/orgs/${organization}`)
             .then((orgData) => {
               setOrganization(orgData.data.name);
@@ -265,6 +277,7 @@ const CreateEventScreen = ({ navigation, route }) => {
         time,
         organization,
         location,
+        images,
         coordinates,
         organization: organizationId,
         eventType,
@@ -512,6 +525,20 @@ const CreateEventScreen = ({ navigation, route }) => {
                 </View>
               ))}
             </View>
+            <Button
+              onPress={() => upload()}
+              style={{ marginTop: 20, marginBottom: 20 }}>
+              Add Pictures
+            </Button>
+            {images && images !== null && images.length > 0 && (
+              <View style={{ alignItems: "center", height: 200 }}>
+                <ScrollView horizontal={true}>
+                  {images.map((uri) => (
+                    <Image key={uri} source={{ uri }} style={styles.image} />
+                  ))}
+                </ScrollView>
+              </View>
+            )}
             <Input
               onChange={(e) => setNote(e.nativeEvent.text)}
               containerStyle={{}}
@@ -632,6 +659,10 @@ const styles = {
   dropdown: {
     paddingLeft: 20,
     backgroundColor: "white",
+  },
+  image: {
+    width: 300,
+    height: 200,
   },
 };
 
