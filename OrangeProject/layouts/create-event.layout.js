@@ -1,4 +1,4 @@
-import { Button, Divider, Image, Input, Overlay, Text } from "@rneui/themed";
+import { Button, Divider, Image, Input, Overlay, Text, ListItem } from "@rneui/themed";
 import {
   Platform,
   ScrollView,
@@ -425,9 +425,11 @@ const CreateEventScreen = ({ navigation, route }) => {
               value={time}
             />
             <Input
-              onChange={(e) => setLocation(e.nativeEvent.text)}
+              onChange={handleLocationInput}
               containerStyle={{}}
               disabledInputStyle={{ background: "#ddd" }}
+              onFocus={() => setInputFocused(true)}
+              onBlur={() => setInputFocused(false)}
               inputContainerStyle={{}}
               errorStyle={{}}
               errorProps={{}}
@@ -440,7 +442,18 @@ const CreateEventScreen = ({ navigation, route }) => {
               placeholder="Location"
               label="Location"
               value={location}
-            />
+              />
+              {isInputFocused && suggestions.length > 0 && (
+                <ScrollView style={{ maxHeight: 200 }}>
+                  {suggestions.map((suggestion, index) => (
+                    <ListItem key={index} onPress={() => onSuggestionPress(suggestion)}>
+                      <ListItem.Content>
+                        <ListItem.Title>{suggestion.label}</ListItem.Title>
+                      </ListItem.Content>
+                    </ListItem>
+                  ))}
+                </ScrollView>
+              )}
             <Input
               onChange={(e) => setEventType(e.nativeEvent.text)}
               containerStyle={{}}
