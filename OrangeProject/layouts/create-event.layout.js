@@ -237,7 +237,7 @@ const CreateEventScreen = ({ navigation, route }) => {
   const onSuggestionPress = (suggestion) => {
     setLocation(suggestion.label);
     setCoordinates({
-      lat: suggestion.coordinates[1],
+      lat: suggestion.coordinates[1], 
       lon: suggestion.coordinates[0],
     });
     setSuggestions([]);
@@ -278,6 +278,7 @@ const CreateEventScreen = ({ navigation, route }) => {
         organization,
         location,
         images,
+        coordinates,
         organization: organizationId,
         eventType,
         ageGroup,

@@ -8,17 +8,18 @@ import { get } from "../../contexts/api";
 import { getPersistData } from "../../contexts/store";
 import { Ionicons } from "@expo/vector-icons";
 
-export default function ChatListScreen({ navigation, route }) {
-  const [focusedButton, setFocusedButton] = useState("parents");
-  const [users, setUsers] = useState([]);
-  const [myUserId, setMyUserId] = useState(null);
-  const [myRoleType, setMyRoleType] = useState(null);
+export default function ChatListScreen({navigation, route}) {
+    const [focusedButton, setFocusedButton] = useState('parents');
+    const [users, setUsers] = useState([]);
+    const [myUserId, setMyUserId] = useState(null);
+    const [myRoleType, setMyRoleType] = useState(null);
 
-  useEffect(() => {
-    if (route.params?.focusedTab) {
-      setFocusedButton(route.params.focusedTab);
-    }
-  }, [route.params]);
+    useEffect(() => {
+        if (route.params?.focusedTab) {
+            setFocusedButton(route.params.focusedTab);
+        }
+    }, [route.params]);
+
 
   useEffect(() => {
     const fetchUsers = async () => {

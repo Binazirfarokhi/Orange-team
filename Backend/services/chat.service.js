@@ -113,33 +113,35 @@ const getProfileImageURL = async (docId) => {
   }
 };
 
-const listUsers = async (req, res) => {
-  try {
-    const docs = await getProfilewithID();
-    console.log(docs, "docs data");
-    const promises = docs.map(async (doc) => {
-      try {
-        if (doc.id) {
-          doc.profileImageURL = await getProfileImageURL(doc.id);
-        }
-        return doc;
-      } catch (error) {
-        console.error("Error in getProfileImageURL for doc.id:", doc.id, error);
-        doc.profileImageError = true;
-        return doc;
-      }
-    });
+const listUsers = async(req, res) => {
+    try {
+        const docs = await getProfilewithID();
+        console.log(docs, "docs data")
+        const promises = docs.map(async doc => {
+            try {
+              if (doc.id) {
+                doc.profileImageURL = await getProfileImageURL(doc.id);
+              }
+              return doc;
+            } catch (error) {
+              console.error('Error in getProfileImageURL for doc.id:', doc.id, error);
+              doc.profileImageError = true;
+              return doc;
+            }
+          });
 
-    const updatedDocs = await Promise.all(promises);
-    res.send(updatedDocs);
-  } catch (error) {
-    console.error(error);
-    res.send({
-      status: "Failed",
-      message: error.message,
-    });
-  }
-};
+        const updatedDocs = await Promise.all(promises);
+        res.send(updatedDocs);
+    } catch (error) {
+        console.error(error);
+        res.send({
+            status: 'Failed',
+            message: error.message
+        });
+    }
+}
+
+
 
 module.exports = {
   sendMessages,

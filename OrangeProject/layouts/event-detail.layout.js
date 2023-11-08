@@ -153,31 +153,33 @@ const EventDetailScreen = ({ navigation, route }) => {
       .catch((error) => alert("Unable to load organization data"));
   }, []);
 
-  // Adding action of chat screen navigation and map display
+  // Adding action of chat screen navigation and map display 
   const navigateChat = (focusedTab) => {
-    navigation.navigate("ChatList", { focusedTab: focusedTab });
+    navigation.navigate('ChatList', { focusedTab: focusedTab });
   };
 
-  // fetching coordinates data
+  // fetching coordinates data 
   const fetchMap = async () => {
     try {
       const { lat, lon } = coordinates;
       if (!lat || !lon) {
-        console.error("Latitude and longitude are missing");
+        console.error('Latitude and longitude are missing');
         return;
       }
-      const response = await getLocation("/location/displaymap", { lat, lon });
+      const response = await getLocation('/location/displaymap', { lat, lon });
       setMapUrl(response.data.imageUrl);
+  
     } catch (error) {
-      console.error("Error fetching map", error);
+      console.error('Error fetching map', error);
     }
   };
-
+  
   useEffect(() => {
     if (coordinates.lat && coordinates.lon) {
       fetchMap();
     }
   }, [coordinates]);
+
 
   return (
     <KeyboardAvoidingView
@@ -275,31 +277,21 @@ const EventDetailScreen = ({ navigation, route }) => {
               </Text>
             </View>
             {/* Adding two chat buttons and map */}
-            {role !== 2 && (
-              <Button
-                style={{ marginVertical: 10 }}
-                onPress={() => navigateChat("organization")}>
+            { role !== 2 && (
+              <Button style={{marginVertical: 10}} onPress={() => navigateChat('organization')}>
                 Chat with Organization
               </Button>
             )}
-            <Button
-              style={{ marginTop: 10, marginBottom: 30 }}
-              onPress={() => navigateChat("parents")}>
-              Chat with Parents
-            </Button>
-
+              <Button style={{marginTop: 10, marginBottom: 30}} onPress={() => navigateChat('parents')}>
+                Chat with Parents
+              </Button>
+            
             <Text style={styles.text1}>Direction</Text>
             {mapUrl && (
-              <View
-                style={{
-                  alignItems: "center",
-                  justifyContent: "center",
-                  marginTop: 20,
-                  marginBottom: 40,
-                }}>
+              <View style={{ alignItems: 'center', justifyContent: 'center', marginTop: 20, marginBottom: 40}}>
                 <Image
                   source={{ uri: mapUrl }}
-                  style={{ width: 350, height: 240 }}
+                  style={{ width: 350, height: 240 }} 
                 />
               </View>
             )}
