@@ -9,7 +9,7 @@ import { DATE_FORMAT_DISPLAY, TIME_FORMAT_DISPLAY, TYPE_PARENT, TYPE_VOLUNTEER }
 
 import { useEffect } from "react";
 import { getPersistData } from "../contexts/store";
-import { get, post } from "../contexts/api";
+import { get, post, getLocation } from "../contexts/api";
 import { getImageUrlWithName } from "../util/general-functions";
 
 const EventDetailScreen = ({ navigation, route }) => {
@@ -38,6 +38,8 @@ const EventDetailScreen = ({ navigation, route }) => {
     const [currentUser, setCurrentUser] = useState()
     const [images, setImages] = useState([]);
     const [photo, setPhoto] = useState();
+    const [mapUrl, setMapUrl] = useState('');
+
 
     useEffect(() => {
         getPersistData('userInfo').then(data => {

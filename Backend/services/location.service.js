@@ -5,9 +5,7 @@ const getLocation = async (req, res) => {
   try {
     const searchText = req.query.text;
     const GEOAPI = process.env.GEOAPI;
-    const url = `https://api.geoapify.com/v1/geocode/autocomplete?text=${encodeURIComponent(
-      searchText
-    )}&filter=countrycode:ca&apiKey=${GEOAPI}`;
+    const url = `https://api.geoapify.com/v1/geocode/autocomplete?text=${encodeURIComponent(searchText)}&filter=countrycode:ca&apiKey=${GEOAPI}`;
     const response = await axios.get(url);
 
     const bcResults = response.data.features.filter(
