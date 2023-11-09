@@ -19,35 +19,37 @@ import {
 
 import { useEffect } from "react";
 import { getPersistData } from "../contexts/store";
-import { get, post } from "../contexts/api";
+import { get, post, getLocation } from "../contexts/api";
 import { getImageUrlWithName } from "../util/general-functions";
 
 const EventDetailScreen = ({ navigation, route }) => {
-  const { id } = route.params;
-  const [eventName, setEventName] = useState("");
-  const [date, setDate] = useState(moment().format(DATE_FORMAT_DISPLAY));
-  const [time, setTime] = useState(moment().format(TIME_FORMAT_DISPLAY));
-  const [location, setLocation] = useState("");
-  const [coordinates, setCoordinates] = useState({ lat: null, lon: null });
-  const [organization, setOrganization] = useState("");
-  const [organizationId, setOrganizationId] = useState("");
-  const [eventType, setEventType] = useState("");
-  const [ageGroup, setAgeGroup] = useState("");
-  const [participants, setParticipants] = useState("");
-  const [orgParticipants, setOrgParticipants] = useState("");
-  const [description, setDescription] = useState("");
-  const [note, setNote] = useState("");
-  const [availableVolunteers, setAvailableVolunteers] = useState([]);
-  const [volunteers, setVolunteers] = useState([]);
-  const [searchText, setSearchText] = useState("");
-  const [showVolunteer, setShowVolunteer] = useState(false);
-  const [joined, setJoined] = useState(false);
-  const [userId, setUserId] = useState("");
-  const [joinedUser, setJoinedUser] = useState([]);
-  const [role, setRole] = useState();
-  const [currentUser, setCurrentUser] = useState();
-  const [images, setImages] = useState([]);
-  const [photo, setPhoto] = useState();
+    const { id } = route.params;
+    const [eventName, setEventName] = useState('')
+    const [date, setDate] = useState(moment().format(DATE_FORMAT_DISPLAY))
+    const [time, setTime] = useState(moment().format(TIME_FORMAT_DISPLAY))
+    const [location, setLocation] = useState('')
+    const [coordinates, setCoordinates] = useState({ lat: null, lon: null });
+    const [organization, setOrganization] = useState('')
+    const [organizationId, setOrganizationId] = useState('')
+    const [eventType, setEventType] = useState('')
+    const [ageGroup, setAgeGroup] = useState('')
+    const [participants, setParticipants] = useState('')
+    const [orgParticipants, setOrgParticipants] = useState('')
+    const [description, setDescription] = useState('')
+    const [note, setNote] = useState('')
+    const [availableVolunteers, setAvailableVolunteers] = useState([]);
+    const [volunteers, setVolunteers] = useState([])
+    const [searchText, setSearchText] = useState('');
+    const [showVolunteer, setShowVolunteer] = useState(false);
+    const [joined, setJoined] = useState(false)
+    const [userId, setUserId] = useState('')
+    const [joinedUser, setJoinedUser] = useState([])
+    const [role, setRole] = useState()
+    const [currentUser, setCurrentUser] = useState()
+    const [images, setImages] = useState([]);
+    const [photo, setPhoto] = useState();
+    const [mapUrl, setMapUrl] = useState('');
+
 
   useEffect(() => {
     getPersistData("userInfo")
