@@ -20,9 +20,8 @@ const patch = async (url, body) => {
 };
 const getLocation = async (url, queryParams) => {
   return await axios.get(`${config.url}${url}`, {
-    params: queryParams 
+    params: queryParams,
   });
 };
-
 
 export { get, post, put, deleteCall, patch, getLocation };
