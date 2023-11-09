@@ -121,4 +121,33 @@ const saveUserPhoto = async (id, photo) => {
     await updateDoc(docRef, { photo })
 }
 
-module.exports = { getProfiles, getProfileByEmail, saveProfile, updateUsername, updateUserDataById, updateUserData, getUserRefByEmail, getProfileById, saveUserPhoto, saveUserReview, getUserReview }
+// DO NOT CHANGE THIS ONE, THIS IS FOR CHAT FEATURE
+const getProfilewithID = async () => {
+    try {
+      const docRef = await getDocs(userCollection);
+      docRef.forEach((doc) => {});
+      return docRef.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+        signup: "",
+      }));
+    } catch (e) {
+      console.error("Error adding document: ", e);
+      return [];
+    }
+};
+
+module.exports = { 
+    getProfiles, 
+    getProfileByEmail, 
+    saveProfile, 
+    updateUsername, 
+    updateUserDataById, 
+    updateUserData, 
+    getUserRefByEmail, 
+    getProfileById, 
+    saveUserPhoto, 
+    saveUserReview, 
+    getUserReview, 
+    getProfilewithID 
+}

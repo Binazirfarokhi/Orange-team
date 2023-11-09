@@ -100,82 +100,70 @@ const EventListScreen = ({ navigation, route }) => {
 
   return (
     <SafeAreaView>
-    <View style={styles.main}>
-      <View style={styles.searchbar}>
-        <Image
-          source={require("../assets/unilogo.png")}
-          style={{ width: 48, height: 48 }}
-        />
-        <SearchBar
-          lightTheme
-          placeholder="Search"
-          onSubmitEditing={handleSearch}
-          value={searchKeyword}
-          onChangeText={(text) => setSearchKeyword(text)}
-          onCancel={handleCancel}
-          containerStyle={styles.searchBarContainer}
-          inputContainerStyle={styles.searchBarInputContainer}
-          inputStyle={{color:'black'}}
-        />
-      </View>
+      <View style={styles.main}>
+        <View style={styles.searchbar}>
+          <Image
+            source={require("../assets/unilogo.png")}
+            style={{ width: 48, height: 48 }}
+          />
+          <SearchBar
+            lightTheme
+            placeholder="Search"
+            onSubmitEditing={handleSearch}
+            value={searchKeyword}
+            onChangeText={(text) => setSearchKeyword(text)}
+            onCancel={handleCancel}
+            containerStyle={styles.searchBarContainer}
+            inputContainerStyle={styles.searchBarInputContainer}
+            inputStyle={{color:'black'}}
+          />
+        </View>
 
-            <View>
-                <ButtonGroup
-                    buttonStyle={{}}
-                    buttonContainerStyle={{}}
-                    buttons={[
-                        "All",
-                        "Upcoming"
-                    ]}
-                    containerStyle={{ marginRight: 20, marginTop: 20 }}
-                    disabled={[3, 4]}
-                    disabledStyle={{}}
-                    disabledTextStyle={{}}
-                    disabledSelectedStyle={{}}
-                    disabledSelectedTextStyle={{}}
-                    innerBorderStyle={{}}
-                    onPress={selectedIdx =>
-                        setSelectedIndex(selectedIdx)
-                    }
-                    selectedButtonStyle={{}}
-                    selectedIndex={selectedIndex}
-                    selectedTextStyle={{}}
-                    textStyle={{}}
-                />
+        <View>
+          <ButtonGroup
+            buttons={["All", "Upcoming"]}
+            containerStyle={{ marginRight: 20, marginTop: 20 }}
+            onPress={selectedIdx => setSelectedIndex(selectedIdx)}
+            selectedIndex={selectedIndex}
+          />
+        </View>
+        <View style={{ paddingBottom: 150, paddingRight: 20 }}>
+          <ScrollView>
+            {events.length > 0 && events
+              .filter(event => selectedIndex === 0 || (selectedIndex === 1 && moment(event.date, DATE_FORMAT_DISPLAY).diff(new Date(), 'days') >= 0))
+              .filter(event => eventName === '' || event.eventName.indexOf(eventName) >= 0)
+              .map(event => (<EventItem key={event.id} event={event} navigation={navigation} orgPos={orgPos} reload={reloadData} />))}
+          </ScrollView>
+        </View>
+        
+        {role !== TYPE_PARENT &&
+          <>
+            <View style={styles.container}>
+              <Button titleStyle={styles.button}
+                containerStyle={{ borderRightWidth: 1, borderRightColor: '#CCC' }}
+                onPress={() => {
+                  navigation.navigate('CreateEvent')
+                }}
+                type="clear"
+              >
+                <Ionicons name="add-circle-outline" size={20} color={'#FFF'} /> New Event
+              </Button>
             </View>
-            <View style={{ paddingBottom: 150, paddingRight: 20 }}>
-                <ScrollView>
-                    {events.length > 0 && events
-                        .filter(event => selectedIndex === 0 || (selectedIndex === 1 && moment(event.date, DATE_FORMAT_DISPLAY).diff(new Date(), 'day') >= 0))
-                        .filter(event => eventName === '' || event.eventName.indexOf(eventName) >= 0)
-                        .map(event => (<EventItem key={event.id} event={event} navigation={navigation} orgPos={orgPos} reload={reloadData} />))}
-                </ScrollView>
+            <View style={styles.fab}>
+              <Text>Send Picture</Text>
+              <FontAwesome name='chevron-up' size={20} color={'#FFF'} />
             </View>
-            {/* <View style={styles.backdrop}></View> */}
-            {role !== TYPE_PARENT &&
-                <View style={styles.container}>
-                    <Button titleStyle={styles.button}
-                        containerStyle={{ borderRightWidth: 1, borderRightColor: '#CCC' }}
-                        onPress={() => {
-                            navigation.navigate('CreateEvent')
-                        }}
-                        type="clear"
-                    ><Ionicons name="add-circle-outline" size={20} color={'#FFF'} /> New Event</Button>
-                </View>
-                <View style={styles.fab}>
-                    <Text>Send Picture</Text>
-                    <FontAwesome name='chevron-up' size={20} color={'#FFF'} />
-                </View>
-                <View style={styles.fab}>
-                    <Text>Update Location</Text>
-                    <FontAwesome name='chevron-up' size={20} color={'#FFF'} />
-                </View>
-                <View style={styles.fab}>
-                    <Text>New Event</Text>
-                    <FontAwesome name='chevron-up' size={20} color={'#FFF'} />
-                </View>
-            </View> */}
-    </View>
+            <View style={styles.fab}>
+              <Text>Update Location</Text>
+              <FontAwesome name='chevron-up' size={20} color={'#FFF'} />
+            </View>
+            <View style={styles.fab}>
+              <Text>New Event</Text>
+              <FontAwesome name='chevron-up' size={20} color={'#FFF'} />
+            </View>
+          </>
+        }
+      </View>
     </SafeAreaView>
   );
 };
