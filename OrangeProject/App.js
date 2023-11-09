@@ -35,6 +35,7 @@ import ChildDetailScreen from "./layouts/child-detail.layout";
 
 import { ThemeProvider, createTheme } from '@rneui/themed';
 import ChildAchivementScreen from "./layouts/child-achivement.layout";
+import NoResultScreen from "./layouts/search/noresult.layout";
 
 const theme = createTheme({
   lightColors: {
@@ -220,6 +221,7 @@ function App({ navigation }) {
               <Stack.Screen name="ChatList" component={ChatListScreen} />
               <Stack.Screen name="StartChat" component={StartChatScreen} />
               <Stack.Screen name="ChatDetail" component={ChatScreen} />
+              <Stack.Screen name="NoResult" component={NoResultScreen} />
             </Stack.Group>
           </Stack.Navigator>
         </NavigationContainer>

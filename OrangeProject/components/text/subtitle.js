@@ -1,12 +1,13 @@
 import { Text } from "react-native";
-export default function Subtitle({ children }) {
+export default function Subtitle({ children, style }) {
     return (
-        <Text style={{
+        <Text style={[{
             textAlign: 'center',
-            // fontFamily: 'Poppins',
             fontSize: 22,
-            fontWeight: 600
-        }}>
+            fontWeight: '600', 
+            color: 'black',
+        }, style]} 
+        >
             { children }
         </Text>
     );
