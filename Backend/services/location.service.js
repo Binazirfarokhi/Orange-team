@@ -48,8 +48,30 @@ const displayMap = async (req, res) => {
 }
 
 
+const geoCoding = async (req, res) => {
+  const { lat, lon } = req.query;
+
+  try {
+      if (!lat || !lon) {
+          return res.status(400).send("Latitude and longitude missing");
+      }
+
+      const GEOAPI = process.env.GEOAPI;
+      const url = `https://api.geoapify.com/v1/geocode/reverse?lat=${lat}&lon=${lon}&apiKey=${GEOAPI}`;
+      const response = await axios.get(url); 
+      const addressData = response.data;
+      res.json({ address: addressData });
+  } catch (error) {
+      console.error(error);
+      const status = (error.response && error.response.status) ? error.response.status : 500;
+      res.status(status).send("Error generating map with marker");
+  }
+}
+
+
 module.exports = {
     getLocation,
-    displayMap
+    displayMap,
+    geoCoding
 }
 
