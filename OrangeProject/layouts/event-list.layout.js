@@ -1,9 +1,8 @@
 import { Button, Image, Input, Text, SearchBar } from "@rneui/themed";
 import { View } from "react-native";
 
-import FontAwesome from "react-native-vector-icons/FontAwesome";
-import Ionicons from "react-native-vector-icons/Ionicons";
-import Feather from "react-native-vector-icons/Feather";
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import React, { useEffect } from "react";
 import { useFocusEffect } from '@react-navigation/native';
 import { useState } from "react";
@@ -13,14 +12,9 @@ import { ScrollView } from "react-native";
 import EventItem from "../components/event-item.component";
 import { getPersistData } from "../contexts/store";
 import { get } from "../contexts/api";
-import {
-  DATE_FORMAT_DISPLAY,
-  POSITION_L1,
-  TYPE_ORGANIZATION,
-  TYPE_PARENT,
-} from "../util/constants";
+import { DATE_FORMAT_DISPLAY, POSITION_L1, TYPE_ORGANIZATION, TYPE_PARENT } from "../util/constants";
 import moment from "moment";
-import { bindOrgAndPosition } from "../util/general-functions";
+import { bindOrgAndPosition } from '../util/general-functions'
 import AuthContext from "../contexts/auth";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -36,9 +30,9 @@ const EventListScreen = ({ navigation, route }) => {
   const [role, setRole] = useState(0);
   const [searchKeyword, setSearchKeyword] = useState('');
 
-  const reloadData = () => {
-    setReloadOnce(!reloadOnce);
-  };
+    const reloadData = () => {
+        setReloadOnce(!reloadOnce)
+    }
 
   const fetchData = async () => {
     const data = await getPersistData("userInfo");
@@ -125,78 +119,48 @@ const EventListScreen = ({ navigation, route }) => {
         />
       </View>
 
-      <View>
-        <ButtonGroup
-          buttonStyle={{}}
-          buttonContainerStyle={{}}
-          buttons={["All", "Upcoming"]}
-          containerStyle={{ marginRight: 20, marginTop: 20 }}
-          disabled={[3, 4]}
-          disabledStyle={{}}
-          disabledTextStyle={{}}
-          disabledSelectedStyle={{}}
-          disabledSelectedTextStyle={{}}
-          innerBorderStyle={{}}
-          onPress={(selectedIdx) => setSelectedIndex(selectedIdx)}
-          selectedButtonStyle={{}}
-          selectedIndex={selectedIndex}
-          selectedTextStyle={{}}
-          textStyle={{}}
-        />
-      </View>
-      <View style={{ paddingBottom: 150, paddingRight: 20 }}>
-        <ScrollView>
-          {events.length > 0 &&
-            events
-              .filter(
-                (event) =>
-                  selectedIndex === 0 ||
-                  (selectedIndex === 1 &&
-                    moment(event.date, DATE_FORMAT_DISPLAY).diff(
-                      new Date(),
-                      "day"
-                    ) >= 0)
-              )
-              .filter(
-                (event) =>
-                  eventName === "" || event.eventName.indexOf(eventName) >= 0
-              )
-              .map((event) => (
-                <EventItem
-                  key={event.id}
-                  event={event}
-                  navigation={navigation}
-                  orgPos={orgPos}
-                  reload={reloadData}
+            <View>
+                <ButtonGroup
+                    buttonStyle={{}}
+                    buttonContainerStyle={{}}
+                    buttons={[
+                        "All",
+                        "Upcoming"
+                    ]}
+                    containerStyle={{ marginRight: 20, marginTop: 20 }}
+                    disabled={[3, 4]}
+                    disabledStyle={{}}
+                    disabledTextStyle={{}}
+                    disabledSelectedStyle={{}}
+                    disabledSelectedTextStyle={{}}
+                    innerBorderStyle={{}}
+                    onPress={selectedIdx =>
+                        setSelectedIndex(selectedIdx)
+                    }
+                    selectedButtonStyle={{}}
+                    selectedIndex={selectedIndex}
+                    selectedTextStyle={{}}
+                    textStyle={{}}
                 />
-              ))}
-        </ScrollView>
-      </View>
-      {/* <View style={styles.backdrop}></View> */}
-      {role !== TYPE_PARENT && (
-        <View style={styles.container}>
-          <Button
-            titleStyle={styles.button}
-            containerStyle={{ borderRightWidth: 1, borderRightColor: "#CCC" }}
-            onPress={() => {
-              navigation.navigate("CreateEvent");
-            }}
-            type="clear">
-            <Ionicons name="add-circle-outline" size={20} color={"#FFF"} /> New
-            Event
-          </Button>
-          {/* <Button titleStyle={styles.button}
-                        onPressItem={name => {
-                            
+            </View>
+            <View style={{ paddingBottom: 150, paddingRight: 20 }}>
+                <ScrollView>
+                    {events.length > 0 && events
+                        .filter(event => selectedIndex === 0 || (selectedIndex === 1 && moment(event.date, DATE_FORMAT_DISPLAY).diff(new Date(), 'day') >= 0))
+                        .filter(event => eventName === '' || event.eventName.indexOf(eventName) >= 0)
+                        .map(event => (<EventItem key={event.id} event={event} navigation={navigation} orgPos={orgPos} reload={reloadData} />))}
+                </ScrollView>
+            </View>
+            {/* <View style={styles.backdrop}></View> */}
+            {role !== TYPE_PARENT &&
+                <View style={styles.container}>
+                    <Button titleStyle={styles.button}
+                        containerStyle={{ borderRightWidth: 1, borderRightColor: '#CCC' }}
+                        onPress={() => {
+                            navigation.navigate('CreateEvent')
                         }}
                         type="clear"
-                    ><FontAwesome name='chevron-up' size={20} color={'#FFF'} /></Button> */}
-        </View>
-      )}
-      {/* <View style={styles.fabs}>
-                <View style={styles.fab}>
-                    <Text>New Event</Text>
-                    <FontAwesome name='chevron-up' size={20} color={'#FFF'} />
+                    ><Ionicons name="add-circle-outline" size={20} color={'#FFF'} /> New Event</Button>
                 </View>
                 <View style={styles.fab}>
                     <Text>Send Picture</Text>
@@ -276,3 +240,4 @@ const styles = {
   // }
 };
 export default EventListScreen;
+

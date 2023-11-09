@@ -7,5 +7,7 @@ router.get('/:email', profile.user)
 router.delete('/:id', profile.deleteUser)
 router.put('/:email', profile.updateUser)
 router.put('/personal/:email', profile.updatePersonalInfo)
+router.post('/review', profile.saveReview)
+router.get('/review/:id', profile.getReview)
 
 module.exports = router
