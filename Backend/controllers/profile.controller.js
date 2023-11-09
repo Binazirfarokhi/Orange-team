@@ -1,13 +1,13 @@
-const express = require('express')
-const router = express.Router()
-const profile = require('../services/profile.service')
+const express = require("express");
+const router = express.Router();
+const profile = require("../services/profile.service");
 // define the home page route
-router.get('/', profile.listUser)
-router.get('/:email', profile.user)
-router.delete('/:id', profile.deleteUser)
-router.put('/:email', profile.updateUser)
-router.put('/personal/:email', profile.updatePersonalInfo)
-router.post('/review', profile.saveReview)
-router.get('/review/:id', profile.getReview)
+router.get("/", profile.listUser);
+router.get("/:email", profile.user);
+router.delete("/:id", profile.deleteUser);
+router.put("/:email", profile.updateUser);
+router.put("/personal/:email", profile.updatePersonalInfo);
+router.post("/review", profile.saveReview);
+router.get("/review/:id", profile.getReview);
 
-module.exports = router
+module.exports = router;

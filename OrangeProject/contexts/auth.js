@@ -1,5 +1,5 @@
 import { createContext } from "react";
 
-const AuthContext = createContext({signed: true});
+const AuthContext = createContext({ signed: true });
 
 export default AuthContext;
