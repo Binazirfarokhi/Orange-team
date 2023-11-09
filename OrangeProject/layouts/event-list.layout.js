@@ -124,7 +124,7 @@ const EventListScreen = ({ navigation, route }) => {
 
         <View>
           <ButtonGroup
-            buttons={["All", "Upcoming"]}
+            buttons={["All", "Upcoming", "Calendar"]}
             containerStyle={{ marginRight: 20, marginTop: 20 }}
             onPress={(selectedIdx) => setSelectedIndex(selectedIdx)}
             selectedIndex={selectedIndex}
@@ -198,6 +198,7 @@ const EventListScreen = ({ navigation, route }) => {
 const styles = {
   main: {
     paddingLeft: 20,
+    marginBottom: 210
   },
   searchbar: {
     display: "flex",

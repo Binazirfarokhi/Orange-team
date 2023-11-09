@@ -15,7 +15,7 @@ import { bindOrgAndPosition } from "../../util/general-functions";
 export default function SearchEventScreen({ navigation }) {
   const [searchKeyword, setSearchKeyword] = useState('');
   const [ageGroupValues, setAgeGroupValues] = useState([3, 10]);
-  const [participants, setParticipants] = useState('10');
+  const [participants, setParticipants] = useState('100');
   const [fromDate, setFromDate] = useState(new Date());
   const [toDate, setToDate] = useState(new Date());
   const [isFromPickerVisible, setFromPickerVisible] = useState(false);
