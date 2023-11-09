@@ -1,10 +1,11 @@
-import { Button, Image, Input, Text } from "@rneui/themed";
+import { Button, Image, Input, Text, SearchBar } from "@rneui/themed";
 import { View } from "react-native";
 
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import Feather from "react-native-vector-icons/Feather";
 import React, { useEffect } from "react";
+import { useFocusEffect } from '@react-navigation/native';
 import { useState } from "react";
 import MyTheme from "../contexts/theme";
 import { ButtonGroup } from "@rneui/themed";
@@ -21,10 +22,11 @@ import {
 import moment from "moment";
 import { bindOrgAndPosition } from "../util/general-functions";
 import AuthContext from "../contexts/auth";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 let index = 0;
 
-const EventListScreen = ({ navigation }) => {
+const EventListScreen = ({ navigation, route }) => {
   const { signOut } = React.useContext(AuthContext);
   const [eventName, setEventName] = useState("");
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -32,41 +34,40 @@ const EventListScreen = ({ navigation }) => {
   const [orgPos, setOrgPos] = useState({});
   const [reloadOnce, setReloadOnce] = useState(true);
   const [role, setRole] = useState(0);
+  const [searchKeyword, setSearchKeyword] = useState('');
 
   const reloadData = () => {
     setReloadOnce(!reloadOnce);
   };
 
-  useEffect(() => {
-    getPersistData("userInfo").then(async (data) => {
-      if (data && data.length > 0) {
-        let result = [];
-        const { orgs, positionOfOrganization, role } = data[0];
-        setRole(role);
-        setOrgPos(bindOrgAndPosition(orgs, positionOfOrganization));
-        if (data[0].role === TYPE_ORGANIZATION) {
-          result = (await get(`/orgs/events/${data[0].organization}`)).data
-            .data;
-          setEvents(result);
-        } else {
-          result = (await get(`/orgs/events`)).data.data;
-          setEvents(result);
-        } /*else {
-                    if (data[0].orgs) {
-                        await Promise.all(data[0].orgs.map(async org => {
-                            const record = (await get(`/orgs/events/${org}`)).data.data;
-                            result = [
-                                ...result,
-                                ...record
-                            ]
-                        }));
-                        setEvents(result)
-                    }
-
-                }*/
+  const fetchData = async () => {
+    const data = await getPersistData("userInfo");
+    if (data && data.length > 0) {
+      let result = [];
+      const { orgs, positionOfOrganization, role } = data[0];
+      setRole(role);
+      setOrgPos(bindOrgAndPosition(orgs, positionOfOrganization));
+      if (role === TYPE_ORGANIZATION) {
+        result = (await get(`/orgs/events/${data[0].organization}`)).data.data;
+      } else {
+        result = (await get(`/orgs/events`)).data.data;
       }
-    });
+      setEvents(result);
+    }
+  };
+
+  useEffect(() => {
+    if (!(route.params && route.params.filteredEvents)) {
+      fetchData();
+    }
   }, [reloadOnce]);
+
+  useEffect(() => {
+    if (route.params && route.params.filteredEvents) {
+      setEvents(route.params.filteredEvents);
+    }
+  }, [route.params]);
+
 
   useEffect(() => {
     setReloadOnce(!reloadData);
@@ -76,41 +77,52 @@ const EventListScreen = ({ navigation }) => {
     return () => clearTimeout(timer);
   }, []);
 
+  const handleSearch = () => {
+    const keywordLower = searchKeyword.toLowerCase();
+  
+    const filteredEvents = events.filter(event =>
+      event.eventName.toLowerCase().includes(keywordLower)
+    );
+  
+    if (filteredEvents.length === 0) {
+      navigation.navigate('NoResult');
+    } else {
+      setEvents(filteredEvents);
+    }
+  };
+  
+  const handleCancel = () => {
+    setSearchKeyword('');
+    fetchData(); 
+  };
+
+  useFocusEffect(
+    React.useCallback(() => {
+      setSearchKeyword('');
+      fetchData();
+    }, [])
+  );
+  
+
   return (
+    <SafeAreaView>
     <View style={styles.main}>
       <View style={styles.searchbar}>
-        <View style={{ flex: 1 }}>
-          <Image
-            // containerStyle={{width: 36, height: 36}}
-            source={require("../assets/unilogo.png")}
-            style={{ width: 48, height: 48 }}
-          />
-        </View>
-        <View style={styles.searchbox}>
-          <Input
-            style={{ borderWidth: 0 }}
-            onChange={(e) => setEventName(e.nativeEvent.text)}
-            containerStyle={{ height: 40 }}
-            disabledInputStyle={{ background: "#ddd" }}
-            inputContainerStyle={{ height: 40 }}
-            errorStyle={{}}
-            errorProps={{}}
-            inputStyle={{}}
-            labelStyle={{}}
-            labelProps={{}}
-            leftIcon={<FontAwesome name="search" size={20} color={"#666"} />}
-            leftIconContainerStyle={{}}
-            rightIconContainerStyle={{}}
-            placeholder="Event Name"
-            value={eventName}
-          />
-        </View>
-        {/* {
-                    !role &&
-                    <View>
-                        <Button onPress={signOut} title="Login" containerStyle={{ flex: 1, marginRight: 20 }}>Logout</Button>
-                    </View>
-                } */}
+        <Image
+          source={require("../assets/unilogo.png")}
+          style={{ width: 48, height: 48 }}
+        />
+        <SearchBar
+          lightTheme
+          placeholder="Search"
+          onSubmitEditing={handleSearch}
+          value={searchKeyword}
+          onChangeText={(text) => setSearchKeyword(text)}
+          onCancel={handleCancel}
+          containerStyle={styles.searchBarContainer}
+          inputContainerStyle={styles.searchBarInputContainer}
+          inputStyle={{color:'black'}}
+        />
       </View>
 
       <View>
@@ -200,29 +212,31 @@ const EventListScreen = ({ navigation }) => {
                 </View>
             </View> */}
     </View>
+    </SafeAreaView>
   );
 };
 
 const styles = {
   main: {
-    flex: 1,
     paddingLeft: 20,
-    paddingTop: 60,
-    display: "flex",
-    flexDirection: "column",
   },
   searchbar: {
     display: "flex",
     flexDirection: "row",
+    alignItems: 'center', 
     paddingRight: 20,
   },
-  searchbox: {
-    flex: 4,
+  searchBarContainer: {
+    flex: 1,
+    backgroundColor: "transparent",
+    borderBottomColor: "transparent",
+    borderTopColor: "transparent",
+  },
+  searchBarInputContainer: {
     backgroundColor: "#D8D4DE",
-    borderRadius: 50,
-    lineHeight: 50,
+    borderRadius: 25,
     height: 50,
-    paddingLeft: 20,
+    // flex: 1, 
   },
   container: {
     height: 50,

@@ -19,6 +19,7 @@ import ChatActiveIcon from "../assets/chat-active-icon.svg";
 import ChatInactiveIcon from "../assets/chat-inactive-icon.svg";
 import AuthContext from "../contexts/auth";
 import {} from "@rneui/themed";
+import SearchEventScreen from "../layouts/search/search.layout";
 
 const Tab = createBottomTabNavigator();
 
@@ -46,12 +47,6 @@ function AuthorizedTabs() {
   return (
     <>
       <Tab.Navigator screenOptions={{ headerShown: false }}>
-        {/* <Tab.Screen name="Home" component={HomeScreen} options={{
-        tabBarLabel: 'Home',
-        tabBarIcon: ({ color, size })=> (
-          <FontAwesome name='home' size={size} color={color} />
-        )
-      }} /> */}
         <Tab.Screen
           name="Event"
           component={EventListScreen}
@@ -59,6 +54,16 @@ function AuthorizedTabs() {
             tabBarLabel: "Events",
             tabBarIcon: ({ color, size }) => (
               <FontAwesome name="tag" size={size} color={color} />
+            ),
+          }}
+        />
+        <Tab.Screen
+          name="Search"
+          component={SearchEventScreen}
+          options={{
+            tabBarLabel: "Search",
+            tabBarIcon: ({ color, size }) => (
+              <FontAwesome name="search" size={size} color={color} />
             ),
           }}
         />

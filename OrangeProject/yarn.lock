@@ -2208,6 +2208,11 @@
     mkdirp "^1.0.4"
     rimraf "^3.0.2"
 
+"@ptomasroos/react-native-multi-slider@^2.2.2":
+  version "2.2.2"
+  resolved "https://registry.yarnpkg.com/@ptomasroos/react-native-multi-slider/-/react-native-multi-slider-2.2.2.tgz#35a97fb8c355627c6a2ded010b360ac5728b44ad"
+  integrity sha512-HWyCnRD3Z3SbHK2FLWYmBBqd1B4iXipeKv1+AK0FoY/CElEDTEixHE8hN60TsqxalPrznn798LE2Q4tHuCiyaA==
+
 "@react-aria/checkbox@^3.2.1":
   version "3.11.2"
   resolved "https://registry.yarnpkg.com/@react-aria/checkbox/-/checkbox-3.11.2.tgz#9e1045edf282298cb8337fd3fd1d953c6cf5f667"
@@ -5883,6 +5888,11 @@ expo-linear-gradient@12.3.0:
   resolved "https://registry.yarnpkg.com/expo-linear-gradient/-/expo-linear-gradient-12.3.0.tgz#7abd8fedbf0138c86805aebbdfbbf5e5fa865f19"
   integrity sha512-f9e+Oxe5z7fNQarTBZXilMyswlkbYWQHONVfq8MqmiEnW3h9XsxxmVJLG8uVQSQPUsbW+x1UUT/tnU6mkMWeLg==
 
+expo-location@^16.3.0:
+  version "16.3.0"
+  resolved "https://registry.yarnpkg.com/expo-location/-/expo-location-16.3.0.tgz#efe7a3a0134f8309622f09c96631b50933405a20"
+  integrity sha512-AAiuzfVxyWkARb/QYBL2GgfhbWVb8rMpUlE37Uu+q7mLwZtKwcLMfG6UK2PtpFRVS8QW1baxEOV9SxMbtXsjrw==
+
 expo-modules-autolinking@1.5.1:
   version "1.5.1"
   resolved "https://registry.yarnpkg.com/expo-modules-autolinking/-/expo-modules-autolinking-1.5.1.tgz#363f90c172769ce12bf56c7be9ca0897adfc7a81"
@@ -9092,6 +9102,11 @@ react-native-communications@2.2.1:
   version "2.2.1"
   resolved "https://registry.yarnpkg.com/react-native-communications/-/react-native-communications-2.2.1.tgz#7883b56b20a002eeb790c113f8616ea8692ca795"
   integrity sha512-5+C0X9mopI0+qxyQHzOPEi5v5rxNBQjxydPPiKMQSlX1RBIcJ8uTcqUPssQ9Mo8p6c1IKIWJUSqCj4jAmD0qVQ==
+
+react-native-date-picker@^4.3.3:
+  version "4.3.3"
+  resolved "https://registry.yarnpkg.com/react-native-date-picker/-/react-native-date-picker-4.3.3.tgz#5ca4ca10283538ab9307b7f2dc6b83233ded122b"
+  integrity sha512-Lq2hGZkwoyCMsxi/uw4KVGu4/xdPZ8AHEx2SU5KY2mipHFpX+r4n5/gXa+rpCRkARJaTFYPZ7S59bT9KMh7fGw==
 
 react-native-element-dropdown@^2.10.0:
   version "2.10.0"
