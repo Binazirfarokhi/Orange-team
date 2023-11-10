@@ -22,6 +22,7 @@ import moment from "moment";
 import { bindOrgAndPosition } from "../util/general-functions";
 import AuthContext from "../contexts/auth";
 import { SafeAreaView } from "react-native-safe-area-context";
+import CalendarComponent from "../components/calendar.component";
 
 let index = 0;
 
@@ -101,6 +102,15 @@ const EventListScreen = ({ navigation, route }) => {
     }, [])
   );
 
+  const [selectedDateEvents, setSelectedDateEvents] = useState([]);
+
+  const handleDateChange = (date) => {
+    const filteredEvents = events.filter((event) =>
+      moment(event.date).isSame(date, 'day')
+    );
+    setSelectedDateEvents(filteredEvents);
+  };
+
   return (
     <SafeAreaView>
       <View style={styles.main}>
@@ -132,20 +142,18 @@ const EventListScreen = ({ navigation, route }) => {
         </View>
         <View style={{ paddingBottom: 150, paddingRight: 20 }}>
           <ScrollView>
-            {events.length > 0 &&
+            {selectedIndex === 2 ? (
+              <CalendarComponent onDateChange={handleDateChange} events={events} />
+            ) : (
+              events.length > 0 &&
               events
-                .filter(
-                  (event) =>
-                    selectedIndex === 0 ||
-                    (selectedIndex === 1 &&
-                      moment(event.date, DATE_FORMAT_DISPLAY).diff(
-                        new Date(),
-                        "days"
-                      ) >= 0)
+                .filter((event) =>
+                  selectedIndex === 0 ||
+                  (selectedIndex === 1 &&
+                    moment(event.date, DATE_FORMAT_DISPLAY).diff(new Date(), "days") >= 0)
                 )
-                .filter(
-                  (event) =>
-                    eventName === "" || event.eventName.indexOf(eventName) >= 0
+                .filter((event) =>
+                  eventName === "" || event.eventName.indexOf(eventName) >= 0
                 )
                 .map((event) => (
                   <EventItem
@@ -155,11 +163,12 @@ const EventListScreen = ({ navigation, route }) => {
                     orgPos={orgPos}
                     reload={reloadData}
                   />
-                ))}
+                ))
+            )}
           </ScrollView>
         </View>
 
-        {role !== TYPE_PARENT && (
+        {(selectedIndex !== 2 && role !== TYPE_PARENT) && (
           <>
             <View style={styles.container}>
               <Button
@@ -176,7 +185,7 @@ const EventListScreen = ({ navigation, route }) => {
                 New Event
               </Button>
             </View>
-            <View style={styles.fab}>
+            {/* <View style={styles.fab}>
               <Text>Send Picture</Text>
               <FontAwesome name="chevron-up" size={20} color={"#FFF"} />
             </View>
@@ -187,7 +196,7 @@ const EventListScreen = ({ navigation, route }) => {
             <View style={styles.fab}>
               <Text>New Event</Text>
               <FontAwesome name="chevron-up" size={20} color={"#FFF"} />
-            </View>
+            </View> */}
           </>
         )}
       </View>
