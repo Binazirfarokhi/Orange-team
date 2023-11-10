@@ -1,4 +1,4 @@
-import { Button, Divider, Image, Input, Overlay, Text } from "@rneui/themed";
+import { Button, Divider, Image, Input, Overlay, Text, ListItem } from "@rneui/themed";
 import {
   Platform,
   ScrollView,
@@ -24,14 +24,15 @@ import {
 import { useHeaderHeight } from "@react-navigation/elements";
 import { useEffect } from "react";
 import { getPersistData } from "../contexts/store";
-import { get, patch, post } from "../contexts/api";
+import { get, patch, post, getLocation } from "../contexts/api";
 import { Dropdown } from "react-native-element-dropdown";
 import { uploadImage } from "../util/general-functions";
+import DateTimePicker from '@react-native-community/datetimepicker';
 
 const CreateEventScreen = ({ navigation, route }) => {
   const [userId, setUserId] = useState();
   const [eventName, setEventName] = useState("");
-  const [date, setDate] = useState(moment().format(DATE_FORMAT_DISPLAY));
+  const [date, setDate] = useState(new Date());
   const [time, setTime] = useState(moment().format(TIME_FORMAT_DISPLAY));
   const [pickerOpen, setPickerOpen] = useState(false);
   const [location, setLocation] = useState("");
@@ -54,9 +55,7 @@ const CreateEventScreen = ({ navigation, route }) => {
   const [selectedDropdown, setSelectedDropdown] = useState([]);
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [role, setRole] = useState();
-
   const [images, setImages] = useState([]);
-
   const height = useHeaderHeight();
 
   let id;
@@ -242,8 +241,27 @@ const CreateEventScreen = ({ navigation, route }) => {
     setInputFocused(false);
   };
 
+  const onChangeDate = (event, selectedDate) => {
+    const currentDate = selectedDate || date;
+    setDate(new Date(currentDate)); 
+  };
+
+  const eventTypeItems = [
+    { label: 'Sports', value: 'Sports' },
+    { label: 'Community', value: 'Community' },
+    { label: 'Music', value: 'Music' },
+    { label: 'Kids', value: 'Kids' },
+    { label: 'Charity', value: 'Charity' },
+    { label: 'Cooking', value: 'Cooking' },
+    { label: 'Festivals', value: 'Festivals' },
+    { label: 'Arts', value: 'Arts' },
+    { label: 'Outdoor', value: 'Outdoor' },
+    { label: 'Other', value: 'Other' },
+  ];
+
   const save = () => {
     let message = "";
+    const formattedDate = date.toISOString().split('T')[0];
     if (eventName === "") message = "Event Name should not be blank.\n";
     if (date === "") message += "Date should not be blank.\n";
     if (time === "") message += "Time should not be blank.\n";
@@ -271,7 +289,7 @@ const CreateEventScreen = ({ navigation, route }) => {
     } else {
       const data = {
         eventName,
-        date,
+        date: formattedDate,
         time,
         organization,
         location,
@@ -380,31 +398,22 @@ const CreateEventScreen = ({ navigation, route }) => {
               value={eventName}
             />
             <Input
-              onFocus={(e) => setPickerOpen(true)}
-              onBlur={(e) => setPickerOpen(false)}
-              onChange={(e) => setDate(e.nativeEvent.text)}
               containerStyle={{}}
-              disabledInputStyle={{ background: "#ddd" }}
               inputContainerStyle={{}}
-              errorStyle={{}}
-              errorProps={{}}
-              inputStyle={{}}
-              labelStyle={{}}
-              labelProps={{}}
               leftIcon={<Feather name="calendar" size={20} color={"#666"} />}
-              leftIconContainerStyle={{}}
-              rightIconContainerStyle={{}}
               placeholder="Date"
               label="Date"
-              value={date}
+              InputComponent={() => (     
+                <DateTimePicker
+                  testID="dateTimePicker"
+                  value={date}
+                  mode="date"
+                  display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+                  onChange={onChangeDate}
+                  style={styles.dateTimePicker}
+                />
+              )}
             />
-            {/* {pickerOpen && 
-                        <DateTimePicker
-                            value={new Date()}
-                            mode='date'
-                            onValueChange={(date) => setDate(moment(date, DATE_FORMAT_PICKER).format(DATE_FORMAT_DISPLAY))}
-                    />
-                        } */}
             <Input
               onChange={(e) => setTime(e.nativeEvent.text)}
               containerStyle={{}}
@@ -454,23 +463,29 @@ const CreateEventScreen = ({ navigation, route }) => {
                 ))}
               </ScrollView>
             )}
-            <Input
-              onChange={(e) => setEventType(e.nativeEvent.text)}
-              containerStyle={{}}
-              disabledInputStyle={{ background: "#ddd" }}
-              inputContainerStyle={{}}
-              errorStyle={{}}
-              errorProps={{}}
-              inputStyle={{}}
-              labelStyle={{}}
-              labelProps={{}}
-              leftIcon={<Feather name="grid" size={20} color={"#666"} />}
-              leftIconContainerStyle={{}}
-              rightIconContainerStyle={{}}
-              placeholder="Event Type"
-              label="Event Type"
-              value={eventType}
-            />
+            <View style={{ marginHorizontal: 10, marginBottom: 20 }}>
+              <Text style={{ color: '#85939e', fontWeight: 'bold', marginBottom: 5, fontSize: 16 }}>
+                Event Type
+              </Text>
+              <Dropdown
+                style={{ height: 40, borderBottomColor: 'gray', borderBottomWidth: 1 }}
+                placeholderStyle={{ color: 'gray' }}
+                selectedTextStyle={{ color: 'black' }}
+                iconStyle={{ color: 'gray' }}
+                data={eventTypeItems}
+                maxHeight={300}
+                labelField="label"
+                valueField="value"
+                placeholder="Select event type"
+                value={eventType}
+                onChange={item => {
+                  setEventType(item.value);
+                }}
+                renderLeftIcon={() => (
+                  <Feather name="grid" size={20} color={"#666"} />
+                )}
+              />
+            </View>
             <Input
               onChange={(e) => setAgeGroup(e.nativeEvent.text)}
               containerStyle={{}}
