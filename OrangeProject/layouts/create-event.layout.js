@@ -89,9 +89,14 @@ const CreateEventScreen = ({ navigation, route }) => {
     setImages(images.filter((img) => img !== uri));
   };
   const upload = async () => {
-    const imgs = await uploadImage("event", null, true);
-    setImages([...images, ...imgs]);
+    try {
+      const imgs = await uploadImage("event", null, true);
+      setImages([...images, ...imgs]);
+    } catch (error) {
+      console.error("Error uploading images:", error);
+    }
   };
+  
 
   const retrieveVolunteer = (org) => {
     // alert(org)
@@ -124,7 +129,8 @@ const CreateEventScreen = ({ navigation, route }) => {
           } = data.data.data;
           setEventName(eventName);
           setAgeGroup(ageGroup);
-          setDate(date);
+          const eventDate = new Date(date);
+          setDate(eventDate);
           setDescription(description);
           setEventType(eventType);
           setLocation(location);
@@ -144,7 +150,7 @@ const CreateEventScreen = ({ navigation, route }) => {
           setTime(time);
           setVolunteers(volunteers);
           const tempVolunteer = volunteers.map((v) => v.id);
-
+          
           setAvailableVolunteers(
             availableVolunteers.filter(
               (vol) => tempVolunteer.indexOf(vol.id) < 0
@@ -153,6 +159,7 @@ const CreateEventScreen = ({ navigation, route }) => {
         })
         .catch((error) => {
           console.error(error);
+          console.log(date)
           alert("Unable to load Event Information.");
         });
     }
@@ -246,6 +253,13 @@ const CreateEventScreen = ({ navigation, route }) => {
     setDate(new Date(currentDate)); 
   };
 
+  // onBlur handler for location suggestions
+  const onBlurHandler = () => {
+    setTimeout(() => {
+      setInputFocused(false);
+    }, 2000); 
+  };
+
   const eventTypeItems = [
     { label: 'Sports', value: 'Sports' },
     { label: 'Community', value: 'Community' },
@@ -261,7 +275,7 @@ const CreateEventScreen = ({ navigation, route }) => {
 
   const save = () => {
     let message = "";
-    const formattedDate = date.toISOString().split('T')[0];
+    // const formattedDate = date.toISOString().split('T')[0];
     if (eventName === "") message = "Event Name should not be blank.\n";
     if (date === "") message += "Date should not be blank.\n";
     if (time === "") message += "Time should not be blank.\n";
@@ -289,7 +303,7 @@ const CreateEventScreen = ({ navigation, route }) => {
     } else {
       const data = {
         eventName,
-        date: formattedDate,
+        date,
         time,
         organization,
         location,
@@ -436,7 +450,7 @@ const CreateEventScreen = ({ navigation, route }) => {
               containerStyle={{}}
               disabledInputStyle={{ background: "#ddd" }}
               onFocus={() => setInputFocused(true)}
-              onBlur={() => setInputFocused(false)}
+              onBlur={onBlurHandler}
               inputContainerStyle={{}}
               errorStyle={{}}
               errorProps={{}}

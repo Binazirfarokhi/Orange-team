@@ -53,6 +53,11 @@ const EventListScreen = ({ navigation, route }) => {
         result = (await get(`/orgs/events`)).data.data;
       }
       setEvents(result);
+      result.forEach(event => {
+        console.log(event)
+        console.log(moment(event.date).format(), new Date());
+        console.log(moment(event.date).diff(new Date(), "days"));
+      });
     }
   };
 
@@ -149,8 +154,7 @@ const EventListScreen = ({ navigation, route }) => {
               events
                 .filter((event) =>
                   selectedIndex === 0 ||
-                  (selectedIndex === 1 &&
-                    moment(event.date, DATE_FORMAT_DISPLAY).diff(new Date(), "days") >= 0)
+                  (selectedIndex === 1 && moment(event.date).diff(new Date(), "days") >= 0)
                 )
                 .filter((event) =>
                   eventName === "" || event.eventName.indexOf(eventName) >= 0
