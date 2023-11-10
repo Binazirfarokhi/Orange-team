@@ -47,7 +47,7 @@ export default function ChatScreen({ navigation, route }) {
             try {
                 // console.log('userId fetching profile1', userId)
                 const response = await get(`/chat/${userId}`);
-                // console.log('userId fetching profile2', response.data)
+                console.log('userId fetching profile2', response.data)
                 if (response && response.data) {
                     setUserProfile({
                         _id: response.data.id,
