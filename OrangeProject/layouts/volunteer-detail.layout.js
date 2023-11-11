@@ -9,7 +9,7 @@ import moment from "moment/moment";
 import { POSITIONS, getPositionByIndex } from "../util/constants";
 import { Dropdown } from "react-native-element-dropdown";
 import { getPersistData } from "../contexts/store";
-import { Avatar, Button } from "@rneui/themed";
+import { Avatar, Button, Image } from "@rneui/themed";
 import { getImageUrl } from "../util/general-functions";
 
 const VolunteerDetailScreen = ({ navigation, route }) => {
@@ -17,12 +17,14 @@ const VolunteerDetailScreen = ({ navigation, route }) => {
   const [email, setEmail] = useState();
   const [fromOrg, setFromOrg] = useState();
   const [orgId, setOrgId] = useState();
+  const [avgStar, setAvgStar] = useState(0);
   useEffect(() => {
     if (route && route.params) {
       setEmail(route.params.email);
       setFromOrg(route.params.fromOrg);
       setOrgId(route.params.orgId);
       setid(route.params.id);
+
     }
   }, []);
 
@@ -34,10 +36,24 @@ const VolunteerDetailScreen = ({ navigation, route }) => {
   const [isFocus, setIsFocus] = useState(false);
   const [updatedOrgPosition, setUpdatedOrgPosition] = useState(false);
   const [orgList, setOrgList] = useState([]);
+  const [reviews, setReviews] = useState([]);
 
   const setCollapseToggle = (index) => {
     setCollapse(collapse === index ? 99 : index);
   };
+
+
+  const loadReview = async (id) => {
+    const result = await get(`/profile/review/${id}`);
+    setReviews(result.data.data);
+    let starCount = 0
+    if (result.data.data && result.data.data.length > 0)
+      result.data.data.forEach(review => {
+        starCount += review.stars
+      })
+    setAvgStar(starCount / result.data.data.length)
+  };
+
 
   useEffect(() => {
     get(`/orgs`)
@@ -60,7 +76,7 @@ const VolunteerDetailScreen = ({ navigation, route }) => {
           .then((data) => {
             if (data !== "FAILED") setImage(data);
           })
-          .catch((error) => {});
+          .catch((error) => { });
 
         get(`/profile/${email && email !== null ? email : emailAddress}`)
           .then((data) => {
@@ -70,6 +86,8 @@ const VolunteerDetailScreen = ({ navigation, route }) => {
               getPositionByIndex(posit)
             );
             setSelectedDropdown(posits);
+
+            loadReview(data.data[0].id);
           })
           .catch((error) => {
             console.error(error);
@@ -240,8 +258,8 @@ const VolunteerDetailScreen = ({ navigation, route }) => {
                     {orgId === undefined
                       ? volunteerInfo.orgs.map((org, index) => getOrg(index))
                       : volunteerInfo.orgs
-                          .filter((vi) => vi === orgId)
-                          .map((org, index) => getOrg(index))}
+                        .filter((vi) => vi === orgId)
+                        .map((org, index) => getOrg(index))}
                   </View>
                 </View>
               )}
@@ -301,21 +319,68 @@ const VolunteerDetailScreen = ({ navigation, route }) => {
                 />
                 <Text
                   style={styles.itemText}
-                  onPress={() => navigation.navigate("Review")}>
+                  onPress={() => setCollapseToggle(4)}>
                   Reviews
                 </Text>
                 <FontAwesome
-                  name={"chevron-right"}
+                  name={collapse === 4 ? "chevron-up" : "chevron-down"}
                   size={20}
                   style={styles.rightIcon}
                 />
               </View>
+
+              {collapse === 4 && (
+                <View style={{ display: "flex" }}>
+                  <Text>
+                    <Star count={avgStar} /> (5)
+                  </Text>
+                  {reviews &&
+                    reviews.map((review) => (
+                      <View key={review.id} style={styles.review}>
+                        <Text style={{ lineHeight: 40 }}>{review.userName}</Text>
+                        <Text>
+                          <Star count={review.stars} />
+                        </Text>
+                        <Text>{review.description}</Text>
+                        <View
+                          style={{
+                            flexDirection: "row",
+                            flexWrap: "wrap",
+                            display: "flex",
+                            paddingTop: 30,
+                            paddingBottom: 30,
+                            justifyContent: "space-evenly",
+                          }}>
+                        </View>
+                      </View>
+                    )
+                    )
+                  }
+                </View>
+              )}
             </View>
           </ScrollView>
         </ImageBackground>
       </View>
     </>
   );
+};
+
+
+const Star = ({ count }) => {
+  function getStar() {
+    const star = [];
+    for (i = 0; i < count; i++)
+      star.push(<FontAwesome key={i} name="star" size={20} />);
+    if (star.length < 5) {
+      for (i = 0; i < 5 - count; i++) {
+        star.push(<FontAwesome key={i+5} name="star" color={'gray'} size={20} />);
+
+      }
+    }
+    return star;
+  }
+  return <>{getStar()}</>;
 };
 
 const styles = {
@@ -397,6 +462,13 @@ const styles = {
   dropdown: {
     paddingLeft: 20,
     backgroundColor: "white",
+  },
+  review: {
+    flex: 1,
+    marginRight: 20,
+    marginTop: 10,
+    marginBottom: 10,
+    borderBottomWidth: 1,
   },
 };
 

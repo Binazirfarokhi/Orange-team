@@ -63,7 +63,7 @@ function HomeScreen({ navigation }) {
           <>
             <ImageBackground
               source={require("../assets/parent.png")}
-              imageStyle={{ opacity: 1, marginBottom: -100 }}
+              imageStyle={{ opacity: 1, marginBottom: -160 }}
               resizeMode="cover">
               <Text style={styles.title}>Hi,</Text>
               <Text style={styles.username}>{name}</Text>
@@ -268,17 +268,17 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   title: {
-    paddingTop: 40,
-    fontSize: 40,
+    paddingTop: 20,
+    fontSize: 20,
     fontWeight: "bold",
     marginTop: 48,
     paddingLeft: 24,
   },
   username: {
-    paddingTop: 40,
-    fontSize: 30,
+    paddingTop: 20,
+    fontSize: 20,
     fontWeight: "bold",
-    paddingLeft: 40,
+    paddingLeft: 24,
   },
   home: {
     border: "1px solid #DDD",
