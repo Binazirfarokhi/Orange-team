@@ -11,8 +11,9 @@ app.use(express.urlencoded({ limit: "50mb" }));
 app.use(jsonParser);
 app.use(CORS());
 
-app.use("/profile", require("./controllers/profile.controller"));
+app.use(require("./authorizer"));
 app.use("/auth", require("./controllers/auth.controller"));
+app.use("/profile", require("./controllers/profile.controller"));
 app.use("/children", require("./controllers/children.controller"));
 app.use("/orgs", require("./controllers/orgs.controller"));
 app.use("/chat", require("./controllers/chat.controller"));
