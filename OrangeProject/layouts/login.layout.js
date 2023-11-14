@@ -87,7 +87,7 @@ function LoginScreen() {
             containerStyle={{}}
             disabledInputStyle={{ background: "#ddd" }}
             inputContainerStyle={{}}
-            onChange={(e) => setUsername(e.nativeEvent.text)}
+            onChange={(e) => setUsername(e.nativeEvent.text.toLowerCase())}
             errorStyle={{}}
             errorProps={{}}
             inputStyle={{}}

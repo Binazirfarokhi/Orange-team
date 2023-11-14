@@ -42,22 +42,27 @@ const EventListScreen = ({ navigation, route }) => {
 
   const fetchData = async () => {
     const data = await getPersistData("userInfo");
-    if (data && data.length > 0) {
-      let result = [];
-      const { orgs, positionOfOrganization, role } = data[0];
-      setRole(role);
-      setOrgPos(bindOrgAndPosition(orgs, positionOfOrganization));
-      if (role === TYPE_ORGANIZATION) {
-        result = (await get(`/orgs/events/${data[0].organization}`)).data.data;
-      } else {
-        result = (await get(`/orgs/events`)).data.data;
+    try {
+      if (data && data.length > 0) {
+        let result = [];
+        const { orgs, positionOfOrganization, role } = data[0];
+        setRole(role);
+        setOrgPos(bindOrgAndPosition(orgs, positionOfOrganization));
+        if (role === TYPE_ORGANIZATION) {
+          result = (await get(`/orgs/events/${data[0].organization}`)).data
+            .data;
+        } else {
+          result = (await get(`/orgs/events`)).data.data;
+        }
+        setEvents(result);
+        // result.forEach(event => {
+        //   console.log(event)
+        //   console.log(moment(event.date).format(), new Date());
+        //   console.log(moment(event.date).diff(new Date(), "days"));
+        // });
       }
-      setEvents(result);
-      result.forEach(event => {
-        console.log(event)
-        console.log(moment(event.date).format(), new Date());
-        console.log(moment(event.date).diff(new Date(), "days"));
-      });
+    } catch (error) {
+      signOut();
     }
   };
 
@@ -111,7 +116,7 @@ const EventListScreen = ({ navigation, route }) => {
 
   const handleDateChange = (date) => {
     const filteredEvents = events.filter((event) =>
-      moment(event.date).isSame(date, 'day')
+      moment(event.date).isSame(date, "day")
     );
     setSelectedDateEvents(filteredEvents);
   };
@@ -148,16 +153,22 @@ const EventListScreen = ({ navigation, route }) => {
         <View style={{ paddingBottom: 150, paddingRight: 20 }}>
           <ScrollView>
             {selectedIndex === 2 ? (
-              <CalendarComponent onDateChange={handleDateChange} events={events} />
+              <CalendarComponent
+                onDateChange={handleDateChange}
+                events={events}
+              />
             ) : (
               events.length > 0 &&
               events
-                .filter((event) =>
-                  selectedIndex === 0 ||
-                  (selectedIndex === 1 && moment(event.date).diff(new Date(), "days") >= 0)
+                .filter(
+                  (event) =>
+                    selectedIndex === 0 ||
+                    (selectedIndex === 1 &&
+                      moment(event.date).diff(new Date(), "days") >= 0)
                 )
-                .filter((event) =>
-                  eventName === "" || event.eventName.indexOf(eventName) >= 0
+                .filter(
+                  (event) =>
+                    eventName === "" || event.eventName.indexOf(eventName) >= 0
                 )
                 .map((event) => (
                   <EventItem
@@ -172,7 +183,7 @@ const EventListScreen = ({ navigation, route }) => {
           </ScrollView>
         </View>
 
-        {(selectedIndex !== 2 && role !== TYPE_PARENT) && (
+        {selectedIndex !== 2 && role !== TYPE_PARENT && (
           <>
             <View style={styles.container}>
               <Button
@@ -211,7 +222,7 @@ const EventListScreen = ({ navigation, route }) => {
 const styles = {
   main: {
     paddingLeft: 20,
-    marginBottom: 210
+    marginBottom: 210,
   },
   searchbar: {
     display: "flex",

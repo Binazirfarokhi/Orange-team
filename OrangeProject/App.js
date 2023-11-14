@@ -32,10 +32,14 @@ import CreateEventScreen from "./layouts/create-event.layout";
 import EventDetailScreen from "./layouts/event-detail.layout";
 import OrganizationInformationScreen from "./layouts/organization-information.layout";
 import ChildDetailScreen from "./layouts/child-detail.layout";
-
 import { ThemeProvider, createTheme } from "@rneui/themed";
 import ChildAchivementScreen from "./layouts/child-achivement.layout";
 import NoResultScreen from "./layouts/search/noresult.layout";
+import axios from "axios";
+import { LogBox } from "react-native";
+
+LogBox.ignoreLogs(["Warning: ..."]); // Ignore log notification by message
+LogBox.ignoreAllLogs(); //Ignore all log notifications
 
 const theme = createTheme({
   lightColors: {
@@ -92,7 +96,11 @@ function App({ navigation }) {
 
       try {
         // alert(JSON.stringify(await getPersistData('token')))
+        console.log(token.idToken);
         const token = await getPersistData("token");
+        axios.defaults.headers.common[
+          "Authorization"
+        ] = `Bearer ${token.idToken}`;
         userToken = token.idToken;
         // Restore token stored in `SecureStore` or any other encrypted storage
         // userToken = await SecureStore.getItemAsync('userToken');
@@ -117,15 +125,22 @@ function App({ navigation }) {
         // We will also need to handle errors if sign in failed
         // After getting token, we need to persist the token using `SecureStore` or any other encrypted storage
         // In the example, we'll use a dummy token
-        const result = (await post("/auth", data)).data;
-        if (result.status === "OK") {
-          await savePersistData("userInfo", result.userData);
-          await savePersistData("token", result.token);
-          dispatch({ type: "SIGN_IN", token: result.token.idToken });
-          navigationRef.navigate("AuthorizedTabs");
-        } else if (result) {
-          alert(result.message);
-        } else alert("Unable to connect to server");
+        try {
+          const result = (await post("/auth", data)).data;
+          if (result.status === "OK") {
+            await savePersistData("userInfo", result.userData);
+            await savePersistData("token", result.token);
+            axios.defaults.headers.common[
+              "Authorization"
+            ] = `Bearer ${result.token.idToken}`;
+            dispatch({ type: "SIGN_IN", token: result.token.idToken });
+            navigationRef.navigate("AuthorizedTabs");
+          } else if (result) {
+            alert(result.message);
+          } else alert("Unable to connect to server");
+        } catch (error) {
+          console.error(error);
+        }
       },
       reloadUserData: async () => {
         try {

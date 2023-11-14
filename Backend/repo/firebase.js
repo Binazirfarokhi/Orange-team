@@ -11,7 +11,9 @@ var config = {
 var serviceAccountConfig = require("../firebase-service-config.json");
 
 const firebase = initializeApp(config);
-const firebaseAdmin = fbAdmin.initializeApp(serviceAccountConfig);
+const firebaseAdmin = fbAdmin.initializeApp({
+  credential: fbAdmin.credential.cert(serviceAccountConfig),
+});
 // Create a new client
 const firestoreDB = getFirestore(firebase);
 const auth = getAuth(firebase);
