@@ -24,7 +24,6 @@ const VolunteerDetailScreen = ({ navigation, route }) => {
       setFromOrg(route.params.fromOrg);
       setOrgId(route.params.orgId);
       setid(route.params.id);
-
     }
   }, []);
 
@@ -42,18 +41,16 @@ const VolunteerDetailScreen = ({ navigation, route }) => {
     setCollapse(collapse === index ? 99 : index);
   };
 
-
   const loadReview = async (id) => {
     const result = await get(`/profile/review/${id}`);
     setReviews(result.data.data);
-    let starCount = 0
+    let starCount = 0;
     if (result.data.data && result.data.data.length > 0)
-      result.data.data.forEach(review => {
-        starCount += review.stars
-      })
-    setAvgStar(starCount / result.data.data.length)
+      result.data.data.forEach((review) => {
+        starCount += review.stars;
+      });
+    setAvgStar(starCount / result.data.data.length);
   };
-
 
   useEffect(() => {
     get(`/orgs`)
@@ -70,22 +67,27 @@ const VolunteerDetailScreen = ({ navigation, route }) => {
     getPersistData("userInfo").then(async (data) => {
       if (data && data.length > 0) {
         const { emailAddress } = data[0].signup;
-        setEmail(emailAddress);
+        if (!email || email === null) setEmail(emailAddress);
         const result = (await get(`/profile/${emailAddress}`)).data[0];
         getImageUrl(data[0].id)
           .then((data) => {
             if (data !== "FAILED") setImage(data);
           })
-          .catch((error) => { });
-
+          .catch((error) => {});
         get(`/profile/${email && email !== null ? email : emailAddress}`)
           .then((data) => {
             setid(data.data[0].id);
             setVolunteerInfo(data.data[0]);
-            let posits = data.data[0].positionOfOrganization.map((posit) =>
-              getPositionByIndex(posit)
-            );
-            setSelectedDropdown(posits);
+            if (
+              data.data[0] &&
+              data.data[0].positionOfOrganization &&
+              data.data[0].positionOfOrganization.length > 0
+            ) {
+              let posits = data.data[0].positionOfOrganization.map((posit) =>
+                getPositionByIndex(posit)
+              );
+              setSelectedDropdown(posits);
+            }
 
             loadReview(data.data[0].id);
           })
@@ -95,7 +97,7 @@ const VolunteerDetailScreen = ({ navigation, route }) => {
           });
       }
     });
-  }, []);
+  }, [email]);
 
   useEffect(() => {
     if (updatedOrgPosition) {
@@ -253,14 +255,22 @@ const VolunteerDetailScreen = ({ navigation, route }) => {
                   <Text style={styles.cardItem}>
                     {volunteerInfo.signup.emailAddress}
                   </Text>
-                  <Text style={styles.cardLabel}>Position of Organization</Text>
-                  <View>
-                    {orgId === undefined
-                      ? volunteerInfo.orgs.map((org, index) => getOrg(index))
-                      : volunteerInfo.orgs
-                        .filter((vi) => vi === orgId)
-                        .map((org, index) => getOrg(index))}
-                  </View>
+                  {volunteerInfo.orgs && (
+                    <>
+                      <Text style={styles.cardLabel}>
+                        Position of Organization
+                      </Text>
+                      <View>
+                        {orgId === undefined
+                          ? volunteerInfo.orgs.map((org, index) =>
+                              getOrg(index)
+                            )
+                          : volunteerInfo.orgs
+                              .filter((vi) => vi === orgId)
+                              .map((org, index) => getOrg(index))}
+                      </View>
+                    </>
+                  )}
                 </View>
               )}
               <View style={styles.item}>
@@ -329,7 +339,7 @@ const VolunteerDetailScreen = ({ navigation, route }) => {
                 />
               </View>
 
-              {collapse === 4 && (
+              {collapse === 4 && reviews && reviews.length > 0 && (
                 <View style={{ display: "flex" }}>
                   <Text>
                     <Star count={avgStar} /> (5)
@@ -337,7 +347,9 @@ const VolunteerDetailScreen = ({ navigation, route }) => {
                   {reviews &&
                     reviews.map((review) => (
                       <View key={review.id} style={styles.review}>
-                        <Text style={{ lineHeight: 40 }}>{review.userName}</Text>
+                        <Text style={{ lineHeight: 40 }}>
+                          {review.userName}
+                        </Text>
                         <Text>
                           <Star count={review.stars} />
                         </Text>
@@ -350,12 +362,9 @@ const VolunteerDetailScreen = ({ navigation, route }) => {
                             paddingTop: 30,
                             paddingBottom: 30,
                             justifyContent: "space-evenly",
-                          }}>
-                        </View>
+                          }}></View>
                       </View>
-                    )
-                    )
-                  }
+                    ))}
                 </View>
               )}
             </View>
@@ -366,7 +375,6 @@ const VolunteerDetailScreen = ({ navigation, route }) => {
   );
 };
 
-
 const Star = ({ count }) => {
   function getStar() {
     const star = [];
@@ -374,8 +382,9 @@ const Star = ({ count }) => {
       star.push(<FontAwesome key={i} name="star" size={20} />);
     if (star.length < 5) {
       for (i = 0; i < 5 - count; i++) {
-        star.push(<FontAwesome key={i+5} name="star" color={'gray'} size={20} />);
-
+        star.push(
+          <FontAwesome key={i + 5} name="star" color={"gray"} size={20} />
+        );
       }
     }
     return star;
