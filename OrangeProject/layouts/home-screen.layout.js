@@ -62,14 +62,33 @@ function HomeScreen({ navigation }) {
         {role === TYPE_PARENT ? (
           <>
             <ImageBackground
-              source={require("../assets/parent.png")}
-              imageStyle={{ opacity: 1, marginBottom: -160 }}
-              resizeMode="cover">
-              <Text style={styles.title}>Hi,</Text>
-              <Text style={styles.username}>{name}</Text>
+              source={require("../assets/parent-background.png")} 
+              style={{ flex: 1, marginBottom: -150}}
+              resizeMode="cover"
+            >
+              <View style={{ 
+                flex: 1, 
+                backgroundColor: 'rgba(222, 200, 213, 0.9)', 
+                justifyContent:'center',
+                alignItems: 'center',}}
+              >
+                <Image
+                  source={require("../assets/parent.png")}
+                  style={{
+                    opacity: 1,
+                    width: 250,
+                    height: 750,
+                    marginLeft: 100,
+                  }}
+                  resizeMode="contain"
+                />
+              </View>
             </ImageBackground>
-            <Text style={styles.title}></Text>
-          </>
+            <View style={{ position: 'relative' }}>
+              <Text style={styles.title}>Hi,</Text>
+              <Text style={styles.parentusername}>{name}</Text>
+            </View>
+            </>
         ) : (
           <>
             <ImageBackground
@@ -245,16 +264,14 @@ function HomeScreen({ navigation }) {
             style={styles.rightIcon}
           />
         </View>
-        {role === TYPE_ORGANIZATION && (
-          <View style={{ ...styles.list, display: "flex" }}>
+          <View style={{ ...styles.list, display: "flex", marginBottom:15}}>
             <Button
               onPress={signOut}
               title="Login"
-              containerStyle={{ flex: 1, marginRight: 20 }}>
+              containerStyle={{ flex: 1, marginRight: 30 }}>
               Logout
             </Button>
           </View>
-        )}
       </View>
     </>
   );
@@ -268,17 +285,27 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   title: {
-    paddingTop: 20,
-    fontSize: 20,
+    fontSize: 30,
     fontWeight: "bold",
-    marginTop: 48,
-    paddingLeft: 24,
+    color:"#613194",
+    position: 'absolute', 
+    top: -140, 
+    left: 40, 
+  },
+  parentusername: {
+    fontSize: 30,
+    fontWeight: "bold",
+    color:"#613194",
+    osition: 'absolute', 
+    top: -100, 
+    left: 40,
   },
   username: {
     paddingTop: 20,
-    fontSize: 20,
+    fontSize: 25,
     fontWeight: "bold",
-    paddingLeft: 24,
+    textAlign:"center",
+    color:"#613194"
   },
   home: {
     border: "1px solid #DDD",
@@ -291,7 +318,7 @@ const styles = StyleSheet.create({
   list: {
     flexDirection: "row",
     paddingLeft: 30,
-    paddingTop: 30,
+    paddingTop: 20,
     flex: 1,
   },
   listText: {
