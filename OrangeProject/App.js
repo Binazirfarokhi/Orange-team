@@ -36,7 +36,7 @@ import { ThemeProvider, createTheme } from "@rneui/themed";
 import ChildAchivementScreen from "./layouts/child-achivement.layout";
 import NoResultScreen from "./layouts/search/noresult.layout";
 import axios from "axios";
-import { LogBox } from "react-native";
+import { LogBox, View, StyleSheet } from "react-native";
 
 LogBox.ignoreLogs(["Warning: ..."]); // Ignore log notification by message
 LogBox.ignoreAllLogs(); //Ignore all log notifications
@@ -55,6 +55,13 @@ const theme = createTheme({
     },
   },
 });
+
+// Dark shade for the whole app, for presentation use
+const DarkShadeOverlay = () => {
+  return (
+    <View style={styles.darkShadeOverlay} pointerEvents="none" />
+  );
+};
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -188,6 +195,7 @@ function App({ navigation }) {
   return (
     <AuthContext.Provider value={authContext}>
       <ThemeProvider theme={theme}>
+      <View style={StyleSheet.absoluteFill}>
         <NavigationContainer ref={navigationRef} theme={MyTheme}>
           <Stack.Navigator screenOptions={{ headerShown: false }}>
             {state.isLoading ? (
@@ -251,9 +259,19 @@ function App({ navigation }) {
             </Stack.Group>
           </Stack.Navigator>
         </NavigationContainer>
+        <DarkShadeOverlay />
+        </View>
       </ThemeProvider>
     </AuthContext.Provider>
   );
 }
+
+const styles = StyleSheet.create({
+  darkShadeOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(0, 0, 0, 0.4)', 
+    zIndex: 1000, 
+  },
+});
 
 export default App;
