@@ -1,4 +1,4 @@
-import { Avatar, Button, Image, Input, Overlay, Text } from "@rneui/themed";
+import { Avatar, Button, Image, Input, Overlay, Text, Header } from "@rneui/themed";
 import {
   ScrollView,
   View,
@@ -8,6 +8,7 @@ import {
 
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import Feather from "react-native-vector-icons/Feather";
+import { Ionicons } from '@expo/vector-icons';
 import { useState } from "react";
 import moment from "moment";
 import {
@@ -21,6 +22,7 @@ import { useEffect } from "react";
 import { getPersistData } from "../contexts/store";
 import { get, post, getLocation } from "../contexts/api";
 import { getImageUrlWithName } from "../util/general-functions";
+import { ProfileImage } from "../components/profile-image.component";
 
 const EventDetailScreen = ({ navigation, route }) => {
   const { id } = route.params;
@@ -146,11 +148,7 @@ const EventDetailScreen = ({ navigation, route }) => {
           .then((orgData) => {
             setOrganization(orgData.data.name);
             setOrgParticipants(orgData.data.participants);
-            const photo = orgData.data.photo;
-            if (photo && photo !== null) {
-              getImageUrlWithName(photo).then(setPhoto).catch();
-              // setPhoto(photo)
-            }
+            setPhoto(orgData.data.image);
           })
           .catch((error) => alert("Unable to load organization data"));
       })
@@ -183,19 +181,31 @@ const EventDetailScreen = ({ navigation, route }) => {
     }
   }, [coordinates]);
 
+  const formattedDate = moment(date).format('dddd, MMMM Do');
+  console.log("photo",photo)
+
   return (
     <KeyboardAvoidingView
       behavior={"padding"}
       keyboardVerticalOffset={150}
       style={styles.container}>
-      <View style={styles.main}>
-        <Feather
-          name="arrow-left"
-          size={30}
-          style={styles.leftIcon}
-          onPress={() => navigation.goBack()}
+      <Header
+          backgroundColor="transparent"
+          centerComponent={{
+            text: "Event Page",
+            style: { fontSize: 25, fontWeight: "700" },
+          }}
+          leftComponent={
+            <Feather
+              name="arrow-left"
+              size={30}
+              onPress={() =>
+                navigation.navigate("AuthorizedTabs", { screen: "Home" })
+              }
+            />
+          }
         />
-        {/* <Text style={styles.title}>Event Page</Text> */}
+      <View style={styles.main}>
         <View>
           <ScrollView style={{ paddingRight: 20 }}>
             {images && images.length > 0 && (
@@ -214,17 +224,9 @@ const EventDetailScreen = ({ navigation, route }) => {
             )}
             <Text style={styles.title}>{eventName}</Text>
             <View
-              style={{ ...styles.item, display: "flex", flexDirection: "row" }}>
-              {photo ? (
-                <Avatar
-                  size={60}
-                  avatarStyle={{ marginLeft: 10 }}
-                  rounded
-                  source={{ uri: photo }}></Avatar>
-              ) : (
-                <FontAwesome name="building-o" size={40} />
-              )}
-              <View style={{ display: "flex", paddingLeft: 20 }}>
+              style={{ ...styles.item, display: "flex", flexDirection: "row", marginLeft:-5 }}>
+              <ProfileImage uri={photo} size={50}/>
+              <View style={{ display: "flex" }}>
                 <Text
                   style={styles.text1}
                   onPress={() =>
@@ -232,27 +234,27 @@ const EventDetailScreen = ({ navigation, route }) => {
                       id: organizationId,
                     })
                   }>
-                  {" "}
                   {organization}
                 </Text>
                 <Text style={styles.text2}>
-                  {" "}
-                  Participants: {orgParticipants}
+                  {orgParticipants} participants
                 </Text>
               </View>
             </View>
             <View
-              style={{ ...styles.item, display: "flex", flexDirection: "row" }}>
-              <Feather name="calendar" size={40} />
+              style={{ ...styles.item, display: "flex", flexDirection: "row", gap:12, marginLeft:8 }}>
+              <Feather name="calendar" size={35} />
               <View style={{ display: "flex" }}>
-                <Text style={styles.text1}> {date}</Text>
-                <Text style={styles.text2}> {time}</Text>
+                <Text style={styles.text1}>{formattedDate}</Text>
+                <Text style={styles.text2}>{time}</Text>
               </View>
             </View>
-            <View
-              style={{ ...styles.item, display: "flex", flexDirection: "row" }}>
-              <Feather name="map" size={30} />
-              <Text style={styles.text1}> {location}</Text>
+            <View style={{ ...styles.item, display: "flex", flexDirection: "row", gap:12, marginLeft:8}}>
+              <Ionicons name="location-sharp" size={35} color="black" />
+              <View style={{flexDirection:'column', width:300}}>
+                <Text style={styles.text1}>{location.split(',')[0]}</Text>
+                <Text style={styles.text2}>{location}</Text>
+              </View>
             </View>
 
             <View
@@ -281,8 +283,7 @@ const EventDetailScreen = ({ navigation, route }) => {
               }}>
               <Text style={styles.text1}> About the event </Text>
               <Text
-                style={{ ...styles.text3, paddingTop: 20, paddingBottom: 20 }}>
-                {" "}
+                style={{ ...styles.text3, paddingTop: 20, paddingBottom: 20, marginLeft:5 }}>
                 {description}
               </Text>
             </View>
@@ -323,10 +324,10 @@ const EventDetailScreen = ({ navigation, route }) => {
                   onPress={() =>
                     checkVolunteer(volunteer.id, volunteer.signup.emailAddress)
                   }
-                  key={volunteer.id}>
+                  key={volunteer.id}
+                  style={{paddingVertical:10}}>
                   <View style={styles.volunteer}>
                     <Text>{volunteer.signup.displayName}</Text>
-                    {/* <Text style={styles.remove} onPress={()=> removeVolunteer(volunteer.id)}>Remove</Text> */}
                   </View>
                 </TouchableOpacity>
               ))}
@@ -355,8 +356,8 @@ const EventDetailScreen = ({ navigation, route }) => {
                 {note}
               </Text>
             </View>
-            {moment(date, DATE_FORMAT_DISPLAY).diff(new Date(), "day") >= 0 && (
-              <Button onPress={joinEvent} disabled={joined}>
+            {moment(date).diff(new Date(), "days") >= 0 && (
+              <Button onPress={joinEvent} disabled={joined} style={{marginBottom:80}}>
                 {joined ? "Joined" : "Register"}
               </Button>
             )}
@@ -409,12 +410,11 @@ const EventDetailScreen = ({ navigation, route }) => {
 const styles = {
   container: {
     flex: 1,
-    // marginBottom: 3000
   },
   main: {
     paddingLeft: 20,
-    paddingTop: 60,
-    paddingBottom: 100,
+    marginTop:20,
+    marginBottom:100
   },
   title: {
     paddingTop: 30,
