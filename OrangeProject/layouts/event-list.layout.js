@@ -38,9 +38,12 @@ const EventListScreen = ({ navigation, route }) => {
   const [role, setRole] = useState(0);
   const [searchKeyword, setSearchKeyword] = useState("");
   const [open, setOpen] = useState(false);
+  const [isFiltered, setIsFiltered] = useState(false);
 
   const reloadData = () => {
-    setReloadOnce(!reloadOnce);
+    if (!isFiltered) {
+      setReloadOnce(!reloadOnce);
+    }
   };
 
   const fetchData = async () => {
@@ -57,7 +60,9 @@ const EventListScreen = ({ navigation, route }) => {
         } else {
           result = (await get(`/orgs/events`)).data.data;
         }
-        setEvents(result);
+        if (!isFiltered) {
+          setEvents(result); 
+        }
         // result.forEach(event => {
         //   console.log(event)
         //   console.log(moment(event.date).format(), new Date());
@@ -66,18 +71,25 @@ const EventListScreen = ({ navigation, route }) => {
       }
     } catch (error) {
       signOut();
-    }
+    } 
   };
 
-  useEffect(() => {
-    if (!(route.params && route.params.filteredEvents)) {
-      fetchData();
-    }
-  }, [reloadOnce]);
+  useFocusEffect(
+    React.useCallback(() => {
+      if (!(route.params && route.params.filteredEvents) && !isFiltered) {
+        fetchData();
+      }
+        return () => {
+        // setIsFiltered(false);
+      };
+    }, [])
+  );
+  
 
   useEffect(() => {
     if (route.params && route.params.filteredEvents) {
       setEvents(route.params.filteredEvents);
+      setIsFiltered(true); 
     }
   }, [route.params]);
 
@@ -101,10 +113,12 @@ const EventListScreen = ({ navigation, route }) => {
     } else {
       setEvents(filteredEvents);
     }
+    setIsFiltered(true);
   };
 
   const handleCancel = () => {
     setSearchKeyword("");
+    setIsFiltered(false);
     fetchData();
   };
 
