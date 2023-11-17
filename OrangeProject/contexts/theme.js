@@ -6,6 +6,7 @@ const MyTheme = {
   colors: {
     ...DefaultTheme.colors,
     primary: "#613194",
+    secondary:''
   },
 };
 

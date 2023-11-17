@@ -1,7 +1,7 @@
 import Feather from "react-native-vector-icons/Feather";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import { Button, Input, CheckBox } from "@rneui/themed";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View, ImageBackground } from "react-native";
 import { get, put } from "../contexts/api";
 import React, { useState, useEffect } from "react";
 import { getPersistData } from "../contexts/store";
@@ -12,6 +12,7 @@ import {
 } from "../util/constants";
 import { ButtonGroup } from "@rneui/base";
 import VolunteerItem from "../components/volunteer-item.component";
+import { ProfileImage } from "../components/profile-image.component";
 
 function OrganizationInformationScreen({ navigation, route }) {
   const [orgDetail, setOrgDetail] = useState({});
@@ -47,72 +48,81 @@ function OrganizationInformationScreen({ navigation, route }) {
   }, []);
 
   return (
-    <View style={styles.main}>
-      <View style={{ paddingLeft: 20, height: 30 }}>
+    <View>
+      <ImageBackground
+        source={require("../assets/parent-background.png")} 
+        style={{ height:300 }}
+        resizeMode="cover"
+      >
+      <View style={{backgroundColor: 'rgba(222, 200, 213, 0.9)',}}>
         <Feather
           name="arrow-left"
           size={30}
-          style={styles.leftIcon}
+          style={{ marginTop: 60, marginLeft: 20 }}
           onPress={() => navigation.goBack()}
         />
+        <View style={{justifyContent: 'center', alignItems:'center', marginTop: 20}}>
+          <View style={{backgroundColor:'white', position: 'absolute', height:200, width:'100%', top:70, borderTopLeftRadius:20, borderTopRightRadius:20}}></View>
+          <ProfileImage uri={orgDetail.image} size={120}/>
+          <Text style={styles.title}>{orgDetail.name}</Text>
+        </View>
       </View>
-      <Text style={styles.title}>{orgDetail.name}</Text>
-      <ButtonGroup
-        buttonContainerStyle={{}}
-        buttons={["About", "Events", "Volunteer"]}
-        containerStyle={{}}
-        disabledStyle={{}}
-        disabledTextStyle={{}}
-        disabledSelectedStyle={{}}
-        disabledSelectedTextStyle={{}}
-        innerBorderStyle={{}}
-        onPress={(selectedIdx) => setScreen(selectedIdx)}
-        selectedButtonStyle={{}}
-        selectedIndex={screen}
-        selectedTextStyle={{}}
-        textStyle={{}}
-      />
-      {screen === 0 && (
-        <View style={styles.card}>
-          <Text>{orgDetail.description || ""}</Text>
-          <Text style={styles.text}>
-            Founded Since : {orgDetail.establishedYear}
-          </Text>
-          <Text style={styles.text}>Volunteers : {volunteers.length}</Text>
-        </View>
-      )}
-      {screen === 1 && (
-        <View style={styles.card}>
-          <Text>Events</Text>
-        </View>
-      )}
-      {screen === 2 && (
-        <View style={styles.card}>
-          <Text>Volunteer</Text>
-          {volunteers.map((volunteer) => (
-            <VolunteerItem
-              key={volunteer.id}
-              volunteer={volunteer}
-              navigation={navigation}
-              orgId={currentOrgId}
-            />
-          ))}
-        </View>
-      )}
+      </ImageBackground>
+      <View style={{ paddingHorizontal:20, backgroundColor:'white', height:'100%'}}>
+        <ButtonGroup
+          buttonContainerStyle={{backgroundColor:'#9B77C2'}}
+          buttons={["About", "Events", "Volunteer"]}
+          containerStyle={{}}
+          disabledStyle={{}}
+          disabledTextStyle={{}}
+          disabledSelectedStyle={{}}
+          disabledSelectedTextStyle={{}}
+          innerBorderStyle={{}}
+          onPress={(selectedIdx) => setScreen(selectedIdx)}
+          selectedButtonStyle={{backgroundColor:'#613194'}}
+          selectedIndex={screen}
+          selectedTextStyle={{}}
+          textStyle={{color:'white'}}
+        />
+        {screen === 0 && (
+          <View style={styles.card}>
+            <Text>{orgDetail.description || ""}</Text>
+            <Text style={styles.text}>
+              Founded Since : {orgDetail.establishedYear}
+            </Text>
+            <Text style={styles.text}>Volunteers : {volunteers.length}</Text>
+          </View>
+        )}
+        {screen === 1 && (
+          <View style={styles.card}>
+            <Text>Events</Text>
+          </View>
+        )}
+        {screen === 2 && (
+          <View style={styles.card}>
+            <Text>Volunteer</Text>
+            {volunteers.map((volunteer) => (
+              <VolunteerItem
+                key={volunteer.id}
+                volunteer={volunteer}
+                navigation={navigation}
+                orgId={currentOrgId}
+              />
+            ))}
+          </View>
+        )}
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  main: {
-    paddingLeft: 20,
-    paddingTop: 60,
-  },
   title: {
-    paddingTop: 30,
+    paddingTop: 5,
     paddingBottom: 30,
-    fontSize: 30,
+    fontSize: 25,
     textAlign: "center",
+    fontWeight:'bold'
   },
   card: {
     marginTop: 30,
