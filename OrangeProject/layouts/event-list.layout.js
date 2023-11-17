@@ -1,8 +1,10 @@
-import { Button, Image, Input, Text, SearchBar } from "@rneui/themed";
+import { Button, Image, Input, Text, SearchBar, SpeedDial} from "@rneui/themed";
 import { View } from "react-native";
 
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import Ionicons from "react-native-vector-icons/Ionicons";
+import { MaterialCommunityIcons } from '@expo/vector-icons'; 
+import { Feather } from '@expo/vector-icons'; 
 import React, { useEffect } from "react";
 import { useFocusEffect } from "@react-navigation/native";
 import { useState } from "react";
@@ -35,6 +37,7 @@ const EventListScreen = ({ navigation, route }) => {
   const [reloadOnce, setReloadOnce] = useState(true);
   const [role, setRole] = useState(0);
   const [searchKeyword, setSearchKeyword] = useState("");
+  const [open, setOpen] = useState(false);
 
   const reloadData = () => {
     setReloadOnce(!reloadOnce);
@@ -185,35 +188,41 @@ const EventListScreen = ({ navigation, route }) => {
 
         {selectedIndex !== 2 && role !== TYPE_PARENT && (
           <>
-            <View style={styles.container}>
-              <Button
-                titleStyle={styles.button}
-                containerStyle={{
-                  borderRightWidth: 1,
-                  borderRightColor: "#CCC",
-                }}
+            <SpeedDial
+              isOpen={open}
+              icon={() => (
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                  <Feather name="plus-circle" size={28} color="white" />
+                  <Text style={{ color: 'white', marginLeft: 10, marginRight:20 }}>New Event</Text>
+                  <Feather name="chevron-up" size={24} color="white" />
+                </View>
+              )}
+              openIcon={{ name: 'close', color:"white" }}
+              onOpen={() => setOpen(!open)}
+              onClose={() => setOpen(!open)}
+              overlayColor="rgba(256,249,246,0.8)"
+              buttonStyle={{ backgroundColor:"#613194", width:180, height:50, padding:0}}
+            >
+              <SpeedDial.Action
+                icon={<MaterialCommunityIcons name="ticket-outline" size={30} color="#9B77C2" />}
+                buttonStyle={{ backgroundColor:"#DEC8D5", width:50, height:50}}
+                title="New Event"
+                titleStyle={{backgroundColor:'transparent', fontSize: 18, fontWeight:'bold'}}
                 onPress={() => {
                   navigation.navigate("CreateEvent");
                 }}
-                type="clear">
-                <Ionicons name="add-circle-outline" size={20} color={"#FFF"} />{" "}
-                New Event
-              </Button>
-            </View>
-            {/* <View style={styles.fab}>
-              <Text>Send Picture</Text>
-              <FontAwesome name="chevron-up" size={20} color={"#FFF"} />
-            </View>
-            <View style={styles.fab}>
-              <Text>Update Location</Text>
-              <FontAwesome name="chevron-up" size={20} color={"#FFF"} />
-            </View>
-            <View style={styles.fab}>
-              <Text>New Event</Text>
-              <FontAwesome name="chevron-up" size={20} color={"#FFF"} />
-            </View> */}
+              />
+              <SpeedDial.Action
+                icon={<Ionicons name="chatbubble-ellipses-outline" size={30} color="#9B77C2" />}
+                buttonStyle={{ backgroundColor:"#DEC8D5", width:50, height:50}}
+                titleStyle={{backgroundColor:'transparent', fontSize: 18, fontWeight:'bold'}}
+                title="Update Parents"
+                onPress={() => console.log('Add Something')}
+              />
+            </SpeedDial>
           </>
         )}
+        {/* <View style={{paddingBottom:50}}></View> */}
       </View>
     </SafeAreaView>
   );
@@ -260,23 +269,5 @@ const styles = {
   button: {
     color: "white",
   },
-  // , fabs: {
-  //     display: 'flex',
-  //     flexDirection: 'column-reverse',
-  //     position: 'absolute',
-  //     bottom: 20,
-  //     right: 20,
-  //     height: 200
-  // }, backdrop: {
-  //     left: 0,
-  //     top: 0,
-  //     right: 0,
-  //     botton: 0,
-  //     position: 'absolute',
-  //     backgroundColor: 'rgba(255,255,255,0.5)',
-  //     height: '200%'
-  // }, fab: {
-
-  // }
 };
 export default EventListScreen;

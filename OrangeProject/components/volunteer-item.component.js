@@ -25,7 +25,7 @@ export default function VolunteerItem({ navigation, volunteer, orgId }) {
 
 const styles = StyleSheet.create({
     main: {
-        backgroundColor: MyTheme.colors.primary,
+        backgroundColor: "#E2CCFA",
         borderRadius: 10,
         marginTop: 20,
         paddingTop: 20,

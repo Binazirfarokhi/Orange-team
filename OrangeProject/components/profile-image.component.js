@@ -18,8 +18,8 @@ const styles = StyleSheet.create({
       display: 'flex',
       justifyContent: 'center',
       alignItems: 'center',
-      border: '8px solid #CCC',
+      // border: '8px solid #CCC',
       borderRadius: '50%',
-      backgroundColor: '#666'
+      // backgroundColor: '#666'
     },
   });

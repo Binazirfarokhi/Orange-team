@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import { View } from "react-native";
+import { View, KeyboardAvoidingView, Platform } from "react-native";
 import { Header, Text, Image } from '@rneui/themed';
 import Feather from 'react-native-vector-icons/Feather';
 import { GiftedChat, Bubble, Time, InputToolbar, Composer, Send, Actions } from 'react-native-gifted-chat';
@@ -180,7 +180,7 @@ export default function ChatScreen({ navigation, route }) {
     
     return (
         <>
-            <View style={{ flex: 1, backgroundColor: "#D8D4DE" }}>
+            <View style={{ flex: 1, backgroundColor: "#D8D4DE"}}>
                 <Header 
                     backgroundColor='white' 
                     centerComponent={{ 
@@ -199,15 +199,21 @@ export default function ChatScreen({ navigation, route }) {
                     )}}
                     leftComponent={<Feather name='arrow-left' size={30} onPress={() => navigation.goBack()}/>}
                 />
-                <GiftedChat 
-                    messages={messages}
-                    onSend={newMessages => onSend(newMessages)}
-                    user={{ _id: myUserId }}
-                    showAvatarForEveryMessage={false}
-                    renderAvatar={renderAvatar}
-                    renderBubble={renderBubble}
-                    renderInputToolbar={renderInputToolbar}
-                />
+                <KeyboardAvoidingView
+                    style={{ flex: 1, backgroundColor: "#D8D4DE" }}
+                    behavior={Platform.OS === "ios" ? "padding" : null}
+                    keyboardVerticalOffset={Platform.OS === "ios" ? -310 : 0} 
+                >
+                    <GiftedChat 
+                        messages={messages}
+                        onSend={newMessages => onSend(newMessages)}
+                        user={{ _id: myUserId }}
+                        showAvatarForEveryMessage={false}
+                        renderAvatar={renderAvatar}
+                        renderBubble={renderBubble}
+                        renderInputToolbar={renderInputToolbar}
+                    />
+                </KeyboardAvoidingView>
             </View>
         </>
     );
