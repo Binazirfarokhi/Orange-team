@@ -122,12 +122,12 @@ const EventListScreen = ({ navigation, route }) => {
     fetchData();
   };
 
-  useFocusEffect(
-    React.useCallback(() => {
-      setSearchKeyword("");
-      fetchData();
-    }, [])
-  );
+  // useFocusEffect(
+  //   React.useCallback(() => {
+  //     setSearchKeyword("");
+  //     fetchData();
+  //   }, [])
+  // );
 
   const [selectedDateEvents, setSelectedDateEvents] = useState([]);
 
@@ -202,6 +202,7 @@ const EventListScreen = ({ navigation, route }) => {
 
         {selectedIndex !== 2 && role !== TYPE_PARENT && (
           <>
+          <View style={{position:'absolute', bottom:30, height: '100%', width:'100%', right:10, }}>
             <SpeedDial
               isOpen={open}
               icon={() => (
@@ -214,8 +215,8 @@ const EventListScreen = ({ navigation, route }) => {
               openIcon={{ name: 'close', color:"white" }}
               onOpen={() => setOpen(!open)}
               onClose={() => setOpen(!open)}
-              overlayColor="rgba(256,249,246,0.8)"
-              buttonStyle={{ backgroundColor:"#613194", width:180, height:50, padding:0}}
+              overlayColor="rgba(256,249,246,0.9)"
+              buttonStyle={{ backgroundColor:"#613194", width:180, height:50, padding:0, }}
             >
               <SpeedDial.Action
                 icon={<MaterialCommunityIcons name="ticket-outline" size={30} color="#9B77C2" />}
@@ -234,6 +235,7 @@ const EventListScreen = ({ navigation, route }) => {
                 onPress={() => console.log('Add Something')}
               />
             </SpeedDial>
+          </View>
           </>
         )}
         {/* <View style={{paddingBottom:50}}></View> */}
