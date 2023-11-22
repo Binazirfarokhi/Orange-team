@@ -269,7 +269,7 @@ function App({ navigation }) {
 const styles = StyleSheet.create({
   darkShadeOverlay: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0, 0, 0, 0.4)', 
+    backgroundColor: 'rgba(0, 0, 0, 0.05)', 
     zIndex: 1000, 
   },
 });
