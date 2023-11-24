@@ -40,13 +40,23 @@ function OrganizationInformationScreen({ navigation, route }) {
   
           // Get events for the organization
           const eventsResponse = await get(`/orgs/events/${orgId}`);
+          const matchingEvents = [];
+
           if (eventsResponse.data && eventsResponse.data.data) {
-            const filteredEvents = eventsResponse.data.data.filter((event) => event.organization === orgId);
-            setEvents(filteredEvents);
-            console.log(filteredEvents);
+            const matchingEvents = [];
+
+            eventsResponse.data.data.forEach(event => {
+              if (event.organization === orgId) {
+                console.log(event.organization, "event.organization for each event");
+                matchingEvents.push(event);
+              }
+            });
+
+            setEvents(matchingEvents);
+            console.log(matchingEvents)
           } else {
             console.error("Events data is not in the expected format:", eventsResponse.data);
-          }
+          }          
         }
       } catch (error) {
         console.error("An error occurred during data fetching:", error);
