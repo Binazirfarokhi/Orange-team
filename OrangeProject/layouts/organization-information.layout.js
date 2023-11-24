@@ -13,40 +13,48 @@ import {
 import { ButtonGroup } from "@rneui/base";
 import VolunteerItem from "../components/volunteer-item.component";
 import { ProfileImage } from "../components/profile-image.component";
+import EventItem from "../components/event-item.component";
 
 function OrganizationInformationScreen({ navigation, route }) {
   const [orgDetail, setOrgDetail] = useState({});
   const [currentOrgId, setCurrentOrgId] = useState(0);
   const [volunteers, setVolunteers] = useState([]);
+  const [events, setEvents] = useState([]);
   const [role, setRole] = useState([]);
   const [screen, setScreen] = useState(0);
 
   useEffect(() => {
-    // get session data
-    getPersistData("userInfo")
-      .then((data) => {
-        if (data && data.length > 0) {
-          let org;
-          if (route && route.params) {
-            org = route.params.id;
-          } else org = data[0].organization;
-          setOrgDetail(data[0].orgDetail);
-          setCurrentOrgId(org);
-          setRole(data[0].role);
-          // get volunteers
-          get(`/orgs/volunteer/${data[0].organization}`)
-            .then((volunteers) => {
-              setVolunteers(volunteers.data.data);
-            })
-            .catch((error) => "Unable to find volunteer information");
+    (async () => {
+      try {
+        const userInfo = await getPersistData("userInfo");
+        if (userInfo && userInfo.length > 0) {
+          let orgId = route?.params?.id || userInfo[0].organization;
+  
+          setOrgDetail(userInfo[0].orgDetail);
+          setCurrentOrgId(orgId);
+          setRole(userInfo[0].role);
+  
+          // Get volunteers
+          const volunteersResponse = await get(`/orgs/volunteer/${orgId}`);
+          setVolunteers(volunteersResponse.data.data);
+  
+          // Get events for the organization
+          const eventsResponse = await get(`/orgs/events/${orgId}`);
+          if (eventsResponse.data && eventsResponse.data.data) {
+            const filteredEvents = eventsResponse.data.data.filter((event) => event.organization === orgId);
+            setEvents(filteredEvents);
+            console.log(filteredEvents);
+          } else {
+            console.error("Events data is not in the expected format:", eventsResponse.data);
+          }
         }
-      })
-      .catch((error) => {
-        console.error(error);
-        alert(error);
-      });
+      } catch (error) {
+        console.error("An error occurred during data fetching:", error);
+        alert("Unable to load data: " + error.message);
+      }
+    })();
   }, []);
-
+  
   return (
     <View>
       <ImageBackground
@@ -94,8 +102,16 @@ function OrganizationInformationScreen({ navigation, route }) {
           </View>
         )}
         {screen === 1 && (
-          <View style={styles.card}>
-            <Text>Events</Text>
+          <View style={styles.eventcard}>
+            {events.map((event) => (
+              <EventItem
+                key={event.id}
+                event={event}
+                navigation={navigation}
+                orgPos={0}
+                role={role}
+              />
+            ))}
           </View>
         )}
         {screen === 2 && (
@@ -122,10 +138,15 @@ const styles = StyleSheet.create({
     paddingBottom: 30,
     fontSize: 25,
     textAlign: "center",
-    fontWeight:'bold'
+    fontFamily: 'Satoshi-Bold',
   },
   card: {
     marginTop: 30,
+    paddingLeft: 10,
+    paddingRight: 30,
+  },
+  eventcard: {
+    marginTop: 0,
     paddingLeft: 10,
     paddingRight: 30,
   },

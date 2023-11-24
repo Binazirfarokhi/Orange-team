@@ -286,7 +286,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 30,
-    fontWeight: "bold",
+    fontFamily: 'Roboto-Bold',
     color:"#613194",
     position: 'absolute', 
     top: -140, 
@@ -294,7 +294,7 @@ const styles = StyleSheet.create({
   },
   parentusername: {
     fontSize: 30,
-    fontWeight: "bold",
+    fontFamily: 'Roboto-Bold',
     color:"#613194",
     osition: 'absolute', 
     top: -100, 
@@ -303,7 +303,7 @@ const styles = StyleSheet.create({
   username: {
     paddingTop: 20,
     fontSize: 25,
-    fontWeight: "bold",
+    fontFamily: 'Roboto-Bold',
     textAlign:"center",
     color:"#613194"
   },

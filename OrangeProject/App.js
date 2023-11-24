@@ -37,6 +37,7 @@ import ChildAchivementScreen from "./layouts/child-achivement.layout";
 import NoResultScreen from "./layouts/search/noresult.layout";
 import axios from "axios";
 import { LogBox, View, StyleSheet } from "react-native";
+import * as Font from 'expo-font';
 
 LogBox.ignoreLogs(["Warning: ..."]); // Ignore log notification by message
 LogBox.ignoreAllLogs(); //Ignore all log notifications
@@ -50,8 +51,12 @@ const theme = createTheme({
   },
   components: {
     Button: {
-      // raised: true,
       radius: 10,
+    },
+  },
+  Text: {
+    style: {
+      fontFamily: 'Roboto-Regular',
     },
   },
 });
@@ -66,7 +71,25 @@ const DarkShadeOverlay = () => {
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
+
+async function loadFonts() {
+  await Font.loadAsync({
+    'Roboto-Regular': require('./assets/fonts/Roboto-Regular.ttf'),
+    'Roboto-Bold': require('./assets/fonts/Roboto-Bold.ttf'),
+    'Satoshi-Regular': require('./assets/fonts/Satoshi-Regular.ttf'),
+    'Satoshi-Bold': require('./assets/fonts/Satoshi-Bold.ttf'),
+  });
+}
+
 function App({ navigation }) {
+  const [fontsLoaded, setFontsLoaded] = React.useState(false);
+
+  React.useEffect(() => {
+    loadFonts().then(() => {
+      setFontsLoaded(true);
+    });
+  }, []);
+
   const [state, dispatch] = React.useReducer(
     (prevState, action) => {
       switch (action.type) {

@@ -64,7 +64,7 @@ const styles = {
   name: {
     paddingTop: 10,
     fontSize: 30,
-    fontWeight: "bold",
+    fontFamily: 'Satoshi-Bold',
   },
   profileImage: {},
   scrollView: {

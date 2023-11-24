@@ -6,7 +6,7 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import { MaterialCommunityIcons } from '@expo/vector-icons'; 
 import { Feather } from '@expo/vector-icons'; 
 import React, { useEffect } from "react";
-import { useFocusEffect } from "@react-navigation/native";
+import { useFocusEffect, useIsFocused } from "@react-navigation/native";
 import { useState } from "react";
 import MyTheme from "../contexts/theme";
 import { ButtonGroup } from "@rneui/themed";
@@ -63,35 +63,29 @@ const EventListScreen = ({ navigation, route }) => {
         if (!isFiltered) {
           setEvents(result); 
         }
-        // result.forEach(event => {
-        //   console.log(event)
-        //   console.log(moment(event.date).format(), new Date());
-        //   console.log(moment(event.date).diff(new Date(), "days"));
-        // });
       }
     } catch (error) {
       signOut();
     } 
   };
+const isFocused = useIsFocused();
 
-  useFocusEffect(
-    React.useCallback(() => {
-      if (!(route.params && route.params.filteredEvents) && !isFiltered) {
-        fetchData();
-      }
-        return () => {
-        // setIsFiltered(false);
-      };
-    }, [])
-  );
+useEffect(() => {
+  if(!isFocused) return;
+  if (!(route.params && route.params.filteredEvents) && !isFiltered) {
+    fetchData();
+  }
+}, [isFocused]);
   
 
   useEffect(() => {
     if (route.params && route.params.filteredEvents) {
+      console.log("route.params.filteredEvents@@", route.params.filteredEvents)
       setEvents(route.params.filteredEvents);
+      console.log("events", events);
       setIsFiltered(true); 
     }
-  }, [route.params]);
+  }, [route.params?.filteredEvents]);
 
   useEffect(() => {
     setReloadOnce(!reloadData);
@@ -168,7 +162,7 @@ const EventListScreen = ({ navigation, route }) => {
           />
         </View>
         <View style={{ paddingBottom: 150, paddingRight: 20 }}>
-          <ScrollView>
+          <ScrollView style={{position:'relative' }}>
             {selectedIndex === 2 ? (
               <CalendarComponent
                 onDateChange={handleDateChange}
@@ -194,21 +188,29 @@ const EventListScreen = ({ navigation, route }) => {
                     navigation={navigation}
                     orgPos={orgPos}
                     reload={reloadData}
+                    role={role}
                   />
                 ))
             )}
+
           </ScrollView>
         </View>
 
         {selectedIndex !== 2 && role !== TYPE_PARENT && (
           <>
-          <View style={{position:'absolute', bottom:30, height: '100%', width:'100%', right:10, }}>
+          {/* <View style={{position:'absolute', top:30, height: '100%', width:'100%', right:10}}> */}
             <SpeedDial
               isOpen={open}
               icon={() => (
                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                  <Feather name="plus-circle" size={28} color="white" />
-                  <Text style={{ color: 'white', marginLeft: 10, marginRight:20 }}>New Event</Text>
+                  <Feather name="plus-circle" size={24} color="white" />
+                  <Text style={{ fontFamily: 'Satoshi-Bold', color: 'white', marginHorizontal: 8 , fontSize: 15}}>New Event</Text>
+                  <View style={{
+                    height: 28, 
+                    width: 1.5,
+                    backgroundColor: '#9B77C2',
+                    marginHorizontal: 5, 
+                  }} />
                   <Feather name="chevron-up" size={24} color="white" />
                 </View>
               )}
@@ -216,13 +218,23 @@ const EventListScreen = ({ navigation, route }) => {
               onOpen={() => setOpen(!open)}
               onClose={() => setOpen(!open)}
               overlayColor="rgba(256,249,246,0.9)"
-              buttonStyle={{ backgroundColor:"#613194", width:180, height:50, padding:0, }}
+              buttonStyle={{ backgroundColor:"#613194", width:180, height:50, padding:0}}
+              containerStyle={{ 
+                position: 'absolute',
+                bottom: 25, 
+                right: 10, 
+                borderRadius:10,
+              }}
             >
               <SpeedDial.Action
                 icon={<MaterialCommunityIcons name="ticket-outline" size={30} color="#9B77C2" />}
                 buttonStyle={{ backgroundColor:"#DEC8D5", width:50, height:50}}
+                containerStyle={{ 
+                  bottom: 70, 
+                  right: 10, 
+                }}
                 title="New Event"
-                titleStyle={{backgroundColor:'transparent', fontSize: 18, fontWeight:'bold'}}
+                titleStyle={{backgroundColor:'transparent', fontSize: 18, fontFamily: 'Satoshi-Bold', bottom: 70, }}
                 onPress={() => {
                   navigation.navigate("CreateEvent");
                 }}
@@ -230,12 +242,16 @@ const EventListScreen = ({ navigation, route }) => {
               <SpeedDial.Action
                 icon={<Ionicons name="chatbubble-ellipses-outline" size={30} color="#9B77C2" />}
                 buttonStyle={{ backgroundColor:"#DEC8D5", width:50, height:50}}
-                titleStyle={{backgroundColor:'transparent', fontSize: 18, fontWeight:'bold'}}
+                titleStyle={{backgroundColor:'transparent', fontSize: 18, fontFamily: 'Satoshi-Bold', bottom: 70}}
                 title="Update Parents"
                 onPress={() => console.log('Add Something')}
+                containerStyle={{ 
+                  bottom: 70, 
+                  right: 10, 
+                }}
               />
             </SpeedDial>
-          </View>
+            {/* </View> */}
           </>
         )}
         {/* <View style={{paddingBottom:50}}></View> */}
