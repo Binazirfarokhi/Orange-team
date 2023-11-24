@@ -86,7 +86,7 @@ export default function EventItem({ navigation, event, orgPos, reload, role }) {
                       <Text style={{fontFamily: 'Roboto-Regular',}}>{ageGroup} Years</Text>
                       <Text style={{fontFamily: 'Roboto-Regular',}}>{participants} Participants</Text>
                   </View>
-                  <View style={{ flex: 1, flexDirection: "row", gap:1, marginLeft:50 }}>
+                  <View style={{ flex: 1, flexDirection: "row", gap:1, marginLeft:45 }}>
                     <Button icon={iconEdit} onPress={editEvent} type="clear" />
                     <Button icon={iconDelete} onPress={deleteEvent} type="clear" />
                   </View>
@@ -98,7 +98,6 @@ export default function EventItem({ navigation, event, orgPos, reload, role }) {
 
 const styles = StyleSheet.create({
     main: {
-        marginTop: 10,
         padding: 10,
         display: 'flex',
         minHeight: 150,

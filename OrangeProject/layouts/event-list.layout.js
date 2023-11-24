@@ -153,14 +153,25 @@ useEffect(() => {
           />
         </View>
 
-        <View>
-          <ButtonGroup
-            buttons={["All", "Upcoming", "Calendar"]}
-            containerStyle={{ marginRight: 20, marginTop: 20 }}
-            onPress={(selectedIdx) => setSelectedIndex(selectedIdx)}
-            selectedIndex={selectedIndex}
-          />
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginRight: 20, marginVertical: 15 }}>
+          {["All", "Upcoming", "Calendar"].map((buttonLabel, index) => (
+            <View key={index} style={{ flex: 1, marginHorizontal: 3 }}>
+              <Button
+                title={buttonLabel}
+                onPress={() => setSelectedIndex(index)}
+                buttonStyle={{
+                  backgroundColor: selectedIndex === index ? '#613194' : '#9B77C2',
+                }}
+                titleStyle={{ fontSize: 15, fontFamily: 'Satoshi-Bold' }}
+                containerStyle={{
+                  width: '100%',
+                }}
+              />
+            </View>
+          ))}
         </View>
+
+
         <View style={{ paddingBottom: 150, paddingRight: 20 }}>
           <ScrollView style={{position:'relative' }}>
             {selectedIndex === 2 ? (
