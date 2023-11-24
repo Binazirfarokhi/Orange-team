@@ -113,6 +113,7 @@ export default function SearchEventScreen({ navigation }) {
   
     if (filteredEvents.length > 0) {
       navigation.navigate('Event', { filteredEvents });
+  
     } else {
       navigation.navigate('NoResult');
     }

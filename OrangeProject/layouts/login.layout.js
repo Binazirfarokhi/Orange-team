@@ -90,7 +90,7 @@ function LoginScreen() {
             onChange={(e) => setUsername(e.nativeEvent.text.toLowerCase())}
             errorStyle={{}}
             errorProps={{}}
-            inputStyle={{}}
+            inputStyle={{fontFamily: 'Roboto-Regular'}}
             labelStyle={{}}
             labelProps={{}}
             value={username}
@@ -108,7 +108,7 @@ function LoginScreen() {
             onChange={(e) => setPassword(e.nativeEvent.text)}
             errorStyle={{}}
             errorProps={{}}
-            inputStyle={{}}
+            inputStyle={{fontFamily: 'Roboto-Regular'}}
             labelStyle={{}}
             labelProps={{}}
             leftIcon={<FontAwesome name="key" size={20} color={"#666"} />}
@@ -148,7 +148,7 @@ function LoginScreen() {
             onPress={() => nextOption()}
             title={nextTitle()}
             titleProps={{}}
-            titleStyle={{ marginHorizontal: 5 }}
+            titleStyle={{ marginHorizontal: 5, fontFamily: 'Roboto-Regular' }}
           />
         )}
         {formType === "forgot" && (
@@ -167,7 +167,7 @@ function LoginScreen() {
             onPress={async () => await forgotPassword(username)}
             title="Request Password"
             titleProps={{}}
-            titleStyle={{ marginHorizontal: 5 }}
+            titleStyle={{ marginHorizontal: 5, fontFamily: 'Roboto-Regular',}}
           />
         )}
         {(formType === "login" || !formType) && (
@@ -205,7 +205,7 @@ function LoginScreen() {
             onPress={() => setFormType("signup")}
             title="Sign Up"
             titleProps={{}}
-            titleStyle={{ marginHorizontal: 5 }}
+            titleStyle={{ marginHorizontal: 5, fontFamily: 'Roboto-Regular', }}
           />
         )}
 
@@ -224,7 +224,7 @@ function LoginScreen() {
             onPress={() => setFormType("login")}
             title="Login"
             titleProps={{}}
-            titleStyle={{ marginHorizontal: 5 }}
+            titleStyle={{ marginHorizontal: 5, fontFamily: 'Roboto-Regular', }}
           />
         )}
       </View>
@@ -259,7 +259,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 30,
-    fontWeight: "bold",
+    fontFamily: 'Satoshi-Bold',
     paddingTop: 20,
   },
   confirm: {
@@ -271,6 +271,7 @@ const styles = StyleSheet.create({
   confirmDescription: {
     paddingBottom: 50,
     textAlign: "center",
+    fontFamily: 'Roboto-Regular',
   },
   back: {
     top: -150,

@@ -207,160 +207,162 @@ const EventDetailScreen = ({ navigation, route }) => {
         />
       <View style={styles.main}>
         <View>
-          <ScrollView style={{ paddingRight: 20 }}>
+          <ScrollView >
             {images && images.length > 0 && (
-              <View style={{ alignItems: "center", height: 200 }}>
-                <ScrollView horizontal={true}>
+              <View style={{ width:'100%' , height: 200 }}>
+                {/* <ScrollView horizontal={true}> */}
                   {images.map((uri) => (
                     <Image
                       key={uri}
-                      // containerStyle={{width: 36, height: 36}}
                       source={{ uri }}
                       style={styles.image}
                     />
                   ))}
-                </ScrollView>
+                {/* </ScrollView> */}
               </View>
             )}
-            <Text style={styles.title}>{eventName}</Text>
-            <View
-              style={{ ...styles.item, display: "flex", flexDirection: "row", marginLeft:-5 }}>
-              <ProfileImage uri={photo} size={50}/>
-              <View style={{ display: "flex" }}>
-                <Text
-                  style={styles.text1}
-                  onPress={() =>
-                    navigation.navigate("OrganizationDetails", {
-                      id: organizationId,
-                    })
-                  }>
-                  {organization}
-                </Text>
-                <Text style={styles.text2}>
-                  {orgParticipants} participants
-                </Text>
+            <View style={{ paddingHorizontal: 20 }}>
+              <Text style={styles.title}>{eventName}</Text>
+              <View
+                style={{ ...styles.item, display: "flex", flexDirection: "row", marginLeft:-5 }}>
+                <ProfileImage uri={photo} size={50}/>
+                <View style={{ display: "flex" }}>
+                  <Text
+                    style={styles.text1}
+                    onPress={() =>
+                      navigation.navigate("OrganizationDetails", {
+                        id: organizationId,
+                      })
+                    }>
+                    {organization}
+                  </Text>
+                  <Text style={styles.text2}>
+                    {orgParticipants} participants
+                  </Text>
+                </View>
               </View>
-            </View>
-            <View
-              style={{ ...styles.item, display: "flex", flexDirection: "row", gap:12, marginLeft:8 }}>
-              <Feather name="calendar" size={35} />
-              <View style={{ display: "flex" }}>
-                <Text style={styles.text1}>{formattedDate}</Text>
-                <Text style={styles.text2}>{time}</Text>
+              <View
+                style={{ ...styles.item, display: "flex", flexDirection: "row", gap:12, marginLeft:8 }}>
+                <Feather name="calendar" size={35} />
+                <View style={{ display: "flex" }}>
+                  <Text style={styles.text1}>{formattedDate}</Text>
+                  <Text style={styles.text2}>{time}</Text>
+                </View>
               </View>
-            </View>
-            <View style={{ ...styles.item, display: "flex", flexDirection: "row", gap:12, marginLeft:8}}>
-              <Ionicons name="location-sharp" size={35} color="black" />
-              <View style={{flexDirection:'column', width:300}}>
-                <Text style={styles.text1}>{location.split(',')[0]}</Text>
-                <Text style={styles.text2}>{location}</Text>
+              <View style={{ ...styles.item, display: "flex", flexDirection: "row", gap:12, marginLeft:8}}>
+                <Ionicons name="location-sharp" size={35} color="black" />
+                <View style={{flexDirection:'column', width:300}}>
+                  <Text style={styles.text1}>{location.split(',')[0]}</Text>
+                  <Text style={styles.text2}>{location}</Text>
+                </View>
               </View>
-            </View>
 
-            <View
-              style={{ ...styles.item, display: "flex", flexDirection: "row" }}>
-              <Text style={styles.text1}> Event Type: </Text>
-              <Text style={styles.text3}> {eventType}</Text>
-            </View>
+              <View
+                style={{ ...styles.item, display: "flex", flexDirection: "row" }}>
+                <Text style={styles.text1}> Event Type: </Text>
+                <Text style={styles.text3}> {eventType}</Text>
+              </View>
 
-            <View
-              style={{ ...styles.item, display: "flex", flexDirection: "row" }}>
-              <Text style={styles.text1}> Age Group: </Text>
-              <Text style={styles.text3}> {ageGroup}</Text>
-            </View>
+              <View
+                style={{ ...styles.item, display: "flex", flexDirection: "row" }}>
+                <Text style={styles.text1}> Age Group: </Text>
+                <Text style={styles.text3}> {ageGroup}</Text>
+              </View>
 
-            <View
-              style={{ ...styles.item, display: "flex", flexDirection: "row" }}>
-              <Text style={styles.text1}> Slot Availability: </Text>
-              <Text style={styles.text3}> {participants}</Text>
-            </View>
+              <View
+                style={{ ...styles.item, display: "flex", flexDirection: "row" }}>
+                <Text style={styles.text1}> Slot Availability: </Text>
+                <Text style={styles.text3}> {participants}</Text>
+              </View>
 
-            <View
-              style={{
-                ...styles.item,
-                display: "flex",
-                flexDirection: "column",
-              }}>
-              <Text style={styles.text1}> About the event </Text>
-              <Text
-                style={{ ...styles.text3, paddingTop: 20, paddingBottom: 20, marginLeft:5 }}>
-                {description}
-              </Text>
-            </View>
-            {/* Adding two chat buttons and map */}
-            {role !== 2 && (
-              <Button
-                style={{ marginVertical: 10 }}
-                onPress={() => navigateChat("organization")}>
-                Chat with Organization
-              </Button>
-            )}
-            <Button
-              style={{ marginTop: 10, marginBottom: 30 }}
-              onPress={() => navigateChat("parents")}>
-              Chat with Parents
-            </Button>
-
-            <Text style={styles.text1}>Direction</Text>
-            {mapUrl && (
               <View
                 style={{
-                  alignItems: "center",
-                  justifyContent: "center",
-                  marginTop: 20,
-                  marginBottom: 40,
+                  ...styles.item,
+                  display: "flex",
+                  flexDirection: "column",
                 }}>
-                <Image
-                  source={{ uri: mapUrl }}
-                  style={{ width: 350, height: 240 }}
-                />
+                <Text style={styles.text1}> About the event </Text>
+                <Text
+                  style={{ ...styles.text3, paddingTop: 20, paddingBottom: 20, marginLeft:5 }}>
+                  {description}
+                </Text>
               </View>
-            )}
-
-            <Text style={styles.text1}>Volunteer List </Text>
-            <View style={styles.volunteers}>
-              {volunteers.map((volunteer) => (
-                <TouchableOpacity
-                  onPress={() =>
-                    checkVolunteer(volunteer.id, volunteer.signup.emailAddress)
-                  }
-                  key={volunteer.id}
-                  style={{paddingVertical:10}}>
-                  <View style={styles.volunteer}>
-                    <Text>{volunteer.signup.displayName}</Text>
-                  </View>
-                </TouchableOpacity>
-              ))}
-            </View>
-            <Text style={styles.text1}>ParticipantsList List </Text>
-
-            <View style={styles.volunteers}>
-              {joinedUser.map((volunteer) => (
-                <View style={styles.volunteer} key={volunteer.id}>
-                  <Text>{volunteer.signup.displayName}</Text>
-                  {/* <Text style={styles.remove} onPress={()=> removeVolunteer(volunteer.id)}>Remove</Text> */}
-                </View>
-              ))}
-            </View>
-
-            <View
-              style={{
-                ...styles.item,
-                display: "flex",
-                flexDirection: "column",
-              }}>
-              <Text style={styles.text1}> Note </Text>
-              <Text
-                style={{ ...styles.text3, paddingTop: 20, paddingBottom: 20 }}>
-                {" "}
-                {note}
-              </Text>
-            </View>
-            {moment(date).diff(new Date(), "days") >= 0 && (
-              <Button onPress={joinEvent} disabled={joined} style={{marginBottom:80}}>
-                {joined ? "Joined" : "Register"}
+              {/* Adding two chat buttons and map */}
+              {role !== 2 && (
+                <Button
+                  style={{ marginVertical: 10 }}
+                  onPress={() => navigateChat("organization")}>
+                  Chat with Organization
+                </Button>
+              )}
+              <Button
+                style={{ marginTop: 10, marginBottom: 30 }}
+                onPress={() => navigateChat("parents")}>
+                Chat with Parents
               </Button>
-            )}
+
+              <Text style={styles.text1}>Direction</Text>
+              {mapUrl && (
+                <View
+                  style={{
+                    alignItems: "center",
+                    justifyContent: "center",
+                    marginTop: 20,
+                    marginBottom: 40,
+                  }}>
+                  <Image
+                    source={{ uri: mapUrl }}
+                    style={{ width: 350, height: 240 }}
+                  />
+                </View>
+              )}
+
+              <Text style={styles.text1}>Volunteer List </Text>
+              <View style={styles.volunteers}>
+                {volunteers.map((volunteer) => (
+                  <TouchableOpacity
+                    onPress={() =>
+                      checkVolunteer(volunteer.id, volunteer.signup.emailAddress)
+                    }
+                    key={volunteer.id}
+                    style={{paddingVertical:10}}>
+                    <View style={styles.volunteer}>
+                      <Text>{volunteer.signup.displayName}</Text>
+                    </View>
+                  </TouchableOpacity>
+                ))}
+              </View>
+              <Text style={styles.text1}>Participants List </Text>
+
+              <View style={styles.volunteers}>
+                {joinedUser.map((volunteer) => (
+                  <View style={styles.volunteer} key={volunteer.id}>
+                    <Text>{volunteer.signup.displayName}</Text>
+                    {/* <Text style={styles.remove} onPress={()=> removeVolunteer(volunteer.id)}>Remove</Text> */}
+                  </View>
+                ))}
+              </View>
+
+              <View
+                style={{
+                  ...styles.item,
+                  display: "flex",
+                  flexDirection: "column",
+                }}>
+                <Text style={styles.text1}> Note </Text>
+                <Text
+                  style={{ ...styles.text3, paddingTop: 20, paddingBottom: 20 }}>
+                  {" "}
+                  {note}
+                </Text>
+              </View>
+              {moment(date).diff(new Date(), "days") >= 0 && role === 0 && (
+                <Button onPress={joinEvent} disabled={joined} style={{marginBottom: 80}}>
+                  {joined ? "Joined" : "Register"}
+                </Button>
+              )}
+
+            </View>
           </ScrollView>
         </View>
       </View>
@@ -412,15 +414,14 @@ const styles = {
     flex: 1,
   },
   main: {
-    paddingLeft: 20,
-    marginTop:20,
     marginBottom:100
   },
   title: {
     paddingTop: 30,
     paddingBottom: 30,
     fontSize: 30,
-    fontWeight: "bold",
+    fontFamily: 'Satoshi-Bold',
+    marginTop:15
   },
   logo: {
     /* Vector */
@@ -444,7 +445,7 @@ const styles = {
   },
   text1: {
     fontSize: 20,
-    fontWeight: "bold",
+    fontFamily: 'Satoshi-Bold',
   },
   text3: {
     fontSize: 20,
@@ -454,8 +455,8 @@ const styles = {
     paddingBottom: 10,
   },
   image: {
-    width: 300,
-    height: 200,
+    width: '100%',
+    height: 220,
   },
 };
 

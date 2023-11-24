@@ -404,7 +404,7 @@ const styles = {
   name: {
     paddingTop: 10,
     fontSize: 30,
-    fontWeight: "bold",
+    fontFamily: 'Roboto-Bold',
   },
   someInfo: {
     paddingTop: 20,
@@ -457,11 +457,7 @@ const styles = {
   },
   cardLabel: {
     height: 20,
-    fontWeight: "bold",
-  },
-  cardLabel: {
-    height: 20,
-    fontWeight: "bold",
+    fontFamily: 'Satoshi-Bold',
   },
   cardItem: {
     height: 30,

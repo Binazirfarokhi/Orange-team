@@ -100,11 +100,29 @@ const sendMessages = async (req, res) => {
 };
 
 const getProfileImageURL = async (docId) => {
+  const imageFormats = ['jpeg', 'jpg', 'png'];
+  
   try {
-    const imagePath = `portrait/${docId}.png`;
-    const imageRef = ref(storage, imagePath);
+    let imageUrl;
+    for (let i = 0; i < imageFormats.length; i++) {
+      const imagePath = `portrait/${docId}.${imageFormats[i]}`;
+      const imageRef = ref(storage, imagePath);
+      
+      try {
+        imageUrl = await getDownloadURL(imageRef);
+        if (imageUrl) break; 
+      } catch (error) {
+        console.log(`Format .${imageFormats[i]} not found for ${docId}`);
+      }
+    }
 
-    return await getDownloadURL(imageRef);
+    if (!imageUrl) {
+      const defaultImagePath = "portrait/default.png";
+      const defaultImageRef = ref(storage, defaultImagePath);
+      return await getDownloadURL(defaultImageRef);
+    }
+
+    return imageUrl;
   } catch (error) {
     console.error("Error fetching profile image:", error);
     const defaultImagePath = "portrait/default.png";
@@ -112,6 +130,7 @@ const getProfileImageURL = async (docId) => {
     return await getDownloadURL(defaultImageRef);
   }
 };
+
 
 const listUsers = async(req, res) => {
     try {

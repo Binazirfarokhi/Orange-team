@@ -6,6 +6,7 @@ export default function Subtitle({ children, style }) {
             fontSize: 22,
             fontWeight: '600', 
             color: 'black',
+            fontFamily: 'Satoshi-Regular',
         }, style]} 
         >
             { children }
