@@ -28,16 +28,25 @@ function OrganizationInformationScreen({ navigation, route }) {
       try {
         const userInfo = await getPersistData("userInfo");
         if (userInfo && userInfo.length > 0) {
-          let orgId = route?.params?.id || userInfo[0].organization;
-  
-          setOrgDetail(userInfo[0].orgDetail);
+          if (route && route.params) {
+            orgId = route.params.id;
+            get(`/orgs/${orgId}`)
+              .then((data) => {
+                setOrgDetail(data.data);
+              })
+              .catch((error) => console.error(error));
+          } else {
+            orgId = userInfo[0].organization;
+            setOrgDetail(data[0].orgDetail);
+          }
+
           setCurrentOrgId(orgId);
           setRole(userInfo[0].role);
-  
+
           // Get volunteers
           const volunteersResponse = await get(`/orgs/volunteer/${orgId}`);
           setVolunteers(volunteersResponse.data.data);
-  
+
           // Get events for the organization
           const eventsResponse = await get(`/orgs/events/${orgId}`);
           const matchingEvents = [];
@@ -45,18 +54,24 @@ function OrganizationInformationScreen({ navigation, route }) {
           if (eventsResponse.data && eventsResponse.data.data) {
             const matchingEvents = [];
 
-            eventsResponse.data.data.forEach(event => {
+            eventsResponse.data.data.forEach((event) => {
               if (event.organization === orgId) {
-                console.log(event.organization, "event.organization for each event");
+                console.log(
+                  event.organization,
+                  "event.organization for each event"
+                );
                 matchingEvents.push(event);
               }
             });
 
             setEvents(matchingEvents);
-            console.log(matchingEvents)
+            console.log(matchingEvents);
           } else {
-            console.error("Events data is not in the expected format:", eventsResponse.data);
-          }          
+            console.error(
+              "Events data is not in the expected format:",
+              eventsResponse.data
+            );
+          }
         }
       } catch (error) {
         console.error("An error occurred during data fetching:", error);
@@ -64,31 +79,49 @@ function OrganizationInformationScreen({ navigation, route }) {
       }
     })();
   }, []);
-  
+
   return (
     <View>
       <ImageBackground
-        source={require("../assets/parent-background.png")} 
-        style={{ height:300 }}
-        resizeMode="cover"
-      >
-      <View style={{backgroundColor: 'rgba(222, 200, 213, 0.9)',}}>
-        <Feather
-          name="arrow-left"
-          size={30}
-          style={{ marginTop: 60, marginLeft: 20 }}
-          onPress={() => navigation.goBack()}
-        />
-        <View style={{justifyContent: 'center', alignItems:'center', marginTop: 20}}>
-          <View style={{backgroundColor:'white', position: 'absolute', height:200, width:'100%', top:70, borderTopLeftRadius:20, borderTopRightRadius:20}}></View>
-          <ProfileImage uri={orgDetail.image} size={120}/>
-          <Text style={styles.title}>{orgDetail.name}</Text>
+        source={require("../assets/parent-background.png")}
+        style={{ height: 300 }}
+        resizeMode="cover">
+        <View style={{ backgroundColor: "rgba(222, 200, 213, 0.9)" }}>
+          <Feather
+            name="arrow-left"
+            size={30}
+            style={{ marginTop: 60, marginLeft: 20 }}
+            onPress={() => navigation.goBack()}
+          />
+          <View
+            style={{
+              justifyContent: "center",
+              alignItems: "center",
+              marginTop: 20,
+            }}>
+            <View
+              style={{
+                backgroundColor: "white",
+                position: "absolute",
+                height: 200,
+                width: "100%",
+                top: 70,
+                borderTopLeftRadius: 20,
+                borderTopRightRadius: 20,
+              }}></View>
+            <ProfileImage uri={orgDetail.image} size={120} />
+            <Text style={styles.title}>{orgDetail.name}</Text>
+          </View>
         </View>
-      </View>
       </ImageBackground>
-      <View style={{ paddingHorizontal:20, backgroundColor:'white', height:'100%'}}>
+      <View
+        style={{
+          paddingHorizontal: 20,
+          backgroundColor: "white",
+          height: "100%",
+        }}>
         <ButtonGroup
-          buttonContainerStyle={{backgroundColor:'#9B77C2'}}
+          buttonContainerStyle={{ backgroundColor: "#9B77C2" }}
           buttons={["About", "Events", "Volunteer"]}
           containerStyle={{}}
           disabledStyle={{}}
@@ -97,10 +130,10 @@ function OrganizationInformationScreen({ navigation, route }) {
           disabledSelectedTextStyle={{}}
           innerBorderStyle={{}}
           onPress={(selectedIdx) => setScreen(selectedIdx)}
-          selectedButtonStyle={{backgroundColor:'#613194'}}
+          selectedButtonStyle={{ backgroundColor: "#613194" }}
           selectedIndex={screen}
           selectedTextStyle={{}}
-          textStyle={{color:'white'}}
+          textStyle={{ color: "white" }}
         />
         {screen === 0 && (
           <View style={styles.card}>
@@ -148,7 +181,7 @@ const styles = StyleSheet.create({
     paddingBottom: 30,
     fontSize: 25,
     textAlign: "center",
-    fontFamily: 'Satoshi-Bold',
+    fontFamily: "Satoshi-Bold",
   },
   card: {
     marginTop: 30,
