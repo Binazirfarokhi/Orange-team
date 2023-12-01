@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, TouchableOpacity } from "react-native";
+import { View, TouchableOpacity, ScrollView } from "react-native";
 import Feather from "react-native-vector-icons/Feather";
 import { SearchBar, Header, Button, Divider, Text } from "@rneui/themed";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
@@ -7,6 +7,7 @@ import { ProfileImage } from "../../components/profile-image.component";
 import { get } from "../../contexts/api";
 import { getPersistData } from "../../contexts/store";
 import { Ionicons } from "@expo/vector-icons";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function ChatListScreen({navigation, route}) {
     const [focusedButton, setFocusedButton] = useState('parents');
@@ -71,18 +72,21 @@ export default function ChatListScreen({navigation, route}) {
     const fetchLatestMessages = async () => {
       for (const user of users) {
         if (user.id !== myUserId) {
+          const cachedMessages = await AsyncStorage.getItem(`messages_${user.id}`);
+          if (cachedMessages) {
+            user.latestMessageText = JSON.parse(cachedMessages).text;
+            user.latestMessageDate = JSON.parse(cachedMessages).createdAt;
+          }
+    
           const userMessages = await fetchMessages(user.id);
-          userMessages.sort(
-            (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
-          );
+          userMessages.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
           const latestMessage = userMessages[0];
-          user.latestMessageText = latestMessage
-            ? latestMessage.text
-            : "No messages yet";
-          user.latestMessageDate = latestMessage
-            ? latestMessage.createdAt
-            : null;
-          // console.log(user.latestMessageDate, "latestMessageDate");
+    
+          if (latestMessage && (!cachedMessages || new Date(latestMessage.createdAt) > new Date(JSON.parse(cachedMessages).createdAt))) {
+            await AsyncStorage.setItem(`messages_${user.id}`, JSON.stringify(latestMessage));
+            user.latestMessageText = latestMessage.text;
+            user.latestMessageDate = latestMessage.createdAt;
+          }
         }
       }
     };
@@ -183,53 +187,56 @@ export default function ChatListScreen({navigation, route}) {
         </View>
         <Divider />
 
-        {filteredUsers.map((user, i) => {
-          if (user.id !== myUserId) {
-            return (
-              <TouchableOpacity
-                key={i}
-                style={{
-                  flexDirection: "row",
-                  marginVertical: "1.5%",
-                  alignItems: "center",
-                  gap: "20",
-                }}
-                onPress={() => {
-                  navigation.navigate("ChatDetail", {
-                    userId: user.id,
-                    myUserId: myUserId,
-                  });
-                }}>
-                <ProfileImage uri={user.profileImageURL} size={65} />
-                <View style={{ flexGrow: 1 }}>
-                  <View
-                    style={{
-                      flexDirection: "row",
-                      justifyContent: "space-between",
-                    }}>
-                    <Text style={{ fontSize: 18, fontWeight: "600" }}>
-                      {user.firstName} {user.lastName}
+        <ScrollView style={{marginBottom:230}}>
+          {filteredUsers.map((user, i) => {
+            if (user.id !== myUserId) {
+              return (
+                <TouchableOpacity
+                  key={i}
+                  style={{
+                    flexDirection: "row",
+                    marginVertical: "1.5%",
+                    alignItems: "center",
+                    gap: "20",
+                  }}
+                  onPress={() => {
+                    navigation.navigate("ChatDetail", {
+                      userId: user.id,
+                      myUserId: myUserId,
+                    });
+                  }}>
+                  <ProfileImage uri={user.profileImageURL} size={65} />
+                  <View style={{ flexGrow: 1 }}>
+                    <View
+                      style={{
+                        flexDirection: "row",
+                        justifyContent: "space-between",
+                      }}>
+                      <Text style={{ fontSize: 18, fontWeight: "600" }}>
+                        {user.firstName} {user.lastName}
+                      </Text>
+                      {user.latestMessageDate &&
+                        user.latestMessageDate.seconds && (
+                          <Text>
+                            {new Date(
+                              user.latestMessageDate.seconds * 1000
+                            ).toLocaleDateString()}
+                          </Text>
+                        )}
+                    </View>
+                    <Text style={{ marginBottom: "20%" }}>
+                      {user.latestMessageText}
                     </Text>
-                    {user.latestMessageDate &&
-                      user.latestMessageDate.seconds && (
-                        <Text>
-                          {new Date(
-                            user.latestMessageDate.seconds * 1000
-                          ).toLocaleDateString()}
-                        </Text>
-                      )}
-                  </View>
-                  <Text style={{ marginBottom: "20%" }}>
-                    {user.latestMessageText}
-                  </Text>
 
-                  <Divider />
-                </View>
-              </TouchableOpacity>
-            );
-          }
-          return null;
-        })}
+                    <Divider />
+                  </View>
+                </TouchableOpacity>
+                
+              );
+            }
+            return null;
+          })}
+        </ScrollView>
       </View>
     </>
   );
