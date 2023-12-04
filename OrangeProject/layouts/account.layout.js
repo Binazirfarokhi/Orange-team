@@ -56,7 +56,6 @@ function AccountScreen({ navigation }) {
         labelStyle={{}}
         labelProps={{}}
         value={displayName}
-        onChange={(e) => setDisplayname(e.nativeEvent.text)}
         leftIcon={<FontAwesome name="user" size={20} color={"#666"} />}
         leftIconContainerStyle={{}}
         rightIconContainerStyle={{}}
@@ -65,12 +64,12 @@ function AccountScreen({ navigation }) {
       />
       <Input
         containerStyle={{}}
-        disabledInputStyle={{ backgroundColor: "#ddd" }}
+        disabledInputStyle={{ backgroundColor: 'transparent' }}
         inputContainerStyle={{}}
         disabled={true}
         errorStyle={{}}
         errorProps={{}}
-        inputStyle={{}}
+        inputStyle={{color:'black'}}
         labelStyle={{}}
         labelProps={{}}
         value={emailAddress}
@@ -122,6 +121,7 @@ function AccountScreen({ navigation }) {
 const styles = StyleSheet.create({
   main: {
     paddingLeft: 20,
+    paddingRight: 20, 
     paddingTop: 60,
     backgroundColor: "white",
   },
