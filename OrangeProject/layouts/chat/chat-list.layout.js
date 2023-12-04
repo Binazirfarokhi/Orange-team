@@ -187,7 +187,7 @@ export default function ChatListScreen({navigation, route}) {
         </View>
         <Divider />
 
-        <ScrollView style={{marginBottom:230}}>
+        <ScrollView style={{marginBottom:210}}>
           {filteredUsers.map((user, i) => {
             if (user.id !== myUserId) {
               return (

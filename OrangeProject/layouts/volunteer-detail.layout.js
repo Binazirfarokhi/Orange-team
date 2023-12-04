@@ -199,7 +199,7 @@ const VolunteerDetailScreen = ({ navigation, route }) => {
             <View style={{ alignItems: "center" }}>
               <Avatar
                 size={120}
-                avatarStyle={{ marginLeft: 10 }}
+                avatarStyle={{ marginLeft: 0 }}
                 rounded
                 source={
                   image ? { uri: image } : require("../assets/boy.png")
@@ -210,7 +210,7 @@ const VolunteerDetailScreen = ({ navigation, route }) => {
             </View>
             <View style={styles.someInfo}>
               <View style={styles.eachInfo}>
-                <Text>0</Text>
+                <Text>4</Text>
                 <Text style={styles.smallFont}>Event Joined</Text>
               </View>
               <View style={styles.eachInfo}>
@@ -249,11 +249,11 @@ const VolunteerDetailScreen = ({ navigation, route }) => {
                   </Text>
                   <Text style={styles.cardLabel}>Phone Number</Text>
                   <Text style={styles.cardItem}>
-                    {volunteerInfo.contactNumber}
+                    (778)-321-5361
                   </Text>
                   <Text style={styles.cardLabel}>Organization</Text>
                   <Text style={styles.cardItem}>
-                    {volunteerInfo.signup.emailAddress}
+                    Girl Guides
                   </Text>
                   {volunteerInfo.orgs && (
                     <>
@@ -261,13 +261,9 @@ const VolunteerDetailScreen = ({ navigation, route }) => {
                         Position of Organization
                       </Text>
                       <View>
-                        {orgId === undefined
-                          ? volunteerInfo.orgs.map((org, index) =>
-                              getOrg(index)
-                            )
-                          : volunteerInfo.orgs
-                              .filter((vi) => vi === orgId)
-                              .map((org, index) => getOrg(index))}
+                      <Text style={styles.cardItem}>
+                        Volunteer
+                      </Text>
                       </View>
                     </>
                   )}
@@ -316,7 +312,7 @@ const VolunteerDetailScreen = ({ navigation, route }) => {
                   Event History
                 </Text>
                 <FontAwesome
-                  name={"chevron-right"}
+                  name={collapse === 2 ? "chevron-up" : "chevron-down"}
                   size={20}
                   style={styles.rightIcon}
                 />
@@ -409,7 +405,6 @@ const styles = {
   someInfo: {
     paddingTop: 20,
     paddingBottom: 20,
-    paddingRight: 20,
     display: "flex",
     flexDirection: "row",
     justifyContent: "space-around",
