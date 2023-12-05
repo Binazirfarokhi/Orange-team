@@ -1,10 +1,7 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import HomeScreen from "../layouts/home-screen.layout";
 import EventListScreen from "../layouts/event-list.layout";
-import OrganizationInformationScreen from "../layouts/organization-information.layout";
-import VolunteerDetailScreen from "../layouts/volunteer-detail.layout";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
-import Ionicons from "react-native-vector-icons/Ionicons";
 import * as React from "react";
 import { useState } from "react";
 import { getPersistData } from "../contexts/store";
@@ -15,13 +12,21 @@ import {
 } from "../util/constants";
 import ParentDetailScreen from "../layouts/personal-detail.layout";
 import ChatListScreen from '../layouts/chat/chat-list.layout';
-import ChatActiveIcon from "../assets/chat-active-icon.svg";
-import ChatInactiveIcon from "../assets/chat-inactive-icon.svg";
+import { 
+  ChatActiveIcon, 
+  ChatInactiveIcon, 
+  UserActiveIcon, 
+  UserInactiveIcon,
+  EventActiveIcon, 
+  EventInactiveIcon,
+  SearchInactiveIcon,
+  SearchActiveIcon
+} from "./icon/icon";
 import AuthContext from "../contexts/auth";
-import {} from "@rneui/themed";
 import SearchEventScreen from "../layouts/search/search.layout";
 
 const Tab = createBottomTabNavigator();
+
 
 function AuthorizedTabs() {
   const [role, setRole] = useState([]);
@@ -52,8 +57,8 @@ function AuthorizedTabs() {
           component={EventListScreen}
           options={{
             tabBarLabel: "Events",
-            tabBarIcon: ({ color, size }) => (
-              <FontAwesome name="tag" size={size} color={color} />
+            tabBarIcon: ({ focused }) => (
+              focused ? <EventActiveIcon /> : <EventInactiveIcon />
             ),
           }}
         />
@@ -62,8 +67,8 @@ function AuthorizedTabs() {
           component={SearchEventScreen}
           options={{
             tabBarLabel: "Search",
-            tabBarIcon: ({ color, size }) => (
-              <FontAwesome name="search" size={size} color={color} />
+            tabBarIcon: ({ focused }) => (
+              focused ? <SearchActiveIcon /> : <SearchInactiveIcon />
             ),
           }}
         />
@@ -72,8 +77,8 @@ function AuthorizedTabs() {
           component={ChatListScreen}
           options={{
             tabBarLabel: "Chat",
-            tabBarIcon: ({ color, size }) => (
-              <FontAwesome name="comments" size={size} color={color} />
+            tabBarIcon: ({ focused }) => (
+              focused ? <ChatActiveIcon /> : <ChatInactiveIcon />
             ),
           }}
         />
@@ -84,8 +89,8 @@ function AuthorizedTabs() {
             component={HomeScreen}
             options={{
               tabBarLabel: "user",
-              tabBarIcon: ({ color, size }) => (
-                <FontAwesome name="user" size={size} color={color} />
+              tabBarIcon: ({ focused }) => (
+                focused ? <UserActiveIcon /> : <UserInactiveIcon />
               ),
             }}
             initialParams={formParam}
@@ -97,22 +102,21 @@ function AuthorizedTabs() {
             component={HomeScreen}
             options={{
               tabBarLabel: "user",
-              tabBarIcon: ({ color, size }) => (
-                <FontAwesome name="user" size={size} color={color} />
+              tabBarIcon: ({ focused }) => (
+                focused ? <UserActiveIcon /> : <UserInactiveIcon />
               ),
             }}
             initialParams={formParam}
           />
         )}
         {role === TYPE_ORGANIZATION && (
-          // <Tab.Screen name="OrganizationInfo" component={OrganizationInformationScreen} options={{
           <Tab.Screen
             name="OrganizationInfo"
             component={HomeScreen}
             options={{
               tabBarLabel: "Info",
-              tabBarIcon: ({ color, size }) => (
-                <FontAwesome name="user" size={size} color={color} />
+              tabBarIcon: ({ focused }) => (
+                focused ? <UserActiveIcon /> : <UserInactiveIcon />
               ),
             }}
           />

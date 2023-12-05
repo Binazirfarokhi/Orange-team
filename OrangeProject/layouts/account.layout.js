@@ -52,7 +52,7 @@ function AccountScreen({ navigation }) {
         inputContainerStyle={{}}
         errorStyle={{}}
         errorProps={{}}
-        inputStyle={{}}
+        inputStyle={{color:'grey'}}
         labelStyle={{}}
         labelProps={{}}
         value={displayName}

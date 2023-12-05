@@ -95,10 +95,10 @@ function HomeScreen({ navigation }) {
               source={require("../assets/parent-background.png")}
               imageStyle={{ opacity: 0.1, marginBottom: -200 }}
               resizeMode="cover">
-              <View style={{ alignItems: "center", paddingTop: 50 }}>
+              <View style={{ alignItems: "center", paddingTop: 50,marginTop:20 }}>
                 <Avatar
-                  size={120}
-                  avatarStyle={{ marginLeft: 10 }}
+                  size={100}
+                  avatarStyle={{}}
                   rounded
                   source={
                     image ? { uri: image } : require("../assets/boy.png")

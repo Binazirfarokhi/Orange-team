@@ -20,7 +20,7 @@ export default function SearchEventScreen({ navigation }) {
   const [toDate, setToDate] = useState(new Date());
   const [isFromPickerVisible, setFromPickerVisible] = useState(false);
   const [isToPickerVisible, setToPickerVisible] = useState(false);
-  const [address, setAddress] = useState("")
+  const [address, setAddress] = useState("UBC Robson Square, 800 Robson St, Vancouver, BC V6E 1A7");
   const [location, setLocation] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [role, setRole] = useState(0);

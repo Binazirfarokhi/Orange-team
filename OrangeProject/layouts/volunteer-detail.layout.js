@@ -9,7 +9,7 @@ import moment from "moment/moment";
 import { POSITIONS, getPositionByIndex } from "../util/constants";
 import { Dropdown } from "react-native-element-dropdown";
 import { getPersistData } from "../contexts/store";
-import { Avatar, Button, Image } from "@rneui/themed";
+import { Avatar, Button, Image, Card } from "@rneui/themed";
 import { getImageUrl } from "../util/general-functions";
 
 const VolunteerDetailScreen = ({ navigation, route }) => {
@@ -36,6 +36,7 @@ const VolunteerDetailScreen = ({ navigation, route }) => {
   const [updatedOrgPosition, setUpdatedOrgPosition] = useState(false);
   const [orgList, setOrgList] = useState([]);
   const [reviews, setReviews] = useState([]);
+  const [selectedEvents, setSelectedEvents] = useState([]);
 
   const setCollapseToggle = (index) => {
     setCollapse(collapse === index ? 99 : index);
@@ -179,6 +180,13 @@ const VolunteerDetailScreen = ({ navigation, route }) => {
     );
   };
 
+  const eventsData = [
+    { eventName: "Girls Basketball", date: "Nov 2, 2023", time: "12:00PM" },
+    { eventName: "Building Your Lemonade Stand", date: "Nov 20, 2023", time: "3:00PM" },
+    { eventName: "Soccer Training", date: "Nov 7, 2023", time: "6:00PM" },
+    { eventName: "Girls Hockey Competition", date: "Nov 12, 2023", time: "10:00AM" }
+  ];
+
   if (!volunteerInfo || !volunteerInfo.signup) return null;
   return (
     <>
@@ -195,7 +203,7 @@ const VolunteerDetailScreen = ({ navigation, route }) => {
               onPress={() => navigation.goBack()}
             />
           </View>
-          <ScrollView style={{ marginBottom: 30 }}>
+          <ScrollView style={{ paddingBottom: 250 }}>
             <View style={{ alignItems: "center" }}>
               <Avatar
                 size={120}
@@ -210,16 +218,14 @@ const VolunteerDetailScreen = ({ navigation, route }) => {
             </View>
             <View style={styles.someInfo}>
               <View style={styles.eachInfo}>
-                <Text>4</Text>
+                <Text style={{fontWeight:'bold', fontSize:18}}>4</Text>
                 <Text style={styles.smallFont}>Event Joined</Text>
               </View>
               <View style={styles.eachInfo}>
-                <Text>
-                  {moment
-                    .unix(volunteerInfo.signup.createdAt.seconds)
-                    .fromNow(true)}
+                <Text style={{fontWeight:'bold', fontSize:18}}>
+                  {`${moment().diff(moment.unix(volunteerInfo.signup.createdAt.seconds), 'days')} days`}
                 </Text>
-                <Text style={styles.smallFont}>Times in Volunteer</Text>
+                <Text style={styles.smallFont}>Time in Volunteer</Text>
               </View>
               {/* <View style={styles.eachInfo}><Text>0</Text><Text style={styles.smallFont}>View Profile</Text></View> */}
             </View>
@@ -287,9 +293,7 @@ const VolunteerDetailScreen = ({ navigation, route }) => {
                 <View style={styles.card}>
                   <Text style={styles.cardItem}>
                     Times in:{" "}
-                    {moment
-                      .unix(volunteerInfo.signup.createdAt.seconds)
-                      .fromNow(true)}
+                    {`${moment().diff(moment.unix(volunteerInfo.signup.createdAt.seconds), 'days')} days`}
                   </Text>
                   <Text style={styles.cardItem}>
                     Since:{" "}
@@ -308,15 +312,38 @@ const VolunteerDetailScreen = ({ navigation, route }) => {
                 />
                 <Text
                   style={styles.itemText}
-                  onPress={() => navigation.navigate("EventHistory")}>
+                  onPress={() => setCollapseToggle(3)}>
                   Event History
                 </Text>
                 <FontAwesome
-                  name={collapse === 2 ? "chevron-up" : "chevron-down"}
+                  name={collapse === 3 ? "chevron-up" : "chevron-down"}
                   size={20}
                   style={styles.rightIcon}
                 />
               </View>
+
+              {collapse === 3 && (
+                <View style={{marginBottom:20}}>
+                {eventsData.map((event, index) => (
+                  <Card key={index} containerStyle={{backgroundColor:'#613194', borderRadius:10, marginBottom:10, marginRight:40, flexDirection:'row', position: 'relative', padding: 20}}>
+                    <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent:'space-between' }}>
+                      <View style={{ flexShrink: 1 }}>
+                        <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 18, marginBottom: 10 }}>
+                          {event.eventName}
+                        </Text>
+                        <Text style={{ color: 'white' }}>{moment(event.date, "MMM D, YYYY").format('YYYY-MM-DD')}</Text>
+                        <Text style={{ color: 'white' }}>{event.time}</Text>
+                      </View>
+                    </View>
+                  </Card>            
+                ))}
+                </View>
+              )}
+
+
+
+
+
               <View style={styles.item}>
                 <MaterialIcons
                   name="star-border"
