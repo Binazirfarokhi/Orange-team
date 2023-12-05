@@ -255,7 +255,7 @@ useEffect(() => {
                 buttonStyle={{ backgroundColor:"#DEC8D5", width:50, height:50}}
                 titleStyle={{backgroundColor:'transparent', fontSize: 18, fontFamily: 'Satoshi-Bold', bottom: 70}}
                 title="Update Parents"
-                onPress={() => console.log('Add Something')}
+                onPress={() => navigation.navigate("ChatList") }
                 containerStyle={{ 
                   bottom: 70, 
                   right: 10, 

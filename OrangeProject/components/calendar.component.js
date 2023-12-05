@@ -65,14 +65,14 @@ export default function CalendarComponent({ onDateChange, events }) {
                 <TouchableOpacity onPress={() => navigation.navigate("EventDetail", { id: event.id })}>
                 <Card key={index} containerStyle={{backgroundColor:'#613194', borderRadius:10, marginBottom:10, flexDirection:'row'}}>
                   <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingRight: 10 }}>
-                    <View style={{marginRight: 150}}>
+                    <View style={{marginRight: 100}}>
                       <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 18, marginBottom: 10 }}>
                         {event.eventName}
                       </Text>
                       <Text style={{ color: 'white' }}>{moment(event.date).format('YYYY-MM-DD')}</Text>
                       <Text style={{ color: 'white' }}>{event.time}</Text>
                     </View>
-                    <Feather name="chevron-right" size={24} color="white" />
+                    <Feather name="chevron-right" size={24} color="white" style={{marginVertical:10}}/>
                   </View>
                 </Card>
               </TouchableOpacity>              
