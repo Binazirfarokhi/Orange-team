@@ -115,7 +115,7 @@ const ChildDetailScreen = ({ navigation, route }) => {
             source={require("../assets/parent-background.png")}
             imageStyle={{ opacity: 0.1, marginLeft: -20 }}
             resizeMode="cover">
-            <ScrollView style={{ paddingRight: 20 }}>
+            <ScrollView style={{ paddingRight: 20, marginTop:50 }}>
               <Feather
                 name="arrow-left"
                 size={30}
@@ -162,10 +162,8 @@ const ChildDetailScreen = ({ navigation, route }) => {
 const styles = StyleSheet.create({
   main: {
     paddingLeft: 20,
-    paddingTop: 60,
     flex: 1,
     display: "flex",
-    backgroundImage: `url("../assets/parent-background.png")`,
   },
   title: {
     paddingTop: 30,
@@ -180,6 +178,7 @@ const styles = StyleSheet.create({
   button: {
     marginTop: 20,
     marginRight: 20,
+    marginBottom: 250
   },
   profile: {
     alignItems: "center",

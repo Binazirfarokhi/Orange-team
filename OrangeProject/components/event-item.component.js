@@ -73,7 +73,7 @@ export default function EventItem({ navigation, event, orgPos, reload, role }) {
     role === 0 ? (
       <Feather name="bookmark" size={20} color="green" />
     ) : (
-      <FontAwesome name="trash" size={20} />
+      <FontAwesome name="trash" size={20} color="#BA0021"/>
     );
 
   return (

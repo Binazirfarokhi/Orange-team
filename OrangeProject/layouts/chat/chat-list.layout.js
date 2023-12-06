@@ -10,33 +10,16 @@ import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function ChatListScreen({navigation, route}) {
-    const [focusedButton, setFocusedButton] = useState('parents');
-    const [users, setUsers] = useState([]);
-    const [myUserId, setMyUserId] = useState(null);
-    const [myRoleType, setMyRoleType] = useState(null);
-
-    useEffect(() => {
-        if (route.params?.focusedTab) {
-            setFocusedButton(route.params.focusedTab);
-        }
-    }, [route.params]);
-
+  const [focusedButton, setFocusedButton] = useState('parents');
+  const [users, setUsers] = useState([]);
+  const [myUserId, setMyUserId] = useState(null);
+  const [myRoleType, setMyRoleType] = useState(null);
 
   useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const response = await get("/chat/userlist");
-        if (response && response.data) {
-          setUsers(response.data);
-        }
-        // console.log(response.data);
-      } catch (error) {
-        console.error("There was an error fetching the users:", error);
+      if (route.params?.focusedTab) {
+          setFocusedButton(route.params.focusedTab);
       }
-    };
-
-    fetchUsers();
-  }, []);
+  }, [route.params]);
 
   useEffect(() => {
     const fetchMyUserId = async () => {
@@ -56,43 +39,48 @@ export default function ChatListScreen({navigation, route}) {
     fetchMyUserId();
   }, []);
 
-  const fetchMessages = async (userId) => {
+  useEffect(() => {
+    const fetchUsersAndMessages = async () => {
+      try {
+        const userResponse = await get("/chat/userlist");
+        if (userResponse && userResponse.data) {
+          const usersWithData = await Promise.all(
+            userResponse.data.map(async (user) => {
+              if (user.id !== myUserId) {
+                const latestMessage = await fetchLatestMessage(user.id);
+                return {
+                  ...user,
+                  latestMessageText: latestMessage ? latestMessage.text : "No messages yet",
+                  latestMessageDate: latestMessage ? latestMessage.createdAt : null,
+                };
+              }
+              return user;
+            })
+          );
+          setUsers(usersWithData);
+        }
+      } catch (error) {
+        console.error("There was an error:", error);
+      }
+    };
+  
+    if (myUserId) {
+      fetchUsersAndMessages();
+    }
+  }, [myUserId]);
+  
+  const fetchLatestMessage= async (userId) => {
     try {
       const response = await get(`/chat/${myUserId}/${userId}`);
-      if (response && response.data) {
-        return response.data;
+      if (response && response.data && response.data.length > 0) {
+        const sortedMessages = response.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        return sortedMessages[0];
       }
     } catch (error) {
       console.error("Error fetching the messages", error);
     }
-    return [];
+    return null;
   };
-
-  useEffect(() => {
-    const fetchLatestMessages = async () => {
-      for (const user of users) {
-        if (user.id !== myUserId) {
-          const cachedMessages = await AsyncStorage.getItem(`messages_${user.id}`);
-          if (cachedMessages) {
-            user.latestMessageText = JSON.parse(cachedMessages).text;
-            user.latestMessageDate = JSON.parse(cachedMessages).createdAt;
-          }
-    
-          const userMessages = await fetchMessages(user.id);
-          userMessages.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-          const latestMessage = userMessages[0];
-    
-          if (latestMessage && (!cachedMessages || new Date(latestMessage.createdAt) > new Date(JSON.parse(cachedMessages).createdAt))) {
-            await AsyncStorage.setItem(`messages_${user.id}`, JSON.stringify(latestMessage));
-            user.latestMessageText = latestMessage.text;
-            user.latestMessageDate = latestMessage.createdAt;
-          }
-        }
-      }
-    };
-
-    fetchLatestMessages();
-  }, [users]);
 
   const filteredUsers = users.filter((user) => {
     if (focusedButton === "parents") {
@@ -190,6 +178,13 @@ export default function ChatListScreen({navigation, route}) {
         <ScrollView style={{marginBottom:210}}>
           {filteredUsers.map((user, i) => {
             if (user.id !== myUserId) {
+              let fullName = user.firstName + ' ' + user.lastName;
+              let maxLength = 21;
+
+              if (fullName.length > maxLength) {
+                fullName = fullName.substring(0, maxLength) + '...';
+              }
+
               return (
                 <TouchableOpacity
                   key={i}
@@ -213,7 +208,7 @@ export default function ChatListScreen({navigation, route}) {
                         justifyContent: "space-between",
                       }}>
                       <Text style={{ fontSize: 18, fontWeight: "600" }}>
-                        {user.firstName} {user.lastName}
+                        {fullName}
                       </Text>
                       {user.latestMessageDate &&
                         user.latestMessageDate.seconds && (

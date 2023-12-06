@@ -1,5 +1,5 @@
 import * as React from 'react';
-import Svg, { Path, Defs, LinearGradient, Stop, Rect, G, Filter, FeFlood, FeColorMatrix, FeOffset, FeGaussianBlur, FeComposite, FeBlend } from 'react-native-svg';
+import Svg, { Path, Defs, LinearGradient, Stop, Rect } from 'react-native-svg';
 
 
 // CHAT
@@ -129,3 +129,5 @@ export const SearchActiveIcon = () => (
     />
   </Svg>
 );
+
+
