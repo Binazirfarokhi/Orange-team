@@ -191,207 +191,205 @@ const VolunteerDetailScreen = ({ navigation, route }) => {
   return (
     <>
       <View style={styles.main}>
+
         <ImageBackground
           source={require("../assets/parent-background.png")}
           imageStyle={{ opacity: 0.1, marginBottom: -100 }}
           resizeMode="cover">
-          <View style={{ paddingLeft: 20, height: 30 }}>
-            <Feather
-              name="arrow-left"
-              size={30}
-              style={styles.leftIcon}
-              onPress={() => navigation.goBack()}
-            />
-          </View>
-          <ScrollView style={{ paddingBottom: 250 }}>
-            <View style={{ alignItems: "center" }}>
-              <Avatar
-                size={120}
-                avatarStyle={{ marginLeft: 0 }}
-                rounded
-                source={
-                  image ? { uri: image } : require("../assets/boy.png")
-                }></Avatar>
-              <Text style={styles.name}>
-                {volunteerInfo.signup.displayName}
-              </Text>
+          <View style={{marginTop:50}}>
+            <View style={{ paddingLeft: 20, height: 30 }}>
+              <Feather
+                name="arrow-left"
+                size={30}
+                style={styles.leftIcon}
+                onPress={() => navigation.goBack()}
+              />
             </View>
-            <View style={styles.someInfo}>
-              <View style={styles.eachInfo}>
-                <Text style={{fontWeight:'bold', fontSize:18}}>4</Text>
-                <Text style={styles.smallFont}>Event Joined</Text>
-              </View>
-              <View style={styles.eachInfo}>
-                <Text style={{fontWeight:'bold', fontSize:18}}>
-                  {`${moment().diff(moment.unix(volunteerInfo.signup.createdAt.seconds), 'days')} days`}
+            <ScrollView style={{ paddingBottom: 250 }}>
+              <View style={{ alignItems: "center" }}>
+                <Avatar
+                  size={120}
+                  avatarStyle={{ marginLeft: 0 }}
+                  rounded
+                  source={
+                    image ? { uri: image } : require("../assets/boy.png")
+                  }></Avatar>
+                <Text style={styles.name}>
+                  {volunteerInfo.signup.displayName}
                 </Text>
-                <Text style={styles.smallFont}>Time in Volunteer</Text>
               </View>
-              {/* <View style={styles.eachInfo}><Text>0</Text><Text style={styles.smallFont}>View Profile</Text></View> */}
-            </View>
-            <View style={styles.list}>
-              <View style={styles.item}>
-                <FontAwesome5
-                  name="user-alt"
-                  size={20}
-                  style={styles.leftIcon}
-                />
-                <Text
-                  style={styles.itemText}
-                  onPress={() => setCollapseToggle(0)}>
-                  Personal Information
-                </Text>
-                <FontAwesome
-                  name={collapse === 0 ? "chevron-up" : "chevron-down"}
-                  size={20}
-                  style={styles.rightIcon}
-                />
-              </View>
-              {collapse === 0 && (
-                <View style={styles.card}>
-                  <Text style={styles.cardLabel}>Email</Text>
-                  <Text style={styles.cardItem}>
-                    {volunteerInfo.signup.emailAddress}
-                  </Text>
-                  <Text style={styles.cardLabel}>Phone Number</Text>
-                  <Text style={styles.cardItem}>
-                    (778)-321-5361
-                  </Text>
-                  <Text style={styles.cardLabel}>Organization</Text>
-                  <Text style={styles.cardItem}>
-                    Girl Guides
-                  </Text>
-                  {volunteerInfo.orgs && (
-                    <>
-                      <Text style={styles.cardLabel}>
-                        Position of Organization
-                      </Text>
-                      <View>
-                      <Text style={styles.cardItem}>
-                        Volunteer
-                      </Text>
-                      </View>
-                    </>
-                  )}
+              <View style={styles.someInfo}>
+                <View style={styles.eachInfo}>
+                  <Text style={{fontWeight:'bold', fontSize:18}}>4</Text>
+                  <Text style={styles.smallFont}>Event Joined</Text>
                 </View>
-              )}
-              <View style={styles.item}>
-                <FontAwesome name="clock-o" size={20} style={styles.leftIcon} />
-                <Text
-                  style={styles.itemText}
-                  onPress={() => setCollapseToggle(2)}>
-                  Time In Volunteer
-                </Text>
-                <FontAwesome
-                  name={collapse === 2 ? "chevron-up" : "chevron-down"}
-                  size={20}
-                  style={styles.rightIcon}
-                />
-              </View>
-
-              {collapse === 2 && (
-                <View style={styles.card}>
-                  <Text style={styles.cardItem}>
-                    Times in:{" "}
+                <View style={styles.eachInfo}>
+                  <Text style={{fontWeight:'bold', fontSize:18}}>
                     {`${moment().diff(moment.unix(volunteerInfo.signup.createdAt.seconds), 'days')} days`}
                   </Text>
-                  <Text style={styles.cardItem}>
-                    Since:{" "}
-                    {moment
-                      .unix(volunteerInfo.signup.createdAt.seconds)
-                      .format("MMMM Do YYYY, h:mm:ss a")}
-                  </Text>
+                  <Text style={styles.smallFont}>Time in Volunteer</Text>
                 </View>
-              )}
-
-              <View style={styles.item}>
-                <MaterialIcons
-                  name="event-available"
-                  size={20}
-                  style={styles.leftIcon}
-                />
-                <Text
-                  style={styles.itemText}
-                  onPress={() => setCollapseToggle(3)}>
-                  Event History
-                </Text>
-                <FontAwesome
-                  name={collapse === 3 ? "chevron-up" : "chevron-down"}
-                  size={20}
-                  style={styles.rightIcon}
-                />
+                {/* <View style={styles.eachInfo}><Text>0</Text><Text style={styles.smallFont}>View Profile</Text></View> */}
               </View>
-
-              {collapse === 3 && (
-                <View style={{marginBottom:20}}>
-                {eventsData.map((event, index) => (
-                  <Card key={index} containerStyle={{backgroundColor:'#613194', borderRadius:10, marginBottom:10, marginRight:40, flexDirection:'row', position: 'relative', padding: 20}}>
-                    <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent:'space-between' }}>
-                      <View style={{ flexShrink: 1 }}>
-                        <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 18, marginBottom: 10 }}>
-                          {event.eventName}
-                        </Text>
-                        <Text style={{ color: 'white' }}>{moment(event.date, "MMM D, YYYY").format('YYYY-MM-DD')}</Text>
-                        <Text style={{ color: 'white' }}>{event.time}</Text>
-                      </View>
-                    </View>
-                  </Card>            
-                ))}
-                </View>
-              )}
-
-
-
-
-
-              <View style={styles.item}>
-                <MaterialIcons
-                  name="star-border"
-                  size={20}
-                  style={styles.leftIcon}
-                />
-                <Text
-                  style={styles.itemText}
-                  onPress={() => setCollapseToggle(4)}>
-                  Reviews
-                </Text>
-                <FontAwesome
-                  name={collapse === 4 ? "chevron-up" : "chevron-down"}
-                  size={20}
-                  style={styles.rightIcon}
-                />
-              </View>
-
-              {collapse === 4 && reviews && reviews.length > 0 && (
-                <View style={{ display: "flex" }}>
-                  <Text>
-                    <Star count={avgStar} /> (5)
+              <View style={styles.list}>
+                <View style={styles.item}>
+                  <FontAwesome5
+                    name="user-alt"
+                    size={20}
+                    style={styles.leftIcon}
+                  />
+                  <Text
+                    style={styles.itemText}
+                    onPress={() => setCollapseToggle(0)}>
+                    Personal Information
                   </Text>
-                  {reviews &&
-                    reviews.map((review) => (
-                      <View key={review.id} style={styles.review}>
-                        <Text style={{ lineHeight: 40 }}>
-                          {review.userName}
-                        </Text>
-                        <Text>
-                          <Star count={review.stars} />
-                        </Text>
-                        <Text>{review.description}</Text>
-                        <View
-                          style={{
-                            flexDirection: "row",
-                            flexWrap: "wrap",
-                            display: "flex",
-                            paddingTop: 30,
-                            paddingBottom: 30,
-                            justifyContent: "space-evenly",
-                          }}></View>
-                      </View>
-                    ))}
+                  <FontAwesome
+                    name={collapse === 0 ? "chevron-up" : "chevron-down"}
+                    size={20}
+                    style={styles.rightIcon}
+                  />
                 </View>
-              )}
-            </View>
-          </ScrollView>
+                {collapse === 0 && (
+                  <View style={styles.card}>
+                    <Text style={styles.cardLabel}>Email</Text>
+                    <Text style={styles.cardItem}>
+                      {volunteerInfo.signup.emailAddress}
+                    </Text>
+                    <Text style={styles.cardLabel}>Phone Number</Text>
+                    <Text style={styles.cardItem}>
+                      (778)-321-5361
+                    </Text>
+                    <Text style={styles.cardLabel}>Organization</Text>
+                    <Text style={styles.cardItem}>
+                      Girl Guides
+                    </Text>
+                    {volunteerInfo.orgs && (
+                      <>
+                        <Text style={styles.cardLabel}>
+                          Position of Organization
+                        </Text>
+                        <View>
+                        <Text style={styles.cardItem}>
+                          Volunteer
+                        </Text>
+                        </View>
+                      </>
+                    )}
+                  </View>
+                )}
+                <View style={styles.item}>
+                  <FontAwesome name="clock-o" size={20} style={styles.leftIcon} />
+                  <Text
+                    style={styles.itemText}
+                    onPress={() => setCollapseToggle(2)}>
+                    Time In Volunteer
+                  </Text>
+                  <FontAwesome
+                    name={collapse === 2 ? "chevron-up" : "chevron-down"}
+                    size={20}
+                    style={styles.rightIcon}
+                  />
+                </View>
+
+                {collapse === 2 && (
+                  <View style={styles.card}>
+                    <Text style={styles.cardItem}>
+                      Times in:{" "}
+                      {`${moment().diff(moment.unix(volunteerInfo.signup.createdAt.seconds), 'days')} days`}
+                    </Text>
+                    <Text style={styles.cardItem}>
+                      Since:{" "}
+                      {moment
+                        .unix(volunteerInfo.signup.createdAt.seconds)
+                        .format("MMMM Do YYYY, h:mm:ss a")}
+                    </Text>
+                  </View>
+                )}
+
+                <View style={styles.item}>
+                  <MaterialIcons
+                    name="event-available"
+                    size={20}
+                    style={styles.leftIcon}
+                  />
+                  <Text
+                    style={styles.itemText}
+                    onPress={() => setCollapseToggle(3)}>
+                    Event History
+                  </Text>
+                  <FontAwesome
+                    name={collapse === 3 ? "chevron-up" : "chevron-down"}
+                    size={20}
+                    style={styles.rightIcon}
+                  />
+                </View>
+
+                {collapse === 3 && (
+                  <View style={{marginBottom:20}}>
+                  {eventsData.map((event, index) => (
+                    <Card key={index} containerStyle={{backgroundColor:'#613194', borderRadius:10, marginBottom:10, marginRight:40, flexDirection:'row', position: 'relative', padding: 20}}>
+                      <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent:'space-between' }}>
+                        <View style={{ flexShrink: 1 }}>
+                          <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 18, marginBottom: 10 }}>
+                            {event.eventName}
+                          </Text>
+                          <Text style={{ color: 'white' }}>{moment(event.date, "MMM D, YYYY").format('YYYY-MM-DD')}</Text>
+                          <Text style={{ color: 'white' }}>{event.time}</Text>
+                        </View>
+                      </View>
+                    </Card>            
+                  ))}
+                  </View>
+                )}
+                <View style={styles.item}>
+                  <MaterialIcons
+                    name="star-border"
+                    size={20}
+                    style={styles.leftIcon}
+                  />
+                  <Text
+                    style={styles.itemText}
+                    onPress={() => setCollapseToggle(4)}>
+                    Reviews
+                  </Text>
+                  <FontAwesome
+                    name={collapse === 4 ? "chevron-up" : "chevron-down"}
+                    size={20}
+                    style={styles.rightIcon}
+                  />
+                </View>
+
+                {collapse === 4 && reviews && reviews.length > 0 && (
+                  <View style={{ display: "flex" }}>
+                    <Text>
+                      <Star count={avgStar} /> (5)
+                    </Text>
+                    {reviews &&
+                      reviews.map((review) => (
+                        <View key={review.id} style={styles.review}>
+                          <Text style={{ lineHeight: 40 }}>
+                            Melyssa Tanaka
+                          </Text>
+                          <Text>
+                            <Star count={review.stars} />
+                          </Text>
+                          <Text>{review.description}</Text>
+                          <View
+                            style={{
+                              flexDirection: "row",
+                              flexWrap: "wrap",
+                              display: "flex",
+                              paddingTop: 30,
+                              paddingBottom: 30,
+                              justifyContent: "space-evenly",
+                            }}></View>
+                        </View>
+                      ))}
+                  </View>
+                )}
+              </View>
+            </ScrollView>
+          </View>
         </ImageBackground>
       </View>
     </>
@@ -420,7 +418,6 @@ const styles = {
     textAlign: "left",
   },
   main: {
-    paddingTop: 60,
     display: "flex",
     backgroundColor: "pink",
   },
@@ -455,6 +452,7 @@ const styles = {
     backgroundColor: "#EFEFEF",
     borderTopLeftRadius: 50,
     borderTopRightRadius: 50,
+    paddingBottom:250
   },
   item: {
     display: "flex",

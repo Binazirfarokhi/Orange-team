@@ -13,6 +13,8 @@ import { useContext } from "react";
 import AuthContext from "../contexts/auth";
 import { Avatar, Button, Image } from "@rneui/themed";
 import { getImageUrl, uploadImage } from "../util/general-functions";
+import { UserInactiveIcon } from "../components/icon/icon";
+import { AccountIcon, EventHistoryIcon, PersonInfoIcon, SettingIcon, StarIcon, TimeIcon, TimeVolunteerIcon } from "../components/icon/profile-icon";
 
 function HomeScreen({ navigation }) {
   const [name, setName] = useState("");
@@ -115,7 +117,9 @@ function HomeScreen({ navigation }) {
         style={{ ...styles.home, flex: role === TYPE_ORGANIZATION ? 1 : 2 }}>
         {role !== TYPE_ORGANIZATION && (
           <View style={styles.list}>
-            <FontAwesome name="user" size={20} style={styles.leftIcon} />
+            <View style={styles.leftIcon}>
+              <AccountIcon />
+            </View>
             <Text
               style={styles.listText}
               onPress={() => navigation.navigate("Account")}>
@@ -129,7 +133,9 @@ function HomeScreen({ navigation }) {
           </View>
         )}
         <View style={styles.list}>
-          <FontAwesome name="home" size={20} style={styles.leftIcon} />
+            <View style={styles.leftIcon}>
+              <PersonInfoIcon />
+            </View>
           <Text
             style={styles.listText}
             onPress={() => navigation.navigate("PersonalInformation")}>
@@ -143,7 +149,9 @@ function HomeScreen({ navigation }) {
         </View>
         {role === TYPE_PARENT && (
           <View style={styles.list}>
-            <FontAwesome name="group" size={20} style={styles.leftIcon} />
+            <View style={styles.leftIcon}>
+              <TimeVolunteerIcon />
+            </View>
             <Text
               style={styles.listText}
               onPress={() => navigation.navigate("ChildrenList")}>
@@ -158,7 +166,9 @@ function HomeScreen({ navigation }) {
         )}
         {role !== TYPE_ORGANIZATION && (
           <View style={styles.list}>
-            <FontAwesome name="table" size={20} style={styles.leftIcon} />
+            <View style={styles.leftUpIcon}>
+              <EventHistoryIcon />
+            </View>
             <Text
               style={styles.listText}
               onPress={() => navigation.navigate("EventHistory")}>
@@ -203,7 +213,9 @@ function HomeScreen({ navigation }) {
         )}
         {role === TYPE_VOLUNTEER && (
           <View style={styles.list}>
-            <FontAwesome5 name="user-tag" size={20} style={styles.leftIcon} />
+            <View style={styles.leftUpIcon2}>
+              <TimeIcon />
+            </View>
             <Text
               style={styles.listText}
               onPress={() => navigation.navigate("TimeInVolunteer")}>
@@ -218,11 +230,9 @@ function HomeScreen({ navigation }) {
         )}
         {role === TYPE_VOLUNTEER && (
           <View style={styles.list}>
-            <FontAwesome5
-              name="align-justify"
-              size={20}
-              style={styles.leftIcon}
-            />
+            <View style={styles.leftIcon}>
+              <TimeVolunteerIcon />
+            </View>
             <Text
               style={styles.listText}
               onPress={() => navigation.navigate("VolunteerDetail")}>
@@ -252,7 +262,9 @@ function HomeScreen({ navigation }) {
             </View>
           ))}
         <View style={styles.list}>
-          <FontAwesome name="gear" size={20} style={styles.leftIcon} />
+          <View style={styles.leftUpIcon2}>
+            <SettingIcon />
+          </View>
           <Text
             style={styles.listText}
             onPress={() => navigation.navigate("Settings")}>
@@ -327,6 +339,14 @@ const styles = StyleSheet.create({
   },
   leftIcon: {
     flex: 1,
+  },
+  leftUpIcon: {
+    flex: 1,
+    marginTop:5,
+  },
+  leftUpIcon2: {
+    flex: 1,
+    marginTop:3,
   },
   rightIcon: {
     flex: 1,

@@ -88,7 +88,7 @@ function AuthorizedTabs() {
             name="User"
             component={HomeScreen}
             options={{
-              tabBarLabel: "user",
+              tabBarLabel: "Profile",
               tabBarIcon: ({ focused }) => (
                 focused ? <UserActiveIcon /> : <UserInactiveIcon />
               ),
@@ -101,7 +101,7 @@ function AuthorizedTabs() {
             name="User"
             component={HomeScreen}
             options={{
-              tabBarLabel: "user",
+              tabBarLabel: "Profile",
               tabBarIcon: ({ focused }) => (
                 focused ? <UserActiveIcon /> : <UserInactiveIcon />
               ),

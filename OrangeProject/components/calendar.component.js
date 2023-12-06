@@ -59,8 +59,8 @@ export default function CalendarComponent({ onDateChange, events }) {
                 selectedDayBackgroundColor:'#E99EB3'
             }}
             />
-        <View style={{ marginVertical: 20, marginHorizontal: 10 }}>
-            <Text style={{ fontSize: 16, fontWeight: 'bold', marginBottom: 20}}>Registered Activities</Text>
+        <View style={{ marginVertical: 10,  }}>
+            <Text style={{ fontSize: 16, fontWeight: 'bold', marginBottom: 20, marginLeft:15}}>Registered Activities</Text>
             {selectedEvents.map((event, index) => (
                 <TouchableOpacity onPress={() => navigation.navigate("EventDetail", { id: event.id })}>
                 <Card key={index} containerStyle={{backgroundColor:'#613194', borderRadius:10, marginBottom:10, flexDirection:'row'}}>
