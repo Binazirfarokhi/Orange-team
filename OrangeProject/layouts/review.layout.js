@@ -28,27 +28,35 @@ function ReviewScreen({ navigation }) {
   React.useEffect(() => {
     getPersistData("userInfo").then(async (data) => {
       if (data && data.length > 0) {
-        const { id } = data[0];
-        setId(id);
-        loadReview(id);
+        const { id } = data[0]; 
+        setId(id); 
+        loadReview(id); 
       }
     });
   }, []);
-
-  const loadReview = async (id) => {
-    const result = await get(`/profile/review/${id}`);
-    setReviews(result.data.data);
-  };
 
   const removeImage = async (uri) => {
     setImages(images.filter((img) => img !== uri));
   };
 
-  const saveReview = async () => {
+  const loadReview = async (id) => { 
+    const result = await get(`/profile/review/${id}`); 
+    setReviews(result.data.data);
+  };
+
+  const uploadPhoto = async () => {
+    const photos = await uploadImage("review", null, true, setLoading);
+    if (photos && photos.length > 0) setImages(photos);
+    setLoading(false);
+  };
+
+  const saveReview = async () => { 
     if (!description || description === "") {
       alert("Cannot submit with review");
-      return;
-    }
+
+      return; 
+    } 
+
     const data = {
       userId: id,
       images,
@@ -56,7 +64,7 @@ function ReviewScreen({ navigation }) {
       description,
       stars: selectedIndex + 1,
     };
-    const result = await post(`/profile/review`, data);
+    const result = await post(`/profile/review`, data); 
     if (result.data.status === "OK") {
       setImages([]);
       setDescription("");
@@ -64,23 +72,17 @@ function ReviewScreen({ navigation }) {
       setSelectedIndex(0);
       loadReview(id);
       alert("Review Posted");
-    } else {
+    } else { 
       alert("Unable to post review.");
-    }
+    } 
   };
-  const uploadPhoto = async () => {
-    const photos = await uploadImage("review", null, true, setLoading);
-    if (photos && photos.length > 0) setImages(photos);
-    setLoading(false);
-  };
-
   return (
     <View style={styles.main}>
-      <KeyboardAvoidingView
+      <KeyboardAvoidingView 
         behavior={"padding"}
-        keyboardVerticalOffset={0}
-        style={styles.container}>
-        {/* <TouchableWithoutFeedback onPress={Keyboard.dismiss}> */}
+        keyboardVerticalOffset={0} 
+        style={ styles.container }> 
+        {}
         <View>
           <Feather
             name="arrow-left"
@@ -89,7 +91,7 @@ function ReviewScreen({ navigation }) {
             onPress={() => navigation.goBack()}
           />
           <Text style={styles.title}>Reviews</Text>
-          <View>
+          <View> 
             <ScrollView
               style={{ marginBottom: 250, paddingRight: 20 }}
               contentContainerStyle={{ flexGrow: 1 }}>
@@ -130,7 +132,6 @@ function ReviewScreen({ navigation }) {
                   multiline={true}
                   labelStyle={{}}
                   labelProps={{}}
-                  // leftIcon={<Feather name='list' size={20} color={'#666'} />}
                   leftIconContainerStyle={{}}
                   rightIconContainerStyle={{}}
                   placeholder="Description"
@@ -160,7 +161,7 @@ function ReviewScreen({ navigation }) {
                       <Image source={{ uri }} style={styles.image} />
                     </View>
                   ))}
-                </View>
+                </View> 
                 <Button onPress={saveReview}>Post Review</Button>
               </View>
               <View style={{ display: "flex" }}>
@@ -186,25 +187,25 @@ function ReviewScreen({ navigation }) {
                             <Image source={{ uri }} style={styles.image} />
                           </View>
                         ))}
-                      </View>
+                      </View> 
                     </View>
                   ))}
               </View>
             </ScrollView>
-          </View>
+          </View> 
         </View>
-        {/* </TouchableWithoutFeedback> */}
-      </KeyboardAvoidingView>
+        {}
+      </KeyboardAvoidingView> 
     </View>
   );
 }
 
-const Star = ({ count }) => {
-  function getStar() {
-    const star = [];
-    for (i = 0; i < count; i++)
+const Star = ({ count }) => { 
+  function getStar() { 
+    const star = []; 
+    for (i = 0; i < count; i++) 
       star.push(<FontAwesome key={i} name="star" size={20} />);
-    return star;
+    return star; 
   }
   return <>{getStar()}</>;
 };
@@ -220,17 +221,17 @@ const styles = StyleSheet.create({
     fontSize: 30,
   },
   image: {
-    width: 100,
+    width: 100, 
     height: 100,
   },
   review: {
-    flex: 1,
-    marginTop: 10,
-    marginBottom: 10,
-    borderColor: MyTheme.colors.primary,
-    borderWidth: 1,
-    borderRadius: 8,
-    padding: 20,
+    flex: 1, 
+    marginTop: 10, 
+    marginBottom: 10, 
+    borderColor: MyTheme.colors.primary, 
+    borderWidth: 1, 
+    borderRadius: 8, 
+    padding: 20, 
     backgroundColor: "white",
   },
 });
